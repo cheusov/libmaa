@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.2 1995/09/04 20:19:59 faith Exp $
+ * $Id: error.c,v 1.3 1995/09/29 02:55:49 yakowenk Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -49,6 +49,9 @@ void err_fatal( const char *routine, const char *format, ... )
    va_end( ap );
    fflush( stderr );
    fflush( stdout );
+#ifdef SEGFAULT
+   SEGFAULT;
+#endif
    exit( 1 );
 }
 
@@ -83,5 +86,8 @@ void err_internal( const char *routine, const char *format, ... )
    fprintf( stderr, "Aborting proteus: " );
    fflush( stderr );
    fflush( stdout );
+#ifdef SEGFAULT
+   SEGFAULT;
+#endif
    abort();
 }

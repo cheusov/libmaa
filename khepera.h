@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Thu Sep 28 19:13:12 1995 by faith@cs.unc.edu
+ * Revised: Thu Sep 28 22:10:10 1995 by yakowenk@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,13 +17,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.10 1995/09/29 00:55:42 faith Exp $
+ * $Id: khepera.h,v 1.11 1995/09/29 02:55:51 yakowenk Exp $
  */
 
 #ifndef _KHEPERA_H_
 #define _KHEPERA_H_
 
 #include <stdio.h>
+#include <stdarg.h>
 
 #ifndef __GCC__
 #define __inline__
@@ -39,6 +40,9 @@
 #ifndef KH_MAGIC
 #define KH_MAGIC 1
 #endif
+
+/* make a seg fault by accessing a null pointer */
+#define SEGFAULT (*(int *)NULL)
 
 #if KH_MAGIC
 #define HSH_MAGIC               0x01020304
@@ -82,6 +86,14 @@ extern __inline__ void *xrealloc( void *pt, unsigned int size );
 extern __inline__ void xfree( void *pt );
 extern __inline__ char *xstrdup( const char *s );
 #endif
+
+
+typedef void *tre_Node;
+typedef void *typ_Expr;
+typedef int boolean;
+#define TRUE 1
+#define FALSE 0
+
 
 /* bit.c */
 extern __inline__ void bit_set( unsigned long flags, int bit );
@@ -398,6 +410,11 @@ extern void   _prs_shutdown( void );
 typedef void *sym_Entry;
 typedef void *sym_Scope;
 
+/* Delimiter used in mangling names prior to searching the symbol table.
+ * Naturally, this character should be outlawed from user-defined identifiers.
+ */
+#define SYM_DELIM_CHAR ':'
+
 extern void      sym_set_size( int size );
 extern sym_Entry sym_add( sym_Scope scope, const char *name );
 extern sym_Entry sym_find( sym_Scope scope, const char *name );
@@ -408,6 +425,11 @@ extern sym_Scope sym_top( sym_Scope scope );
 extern sym_Scope sym_push( sym_Scope scope );
 extern sym_Scope sym_pop( sym_Scope scope );
 extern void      _sym_shutdown( void );
+ 
+extern boolean     sym_rule_find(tre_Node, tre_Node *);
+extern void        sym_rule_install(tre_Node, tre_Node);
+extern const char *sym_mangle_name(tre_Node);
+extern const char *sym_mangle_function_name(tre_Node);
 
 /* tree.c */
 
@@ -440,7 +462,10 @@ extern void      _sym_shutdown( void );
    int                    integer;              \
    double                 real;                 \
    unsigned long          bits;                 \
-   sym_Scope              scope
+   sym_Scope              scope;                \
+   typ_Expr               exprType;             \
+   sym_Scope              symbolTable;          \
+   tre_SetTree            polymorphicVars
 
 #if KH_MAGIC
 #define TRE_HEADER int magic; _TRE_HEADER
@@ -448,7 +473,6 @@ extern void      _sym_shutdown( void );
 #define TRE_HEADER _TRE_HEADER
 #endif
 
-typedef void *tre_Node;
 typedef void *pp_Format;
 
 typedef struct tre_Stats {
@@ -456,6 +480,14 @@ typedef struct tre_Stats {
    int inuse;			/* Number of nodes currently in use */
    int reused;			/* Number of nodes reused */
 } *tre_Stats;
+
+typedef struct tre_SetTree {
+   set_Set vars;                /* set of elements at this node */
+   struct tre_SetTree *parent;  /* parent node in tree */
+} *tre_SetTree;
+
+typedef const char *(*tre_Mangler)(tre_Node);
+
 
 extern void tre_set_size( int size );
 extern void tre_set_guard( int guard );
@@ -543,6 +575,16 @@ extern tre_Stats  tre_get_stats( void );
 extern void       tre_print_stats( FILE *stream );
 extern void       _tre_shutdown( void );
 
+extern tre_SetTree tre_polymorphic_vars(tre_Node);
+extern void        tre_polymorphic_vars_set(tre_Node,tre_SetTree);
+extern typ_Expr    tre_expr_type(tre_Node);
+extern void        tre_expr_type_set(tre_Node,typ_Expr);
+extern sym_Scope   tre_symtab(tre_Node);
+extern void        tre_symtab_set(tre_Node,sym_Scope);
+extern void        tre_register_name_mangler(int,tre_Mangler);
+extern tre_Mangler tre_name_mangler(tre_Node);
+
+
 /* pp.c */
 
 typedef void *pp_Stream;
@@ -564,4 +606,110 @@ extern pp_Format pp_vmake_format( const char *format, va_list *ap );
 extern pp_Format pp_make_format( const char *format, ... );
 extern void      pp_free_format( pp_Format format );
 
+
+
+/* dct.c */
+
+typedef lst_List                        dct_Dict;
+typedef struct { lst_Position a,z; }    dct_Position;
+typedef void                           *dct_Element;
+typedef void                           *dct_ElementPtr;
+typedef void                          (*dct_Destr)(dct_Element);
+
+#define DCT_ARITY 3
+
+#define _X3(X) X,X,X
+extern dct_Dict   dct_create();
+extern boolean    dct_find(dct_Dict, _X3(dct_ElementPtr));
+extern void       dct_add(dct_Dict, _X3(dct_Element) );
+extern int        dct_length(dct_Dict);
+extern dct_Position dct_last_position(dct_Dict);
+extern void       dct_truncate(dct_Dict,int, _X3(dct_Destr));
+extern void       dct_truncate_position(dct_Dict,dct_Position, _X3(dct_Destr));
+extern void       dct_destroy(dct_Dict, _X3(dct_Destr));
+extern void       dct_iterate(dct_Dict, int (*)( _X3(dct_Element)));
+extern dct_Position dct_next_position(dct_Position);
+#undef _X3(X)
+
+
+#define DCT_POSITION_INIT(P,D) (LST_POSITION_INIT((P).a,(D)),(P).z=NULL)
+#define DCT_POSITION_NEXT(P)  ((P)=dct_next_position(P))
+#define DCT_POSITION_OK(P)   (LST_POSITION_OK((P).a) || LST_POSITION_OK((P).z))
+#define DCT_POSITION_GET(P,X,Y,Z) \
+                     ((P).z=(P).a),             LST_POSITION_GET((P).z,(X)), \
+                     LST_POSITION_NEXT((P).z),  LST_POSITION_GET((P).z,(Y)), \
+                     LST_POSITION_NEXT((P).z),  LST_POSITION_GET((P).z,(Z))
+
+/* iterate over all entries (X,Y,Z) in dictionary D */
+#define DCT_ITERATE(D,P,X,Y,Z) \
+     for ( DCT_POSITION_INIT((P),(D)); \
+           DCT_POSITION_OK(P) && (DCT_POSITION_GET((P),(X),(Y),(Z)),1); \
+           DCT_POSITION_NEXT(P) )
+
+
+
+/* inf.c */
+
+extern src_Type   inf_CurrentSourcePosition;
+extern void       inf_infer(tre_Node);
+extern boolean    inf_infer_definition(tre_Node,tre_Node);
+
+
+/* lnk.c */
+
+typedef void                     *lnk_Link;
+typedef void                     *lnk_LinkPtr;
+
+#define NEW(N,T)          (T *)malloc((N)*sizeof(T))
+#define LNK_NEWP(PTR)     PTR=(lnk_Link)lnk_new_(sizeof(*PTR))
+#define lnk_xfer(P)       lnk_xfer_(&P)
+#define lnk_delete(P,D)   lnk_delete_(&(P),D) 
+
+extern lnk_Link    lnk_new_(int);
+extern lnk_Link    lnk_copy(lnk_Link);
+extern lst_List    lnk_copy_list(lst_List);
+extern set_Set     lnk_copy_set(set_Set);
+extern lnk_Link    lnk_xfer_(lnk_LinkPtr);
+extern lnk_Link    lnk_delete_(  lnk_LinkPtr, void (*)(lnk_Link));
+extern lst_List    lnk_delete_list( lst_List, void (*)(lnk_Link));
+extern set_Set     lnk_delete_set(   set_Set, void (*)(lnk_Link));
+extern void        lnk_decrement(   lnk_Link, void (*)(lnk_Link));
+
+
+
+/* typ.c */
+
+enum typ_Tag {
+   TYP_VARI, TYP_LINK, TYP_OPER, TYP_CONS, TYP_CSET, TYP_INTC, TYP_PLUS
+};
+
+
+extern typ_Expr      typ_new_vari();
+extern typ_Expr      typ_new_link(typ_Expr);
+extern typ_Expr      typ_new_oper(char *,lst_List);
+extern typ_Expr      typ_new_cons(typ_Expr,typ_Expr);
+extern typ_Expr      typ_new_cset(set_Set);
+extern typ_Expr      typ_new_intc(int);
+extern typ_Expr      typ_new_plus(typ_Expr,typ_Expr);
+extern typ_Expr      typ_new_base_type(char *, int);
+extern typ_Expr      typ_instance(typ_Expr, tre_SetTree, dct_Dict);
+extern boolean       typ_mgu(typ_Expr, typ_Expr, lst_List);
+extern void          typ_apply_mgu(dct_Dict);
+extern boolean       typ_unify(typ_Expr, typ_Expr);
+extern void          typ_read_typerule();
+extern tre_Node      typ_ast_instance(tre_Node);
+extern void          typ_unlink(void *);
+extern void          typ_destroy(typ_Expr);
+extern unsigned long typ_hash(const typ_Expr);
+extern int           typ_compare(const typ_Expr, const typ_Expr);
+extern void          typ_dump(typ_Expr);
+extern lst_List      typ_constraints_get(typ_Expr);
+extern void          typ_constraints_set(typ_Expr, lst_List);
+extern src_Type      typ_trace_info_get(typ_Expr);
+extern void          typ_trace_info_set(typ_Expr, src_Type);
+extern typ_Expr      typ_dup_expr_tree(typ_Expr);
+
+
+
 #endif
+

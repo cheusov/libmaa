@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.3 1995/09/11 02:20:09 faith Exp $
+# $Id: Makefile.in,v 1.4 1995/09/29 02:55:47 yakowenk Exp $
 #
 
 .SUFFIXES:
@@ -52,13 +52,14 @@ RANLIB=		@RANLIB@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
 
-HEADERS= ../config.h kh.h khepera.h obstack.h
+HEADERS= ../config.h kh.h khepera.h obstack.h misc.h
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
 	 debug.o source.o parse.o tree.o kh.o pp.o prime.o symbol.o \
-	 parse-concrete.o
+	 parse-concrete.o bit.o \
+	 dct.o inf.o lnk.o typ.o
 EXES=	 pptest treetest settest hashtest stringtest debugtest memtest \
-	 primetest listtest
+	 primetest listtest inftest
 
 LIBS=    libkhepera.a
 
