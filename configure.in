@@ -18,7 +18,7 @@ dnl You should have received a copy of the GNU General Public License along
 dnl with this program; if not, write to the Free Software Foundation, Inc.,
 dnl 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
-dnl $Id: configure.in,v 1.29 2004/06/06 14:03:01 cheusov Exp $
+dnl $Id: configure.in,v 1.30 2004/12/23 18:56:45 cheusov Exp $
 dnl
 dnl Flag conventions:
 dnl     CFLAGS and LDFLAGS should be settable on the make commandline
@@ -33,7 +33,7 @@ dnl     YCFLAGS is for yacc
 dnl     LCFLAGS is for lex
 
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.29 $)
+AC_REVISION($Revision: 1.30 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
 AC_CONFIG_HEADER(config.h)
@@ -311,7 +311,8 @@ AC_SUBST(WLDFLAGS)
 AC_SUBST(XTRACFLAGS)
 AC_SUBST(XTRALDFLAGS)
 AC_SUBST(XTRAHEADERS)
-AC_CONFIG_FILES([Makefile doc/Makefile])
+AC_SUBST(AWK)
+AC_CONFIG_FILES([Makefile doc/Makefile arggram2c])
 AC_OUTPUT
 
 date > stamp-h.in

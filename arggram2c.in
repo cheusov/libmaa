@@ -1,4 +1,4 @@
-#!/usr/bin/awk -f
+#!@AWK@ -f
 
 #
 # converts arggram.txt to arggram.c
@@ -12,7 +12,7 @@ BEGIN {
 }
 
 {
-   sub(/#.*$/, "")
+   sub(/[#].*$/, "")
 }
 
 NF == 0 {

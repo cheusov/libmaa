@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.45 2004/10/08 06:20:31 cheusov Exp $
+# $Id: Makefile.in,v 1.46 2004/12/23 18:56:45 cheusov Exp $
 #
 
 ifneq (,)
@@ -51,6 +51,7 @@ RANLIB=		@RANLIB@
 INSTALL=        @INSTALL@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
+AWK=            @AWK@
 
 CFLAGS=		@CFLAGS@ $(VFLAGS) @CPPFLAGS@ @DEFS@ @WCFLAGS@ -I.
 LDFLAGS=        @LDFLAGS@
@@ -110,7 +111,7 @@ tests-update: $(TESTS)
 
 arg.o: arggram.c
 arggram.c: arggram.txt
-	awk -f ./arggram2c < $< > $@
+	@AWK@ -f ./arggram2c < $< > $@
 
 %.o: %.c
 	$(CC) -c $(XTRACFLAGS) $(CFLAGS) $<
