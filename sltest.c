@@ -1,6 +1,6 @@
 /* sltest.c -- 
  * Created: Mon Feb 19 08:57:34 1996 by faith@cs.unc.edu
- * Revised: Sun Feb 25 15:51:20 1996 by faith@cs.unc.edu
+ * Revised: Mon Sep 23 20:57:49 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: sltest.c,v 1.2 1996/02/25 22:04:03 faith Exp $
+ * $Id: sltest.c,v 1.3 1996/09/24 01:06:14 faith Exp $
  * 
  */
 
@@ -26,7 +26,7 @@
 
 #undef DUMP
 
-int compare( const void *datum1, const void *datum2 )
+static int compare( const void *datum1, const void *datum2 )
 {
    long a = (long)datum1;
    long b = (long)datum2;
@@ -36,13 +36,13 @@ int compare( const void *datum1, const void *datum2 )
    return 0;
 }
 
-int print( const void *datum )
+static int print( const void *datum )
 {
    printf( "%d ", (int)datum );
    return 0;
 }
 
-const void *key( const void *datum )
+static const void *key( const void *datum )
 {
    return datum;
 }

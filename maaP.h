@@ -1,6 +1,6 @@
 /* maaP.h -- Internal header file for libmaa
  * Created: Sun Nov 19 13:19:44 1995 by faith@cs.unc.edu
- * Revised: Tue Mar 26 21:35:12 1996 by r.faith@ieee.org
+ * Revised: Mon Sep 23 21:02:23 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.5 1996/03/27 02:45:24 faith Exp $
+ * $Id: maaP.h,v 1.6 1996/09/24 01:06:13 faith Exp $
  */
 
 #ifndef _MAAP_H_
@@ -108,11 +108,12 @@ extern char *optarg;
 
 /* We actually need a few non-ANSI C things... */
 #if defined(__linux__) && defined(__STRICT_ANSI__)
-extern char *strdup( const char * );
-extern int  fileno( FILE *stream);
-extern FILE *fdopen( int fildes, const char *mode);
-extern void bcopy(const void *src, void *dest, int n);
-extern long int random(void);
+extern char     *strdup( const char * );
+extern int      fileno( FILE *stream );
+extern FILE     *fdopen( int fildes, const char *mode );
+extern void     bcopy( const void *src, void *dest, int n );
+extern long int random( void );
+extern void     srandom( unsigned int );
 #endif
 
 #if HAVE_SYS_RESOURCE_H

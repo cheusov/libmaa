@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sun Jun 23 12:53:20 1996 by faith@cs.unc.edu
+ * Revised: Mon Sep 23 20:48:59 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.17 1996/06/24 20:22:17 faith Exp $
+ * $Id: maa.h,v 1.18 1996/09/24 01:06:12 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -471,5 +471,10 @@ extern void       _sl_dump( sl_List list );
 /* text.c */
 
 extern const char *txt_soundex( const char *string );
+
+/* base64.c */
+
+extern const char *b64_encode( unsigned long val );
+extern unsigned long b64_decode( const char *val );
 
 #endif
