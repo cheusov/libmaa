@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.10 1996/03/11 17:49:48 yakowenk Exp $
+ * $Id: list.c,v 1.11 1996/03/29 19:15:50 yakowenk Exp $
  *
  * \section{List Routines}
  *
@@ -443,7 +443,7 @@ void lst_set_position( lst_Position position, const void *datum )
 
 static int _lst_dump_node( const void *datum )
 {
-   printf(" 0x%8x\n",(unsigned int)datum);
+   printf(" 0x%08x\n",(unsigned int)datum);
    return 0;
 }
 
