@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Mon Jan  1 16:00:54 1996 by r.faith@ieee.org
+# Revised: Sun Jan  7 20:26:17 1996 by r.faith@ieee.org
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,8 +17,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.10 1996/01/02 04:09:35 faith Exp $
+# $Id: Makefile.in,v 1.11 1996/01/08 03:26:42 faith Exp $
 #
+
+MAA_MAJOR=0
+MAA_MINOR=9
 
 .SUFFIXES:
 .SUFFIXES: .c .o
@@ -36,7 +39,8 @@ SHELL=		/bin/sh
 
 CC=		@CC@
 CFLAGS=		@CFLAGS@
-XCFLAGS=	@EXTRACFLAGS@ @DEFS@ @DMCFLAGS@ -I. -I..
+VFLAGS=         -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
+XCFLAGS=	@EXTRACFLAGS@ @DEFS@ $(VFLAGS) @DMCFLAGS@ -I. -I..
 LDFLAGS=	@LDFLAGS@
 XLDFLAGS=	-L.
 CPP=		@CPP@
@@ -55,9 +59,9 @@ INSTALL_DATA=	@INSTALL_DATA@
 HEADERS= ../config.h maa.h maaP.h decl.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
-	 debug.o maa.o prime.o bit.o timer.o
+	 debug.o maa.o prime.o bit.o timer.o version.o arg.o
 TESTS=	 settest hashtest stringtest debugtest \
-	 primetest listtest bittest
+	 primetest listtest bittest argtest
 EXES=    memtest
 
 LIBS=    libmaa.a
@@ -68,26 +72,41 @@ all: $(LIBS) $(EXES) $(TESTS)
 
 tests: $(TESTS)
 	@for i in $(TESTS); do \
-		./$$i > /tmp/$$i.out; \
-		if cmp ./$$i.out /tmp/$$i.out; \
-			then echo PASSED $$i; \
+		./$$i | fgrep -v ' at ' > ./$$i.out.new; \
+		if cmp ./$$i.out $$i.out.new; \
+			then echo PASSED $$i; rm -f $$i.out.new; \
 			else echo FAILED $$i; \
 		fi; \
-		rm -f /tmp/$$i.out; \
 	done
 
 tests-update: $(TESTS)
-	@for i in $(TESTS); do echo Writing $$i.out; ./$$i > $$i.out; done
+	@for i in $(TESTS); do \
+		echo Writing $$i.out; \
+		./$$i | fgrep -v ' at ' > $$i.out; \
+	done
 
 %.o: %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(XCFLAGS) $<
 
-%: %.o $(LDLIBS)
+%: %.o
 	$(CC) $(LDFLAGS) $(XLDFLAGS) -o $@ $< $(LDLIBS)
+
+$(EXES) $(TESTS): $(LIBS)
 
 ALLFLAGS=$(CPPFLAGS) $(CFLAGS) $(XCFLAGS) $(LDFLAGS) $(XLDFLAGS)
 %: %.c
 	$(CC) $(ALLFLAGS) -o $@ $< $(LDLIBS)
+
+date := $(shell date)
+version.stamp: version.c
+	cp version.c version.tmp
+	sed "s,/\* Stamp: .*\*/,/* Stamp: $(date) */," \
+		< version.tmp > version.c
+	touch version.stamp
+
+version.c:
+	echo "/* Stamp: `date` */" > version.c
+	echo 'const char *maa_revision_string = "$$Revision: 1.11 $$";' >> version.c
 
 libmaa.a:: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
@@ -99,8 +118,9 @@ $(EXES):    $(HEADERS) $(LIBS)
 .PHONY: clean cleandist tags
 clean:
 	-rm -f *.o *.s *~ core a.out config.log $(TESTS) $(EXES)
-	-rm -f *.log *.aux *.toc *.dvi *.ps
+	-rm -f *.log *.aux *.toc *.dvi *.ps *.out.new
 	-rm -f *.cfg *.dtk .inslog tca.map .pure
+	-rm -f version.stamp version.tmp
 
 distclean: clean
 	-rm -f config.h config.cache Makefile $(LIBS)

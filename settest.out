@@ -99,17 +99,14 @@ key29
 key98
 key89
 key1
-Statistics for set at 0x8015000:
    5 resizings to 347 total
    100 entries (88 buckets used, 76 without overflow)
    maximum list length is 2 (optimal is 1.1)
    101 retrievals (86 from top, 1 failed)
-Statistics for set at 0x8015000:
    5 resizings to 347 total
    100 entries (89 buckets used, 79 without overflow)
    maximum list length is 3 (optimal is 1.1)
    100 retrievals (79 from top, 0 failed)
-Statistics for set at 0x8015000:
    5 resizings to 347 total
    100 entries (83 buckets used, 68 without overflow)
    maximum list length is 3 (optimal is 1.2)

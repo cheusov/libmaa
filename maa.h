@@ -1,7 +1,7 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Mon Jan  1 14:56:32 1996 by r.faith@ieee.org
- * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Sun Jan  7 21:48:31 1996 by r.faith@ieee.org
+ * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.4 1996/01/02 04:09:43 faith Exp $
+ * $Id: maa.h,v 1.5 1996/01/08 03:26:50 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -58,15 +58,25 @@
 #define SYM_SCOPE_MAGIC_FREED   0x21436587
 #define SYM_SYMBOL_MAGIC        0xfedcba98
 #define SYM_SYMBOL_MAGIC_FREED  0xefcdab89
+#define ARG_MAGIC               0xfeedbead
+#define ARG_MAGIC_FREED         0xefdeebda
 #endif
+
+/* version.c */
+
+extern const char *maa_revision_string;
+
 
 /* maa.c */
 
 #define KH_MEMORY    0xc1000000	/* Print memory usage statistics at exit */
 #define KH_TIME      0xc2000000	/* Print timer information at exit */
 
-extern void maa_init( const char *programName );
-extern void maa_shutdown( void );
+extern void       maa_init( const char *programName );
+extern void       maa_shutdown( void );
+extern int        maa_version_major( void );
+extern int        maa_version_minor( void );
+extern const char *maa_version( void );
 
 /* xmalloc.c */
 
@@ -348,5 +358,22 @@ extern double tim_get_system( const char *name );
 extern void   tim_print_timer( FILE *str, const char *name );
 extern void   tim_print_timers( FILE *str );
 extern void   _tim_shutdown( void );
+
+/* arg.c */
+
+typedef void *arg_List;
+
+extern arg_List   arg_create( void );
+extern void       arg_destroy( arg_List arg );
+extern arg_List   arg_add( arg_List arg, const char *string );
+extern arg_List   arg_addn( arg_List arg, const char *string, int length );
+extern void       arg_grow( arg_List arg, const char *string, int length );
+extern arg_List   arg_finish( arg_List arg );
+extern const char *arg_get( arg_List arg, int item );
+extern void       arg_get_vector( arg_List arg,
+				  int *argc, const char ***argv );
+extern arg_List   arg_argify( const char *string );
+
+/* pr.c */
 
 #endif

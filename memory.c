@@ -1,7 +1,7 @@
 /* memory.c -- Memory management for Khepera
  * Created: Thu Dec 22 09:58:38 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:22 1995 by faith@cs.unc.edu
- * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Sun Jan  7 21:48:32 1996 by r.faith@ieee.org
+ * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: memory.c,v 1.4 1995/11/19 19:28:46 faith Exp $
+ * $Id: memory.c,v 1.5 1996/01/08 03:26:51 faith Exp $
  *
  * \section{Memory Management Routines}
  *
@@ -152,7 +152,7 @@ const char *mem_strncpy( mem_String info,
 }
 
 /* \doc |mem_grow| copies |len| of |string| onto the top of the memory
-   opnect pointed to by |info|.  Several calls to |mem_grow| should be
+   object pointed to by |info|.  Several calls to |mem_grow| should be
    followed by a single call to |mem_finish| without any intervening calls
    to other functions which modify |info|. */
 
@@ -177,6 +177,7 @@ const char *mem_finish( mem_String info )
    
    ++i->count;
    i->bytes += 1;
+   obstack_grow0( i->obstack, "", 0 );
    return obstack_finish( i->obstack );
 }
 

@@ -1,7 +1,7 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Mon Jan  1 14:38:15 1996 by r.faith@ieee.org
- * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Sun Jan  7 21:50:41 1996 by r.faith@ieee.org
+ * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.3 1996/01/02 04:09:41 faith Exp $
+ * $Id: maa.c,v 1.4 1996/01/08 03:26:49 faith Exp $
  *
  * \section{General Support}
  *
@@ -51,6 +51,8 @@ void maa_init( const char *programName )
 
 void maa_shutdown( void )
 {
+   if (dbg_test(KH_MEMORY) || dbg_test(KH_TIME))
+      fprintf( stderr, "%s\n", maa_version() );
    if (dbg_test(KH_MEMORY)) {
       str_print_stats( stderr );
    }
@@ -64,4 +66,41 @@ void maa_shutdown( void )
    }
    _tim_shutdown();
    dbg_destroy();
+}
+
+int maa_version_major( void )
+{
+   return MAA_MAJOR;
+}
+
+int maa_version_minor( void )
+{
+   return MAA_MINOR;
+}
+
+const char *maa_version( void )
+{
+   static char       buffer[80];
+   char              *pt;
+   char              *colon;
+   
+   sprintf( buffer, "libmaa, version %d.%d.", MAA_MAJOR, MAA_MINOR );
+   if ((colon = strchr( maa_revision_string, ':'))) {
+				/* Assume an RCS Revision string */
+      strcat( buffer, colon + 1 );
+      pt = strrchr( buffer, '$') - 1;
+      if (!pt)                  /* Stripped RCS Revision string? */
+            pt = buffer + strlen( buffer ) - 1;
+      if (*pt != ' ')
+            ++pt;
+      *pt = '\0';
+   } else {                     /* Assume a simple number */
+      if (maa_revision_string[0] == '$')
+	 strcat( buffer, "0" );
+      else
+	 strcat( buffer, maa_revision_string );
+   }
+      
+   return buffer;
+
 }
