@@ -1,6 +1,6 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:47 1996 by faith@cs.unc.edu
+ * Revised: Thu Apr 17 11:41:06 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.13 1996/09/23 23:20:42 faith Exp $
+ * $Id: set.c,v 1.14 1997/04/21 15:23:37 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -336,8 +336,8 @@ int set_member( set_Set set, const void *elem )
    order, and that this order may change between two successive calls to
    |set_iterate|. */
 
-void set_iterate( set_Set set,
-		  int (*iterator)( const void *elem ) )
+int set_iterate( set_Set set,
+		 int (*iterator)( const void *elem ) )
 {
    setType       t = (setType)set;
    unsigned long i;
@@ -355,12 +355,13 @@ void set_iterate( set_Set set,
 	 for (pt = t->buckets[i]; pt; pt = pt->next)
 	    if (iterator( pt->elem )) {
 	       t->readonly = savedReadonly;
-	       return;
+	       return 1;
 	    }
       }
    }
    
    t->readonly = savedReadonly;
+   return 0;
 }
 
 /* \doc |set_iterate_arg| is used to iterate a function over every |elem|
@@ -370,9 +371,9 @@ void set_iterate( set_Set set,
    order, and that this order may change between two successive calls to
    |set_iterate|. */
 
-void set_iterate_arg( set_Set set,
-		      int (*iterator)( const void *elem, void *arg ),
-		      void *arg )
+int set_iterate_arg( set_Set set,
+		     int (*iterator)( const void *elem, void *arg ),
+		     void *arg )
 {
    setType       t = (setType)set;
    unsigned long i;
@@ -390,12 +391,13 @@ void set_iterate_arg( set_Set set,
 	 for (pt = t->buckets[i]; pt; pt = pt->next)
 	    if (iterator( pt->elem, arg )) {
 	       t->readonly = savedReadonly;
-	       return;
+	       return 1;
 	    }
       }
    }
    
    t->readonly = savedReadonly;
+   return 0;
 }
 
 /* \doc |set_init_position| returns a position marker for some arbitary

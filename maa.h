@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Wed Mar 19 14:57:14 1997 by faith@cs.unc.edu
+ * Revised: Thu Apr 17 11:41:07 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.28 1997/03/19 21:10:23 faith Exp $
+ * $Id: maa.h,v 1.29 1997/04/21 15:23:36 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -199,9 +199,9 @@ extern void                set_destroy( set_Set set );
 extern int                 set_insert( set_Set set, const void *elem );
 extern int                 set_delete( set_Set set, const void *elem );
 extern int                 set_member( set_Set set, const void *elem );
-extern void                set_iterate( set_Set set,
+extern int                 set_iterate( set_Set set,
 					int (*iterator)( const void *key ) );
-extern void                set_iterate_arg( set_Set set,
+extern int                 set_iterate_arg( set_Set set,
 					    int (*iterator)( const void *elem,
 							     void *arg ),
 					    void *arg );
@@ -260,9 +260,9 @@ extern void         lst_nth_set( lst_List list, unsigned int n,
 				 const void *datum );
 extern int          lst_member( lst_List list, const void *datum );
 extern unsigned int lst_length( lst_List list );
-extern void         lst_iterate( lst_List list,
+extern int          lst_iterate( lst_List list,
 				 int (*iterator)( const void *datum ) );
-extern void         lst_iterate_arg( lst_List list,
+extern int          lst_iterate_arg( lst_List list,
 				     int (*iterator)( const void *datum,
 						      void *arg ),
 				     void *arg );

@@ -1,7 +1,7 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Mon Sep 23 16:23:49 1996 by faith@cs.unc.edu
+ * Revised: Thu Apr 17 11:41:09 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.12 1996/09/23 23:20:38 faith Exp $
+ * $Id: list.c,v 1.13 1997/04/21 15:23:34 faith Exp $
  *
  * \section{List Routines}
  *
@@ -334,14 +334,15 @@ void lst_truncate_position( lst_List list, lst_Position position )
    element.  If |iterator| returns a non-zero value, the iterations stop,
    and |lst_iterate| returns.  */
 
-void lst_iterate( lst_List list, int (*iterator)( const void *datum ) )
+int lst_iterate( lst_List list, int (*iterator)( const void *datum ) )
 {
    listType l = (listType)list;
    dataType d;
 
    _lst_check( l, __FUNCTION__ );
    
-   for (d = l->head; d; d = d->next) if (iterator( d->datum )) return;
+   for (d = l->head; d; d = d->next) if (iterator( d->datum )) return 1;
+   return 0;
 }
 
 /* \doc |lst_iterate_arg| is used to iterate a function over every element
@@ -349,16 +350,17 @@ void lst_iterate( lst_List list, int (*iterator)( const void *datum ) )
    element.  If |iterator| returns a non-zero value, the iterations stop,
    and |lst_iterate| returns.  */
 
-void lst_iterate_arg( lst_List list,
-		      int (*iterator)( const void *datum, void *arg ),
-		      void *arg )
+int lst_iterate_arg( lst_List list,
+		     int (*iterator)( const void *datum, void *arg ),
+		     void *arg )
 {
    listType l = (listType)list;
    dataType d;
 
    _lst_check( l, __FUNCTION__ );
    
-   for (d = l->head; d; d = d->next) if (iterator( d->datum, arg )) return;
+   for (d = l->head; d; d = d->next) if (iterator( d->datum, arg )) return 1;
+   return 0;
 }
 
 /* \doc |lst_init_position| returns a position marker for the head of the
