@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sat Oct  7 19:59:59 1995 by faith@cs.unc.edu
+ * Revised: Sun Oct  8 17:04:28 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.13 1995/10/08 00:46:38 faith Exp $
+ * $Id: khepera.h,v 1.14 1995/10/11 15:29:54 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -73,6 +73,8 @@
 #define KH_LINE      0xc0000020	/* Line number debugging */
 #define KH_MEMORY    0xc0000040	/* Print memory usage statistics at exit */
 #define KH_TIME      0xc0000080	/* Print timer information at exit */
+#define KH_RULES     0xc0000100	/* Rule application */
+#define KH_REPLACE   0xc0000200	/* tre_replace */
 
 extern void kh_init( void );
 extern void kh_shutdown( void );
@@ -546,7 +548,9 @@ extern void       tre_insert_before( tre_Node sibling, tre_Node child );
 extern void       tre_insert_after( tre_Node sibling, tre_Node child );
 extern void       tre_destroy( tre_Node node );
 extern tre_Node   tre_disconnect( tre_Node node );
+extern void       _tre_delete( tre_Node node );
 extern void       tre_delete( tre_Node node );
+extern tre_Node   tre_replace( tre_Node old, tre_Node new );
 extern tre_Node   tre_mk( int id, src_Type src, ... );
 extern tre_Node   tre_set_src( tre_Node node, src_Type src );
 extern tre_Node   tre_set_flag( tre_Node node, int flag );
@@ -572,6 +576,8 @@ extern int        tre_postorder_right( tre_Node node,
 				       int (*f)( tre_Node node ) );
 extern int        tre_iterate( tre_Node parent,
 			       int (*f)( tre_Node node, int position ) );
+extern int        tre_apply_rule( tre_Node root,
+				  int (*f)( int *count, tre_Node node ) );
 extern void       tre_print( tre_Node parent, FILE *stream );
 extern void       _tre_rb_dump( int id );
 extern tre_Stats  tre_get_stats( void );
