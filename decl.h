@@ -1,6 +1,6 @@
 /* decl.h -- Declarations for non-ANSI hosts
  * Created: Sun Nov 19 14:04:27 1995 by faith@cs.unc.edu
- * Revised: Mon Jan  1 23:21:44 1996 by faith@cs.unc.edu
+ * Revised: Sun Feb 11 12:17:49 1996 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: decl.h,v 1.3 1996/01/02 04:32:47 faith Exp $
+ * $Id: decl.h,v 1.4 1996/02/11 23:30:58 faith Exp $
  * 
  */
 
@@ -29,34 +29,37 @@ declarations for standard library calls.  We provide them here for
 situations that we know about. */
 
 #if defined(__sparc__)
-extern void   bcopy( const void *, void *, int );
 extern char   *memset( void *, int, int );
+extern char   *strchr( const char *, int );
 extern char   *strdup( const char * );
+extern char   *strrchr( const char *, int );
+extern char   *strtok( char *, const char * );
+extern int    _filbuf( FILE * );
 extern int    _flsbuf( unsigned char, FILE * );
 extern int    fflush( FILE * );
 extern int    fprintf( FILE *, const char *, ... );
 extern int    fputc( char, FILE * );
 extern int    fputs( const char *, FILE * );
+extern int    fread( char *, int, int, FILE * );
+extern int    fscanf( FILE *, const char *, ... );
+extern int    fwrite( char *, int, int, FILE * );
+extern int    getrusage( int who, struct rusage * );
+extern int    gettimeofday( struct timeval *, struct timezone * );
 extern int    on_exit( void (*)(), caddr_t );
 extern int    pclose( FILE * );
 extern int    printf( const char *, ... );
+extern int    scanf( const char *, ... );
+extern int    sscanf( const char *, const char *, ... );
 extern int    unlink( const char * );
 extern int    vfprintf( FILE *, const char *, ... );
 extern int    vsprintf( char *, const char *, ... );
 extern long   random( void );
 extern long   strtol( const char *, char **, int );
+extern time_t time( time_t * );
+extern void   bcopy( const void *, void *, int );
 extern void   fclose( FILE * );
 extern void   perror( const char * );
 extern void   srandom( int );
-extern char   *strchr( const char *, int );
-extern char   *strrchr( const char *, int );
-extern char   *strtok( char *, const char * );
-extern int    fread( char *, int, int, FILE * );
-extern int    fwrite( char *, int, int, FILE * );
-extern int    _filbuf( FILE * );
-extern time_t time( time_t * );
-extern int    gettimeofday( struct timeval *, struct timezone * );
-extern int    getrusage( int who, struct rusage * );
 #endif				/* __sparc__ */
 
 #if defined(__ultrix__) && defined(__MIPSEL__)
