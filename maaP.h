@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.11 1998/01/05 01:06:08 faith Exp $
+ * $Id: maaP.h,v 1.12 1998/01/05 14:19:06 faith Exp $
  */
 
 #ifndef _MAAP_H_
@@ -101,10 +101,12 @@ extern unsigned long int strtoul( const char *, char **, int );
 #if HAVE_GETOPT_H
 # include <getopt.h>
 #else
-#if !defined(__FreeBSD__) && !(defined(__sparc) && defined(__svr4__))
+#if !defined(__FreeBSD__) && !defined(__DGUX__)
+#if !(defined(__sparc) && defined(__svr4__))
 extern int  getopt( int, char **, char * );
 extern int  optind;
 extern char *optarg;
+#endif
 #endif
 #endif
 
