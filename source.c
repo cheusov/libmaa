@@ -1,7 +1,7 @@
 /* source.c -- Source code management for Libmaa
  * Created: Mon Dec 26 19:42:03 1994 by faith@cs.unc.edu
- * Revised: Wed May 21 00:45:36 1997 by faith@acm.org
- * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Sun Feb 22 06:51:24 1998 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997, 1998 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.6 1997/05/21 05:01:26 faith Exp $
+ * $Id: source.c,v 1.7 1998/02/22 15:13:52 faith Exp $
  *
  * \section{Source Code Management}
  *
@@ -392,7 +392,7 @@ void src_parse_error( FILE *stream, src_Type source, const char *message )
    _src_print_yyerror( str, message );
    putc( '\n', str );
 
-   _src_print_error( str, s, s->length );
+   _src_print_error( str, s, 0 );
 }
 
 /* \doc |src_print_error| will print an arbitrary error, specified as for
