@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Wed Sep 25 21:48:57 1996 by faith@cs.unc.edu
+ * Revised: Wed Oct  2 20:00:58 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.20 1996/09/26 02:23:15 faith Exp $
+ * $Id: maa.h,v 1.21 1996/10/03 01:36:05 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -445,11 +445,18 @@ extern arg_List   arg_argify( const char *string );
 #define PR_STDERR_TO_STDOUT 0x00000100
 
 extern int  pr_open( const char *command, int flags,
-		     FILE **instr, FILE **outstr, FILE **errstr );
-extern int  pr_close( FILE *str );
-extern int pr_wait( int pid );
+		     int *infd, int *outfd, int *errfd );
+extern int  pr_close_nowait( int fd );
+extern int  pr_close( int fd );
+extern int  pr_wait( int pid );
 extern void _pr_shutdown( void );
 extern int  pr_spawn( const char *command );
+int pr_readwrite( int in, int out,
+		  const char *inBuffer, int inLen,
+		  char *outBuffer, int outMaxLen );
+int pr_filter( const char *command,
+	       const char *inBuffer, int inLen,
+	       char *outBuffer, int outMaxLen );
 
 /* sl.c */
 

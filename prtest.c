@@ -1,6 +1,6 @@
 /* prtest.c -- 
  * Created: Fri Jan 12 14:18:32 1996 by r.faith@ieee.org
- * Revised: Mon May  6 12:45:32 1996 by faith@cs.unc.edu
+ * Revised: Wed Oct  2 20:06:41 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: prtest.c,v 1.2 1996/05/27 16:22:17 faith Exp $
+ * $Id: prtest.c,v 1.3 1996/10/03 01:36:07 faith Exp $
  * 
  */
 
@@ -25,18 +25,18 @@
 
 int main( int argc, char **argv )
 {
-   FILE *prev = NULL;
-   FILE *next; 
+   int  prev = 0;
+   int  next; 
    char buf[BUFSIZ];
    int  c;
    int  i;
+
+   maa_init( argv[0] );
 
    while ((c = getopt( argc, argv, "D" )) != EOF)
       switch (c) {
       case 'D': dbg_set( ".pr" ); break;
       }
-
-   maa_init( argv[0] );
 
    if (argc-optind == 0) {
       pr_open( "echo foo", PR_USE_STDIN | PR_CREATE_STDOUT,
@@ -49,7 +49,7 @@ int main( int argc, char **argv )
       }
    }
    
-   while ((fgets( buf, BUFSIZ, next )))
+   while ((read( next, buf, BUFSIZ )))
       printf( "Got: \"%s\"\n", buf );
    printf( "status = 0x%02x\n", pr_close( next ) );
    

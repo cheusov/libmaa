@@ -1,6 +1,6 @@
 /* pr.c -- Process creation and tracking support
  * Created: Sun Jan  7 13:34:08 1996 by r.faith@ieee.org
- * Revised: Wed Oct  2 19:50:43 1996 by faith@cs.unc.edu
+ * Revised: Wed Oct  2 20:42:53 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.7 1996/10/02 23:51:41 faith Exp $
+ * $Id: pr.c,v 1.8 1996/10/03 01:36:06 faith Exp $
  *
  * \section{Process Management Routines}
  *
@@ -119,8 +119,7 @@ void _pr_shutdown( void )
    }
 }
 
-int pr_open( const char *command, int flags,
-	     FILE **instr, FILE **outstr, FILE **errstr )
+int pr_open( const char *command, int flags, int *infd, int *outfd, int *errfd)
 {
    int        pid;
    int        fdin[2];
@@ -165,15 +164,15 @@ int pr_open( const char *command, int flags,
    if (pid == 0) {		/* child */
       int        i;
 
-#define CHILD(CREATE,USE,fds,writefd,readfd,str,FILENO,flag)   \
+#define CHILD(CREATE,USE,fds,writefd,readfd,fd,FILENO,flag)    \
       if (flags & CREATE) {                                    \
 	 close( fds[writefd] );                                \
 	 dup2( fds[readfd], FILENO );                          \
 	 close( fds[readfd] );                                 \
       } else if (flags & USE) {                                \
-	 if (str && *str) {                                    \
-	    dup2( fileno( *str ), FILENO );                    \
-	    fclose( *str );                                    \
+	 if (fd && *fd) {                                      \
+	    dup2( *fd, FILENO );                               \
+	    close( *fd );                                      \
 	 } else {                                              \
 	    if ((null = open( "/dev/null", flag )) >= 0) {     \
 	       dup2( null, FILENO );                           \
@@ -182,11 +181,11 @@ int pr_open( const char *command, int flags,
 	 }                                                     \
       }
       
-      CHILD( PR_CREATE_STDIN, PR_USE_STDIN, fdin, 1, 0, instr,
+      CHILD( PR_CREATE_STDIN, PR_USE_STDIN, fdin, 1, 0, infd,
 	     STDIN_FILENO, O_RDONLY );
-      CHILD( PR_CREATE_STDOUT, PR_USE_STDOUT, fdout, 0, 1, outstr,
+      CHILD( PR_CREATE_STDOUT, PR_USE_STDOUT, fdout, 0, 1, outfd,
 	     STDOUT_FILENO, O_WRONLY );
-      CHILD( PR_CREATE_STDERR, PR_USE_STDERR, fderr, 0, 1, errstr,
+      CHILD( PR_CREATE_STDERR, PR_USE_STDERR, fderr, 0, 1, errfd,
 	     STDERR_FILENO, O_WRONLY );
       
 #undef CHILD
@@ -201,26 +200,26 @@ int pr_open( const char *command, int flags,
       _exit(127);
    }
 				/* parent */
-#define PARENT(CREATE,USE,fds,readfd,writefd,str,flag,name) \
+#define PARENT(CREATE,USE,fds,readfd,writefd,fd,flag,name)  \
    if (flags & CREATE) {                                    \
       close( fds[ readfd ] );                               \
-      *str = fdopen( fds[ writefd ], flag );                \
-      _pr_objects[ fileno( *str ) ].pid = pid;              \
-      PRINTF(MAA_PR,(name " = %d; ",fileno( *str)));        \
+      *fd = fds[ writefd ];                                 \
+      _pr_objects[ *fd ].pid = pid;                         \
+      PRINTF(MAA_PR,(name " = %d; ",*fd));                  \
    } else if (flags & USE) {                                \
-      if (str && *str) {                                    \
-	 PRINTF(MAA_PR,(name " = %d*; ",fileno(*str)));     \
-	 _pr_objects[ fileno( *str ) ].pid =0;              \
-	 fclose( *str );                                    \
+      if (fd && *fd) {                                      \
+	 PRINTF(MAA_PR,(name " = %d*; ",*fd));              \
+	 _pr_objects[ *fd ].pid =0;                         \
+	 close( *fd );                                      \
       }                                                     \
    }
 
    PARENT( PR_CREATE_STDIN,  PR_USE_STDIN, fdin,  0, 1,
-	   instr,  "w", "stdin" );
+	   infd,  "w", "stdin" );
    PARENT( PR_CREATE_STDOUT, PR_USE_STDOUT, fdout, 1, 0,
-	   outstr, "r", "stdout" );
+	   outfd, "r", "stdout" );
    PARENT( PR_CREATE_STDERR, PR_USE_STDERR, fderr, 1, 0,
-	   errstr, "r", "stderr" );
+	   errfd, "r", "stderr" );
    
 #undef PARENT
    
@@ -261,31 +260,29 @@ int pr_wait( int pid )
    return exitStatus;
 }
 
-int pr_close_nowait( FILE *str )
+int pr_close_nowait( int fd )
 {
-   int fd         = fileno( str );
    int pid;
 
    if (!_pr_objects)
       err_internal( __FUNCTION__, "No previous call to pr_open()\n" );
    if (!(pid = _pr_objects[ fd ].pid))
-      err_internal( __FUNCTION__,
-		    "File (%d) not created by pr_open()\n", fileno( str ) );
+      err_internal( __FUNCTION__, "File (%d) not created by pr_open()\n", fd );
 
    _pr_objects[ fd ].pid = 0;
 
-   fclose( str );
+   close( fd );
    return pid;
 }
 
-int pr_close( FILE *str )
+int pr_close( int fd )
 {
-   int pid = pr_close_nowait( str );
+   int pid = pr_close_nowait( fd );
    
    return pr_wait( pid );
 }
 
-int pr_readwrite( FILE *in, FILE *out,
+int pr_readwrite( int in, int out,
 		  const char *inBuffer, int inLen,
 		  char *outBuffer, int outMaxLen )
 {
@@ -298,67 +295,89 @@ int pr_readwrite( FILE *in, FILE *out,
    int            n;
    int            count;
    int            retval;
+   int            status;
    
-   if ((flags = fcntl( fileno( in ), F_GETFL )) < 0)
+   if ((flags = fcntl( in, F_GETFL )) < 0)
       err_fatal_errno( __FUNCTION__, "Can't get flags for output stream\n" );
 #ifdef O_NONBLOCK
    flags |= O_NONBLOCK;
 #else
    flags |= FNDELAY;
 #endif
-   fcntl( fileno( in ), F_SETFL, flags );
+   fcntl( in, F_SETFL, flags );
 
-   if ((flags = fcntl( fileno( out ), F_GETFL )) < 0)
+   if ((flags = fcntl( out, F_GETFL )) < 0)
       err_fatal_errno( __FUNCTION__, "Can't get flags for input stream\n" );
 #ifdef O_NONBLOCK
    flags |= O_NONBLOCK;
 #else
    flags |= FNDELAY;
 #endif
-   fcntl( fileno( out ), F_SETFL, flags );
+   fcntl( out, F_SETFL, flags );
 
-   FD_ZERO( &rfds );
-   FD_ZERO( &wfds );
-   FD_ZERO( &efds );
-   FD_SET( fileno( out ), &rfds );
-   FD_SET( fileno( in ),  &wfds );
-   FD_SET( fileno( out ), &efds );
-   FD_SET( fileno( in ),  &efds );
-   
-   n = max( fileno( in ), fileno( out ) ) + 1;
+   n = max( in, out ) + 1;
 
    for (;;) {
       tv.tv_sec  = 5;
       tv.tv_usec = 0;
+      FD_ZERO( &rfds );
+      FD_ZERO( &wfds );
+      FD_ZERO( &efds );
+      FD_SET( out, &rfds );
+      FD_SET( out, &efds );
+      if (inLen) {
+	 FD_SET( in, &wfds );
+	 FD_SET( in, &efds );
+      }
+   
       switch ((retval = select( n, &rfds, &wfds, &efds, &tv )))
       {
       case -1: err_fatal_errno( __FUNCTION__, "Filter failed\n" ); break;
-      case 0:  err_fatal( __FUNCTION__, "Filter hung\n" );         break;
+/*       case 0:  err_fatal( __FUNCTION__, "Filter hung\n" );         break; */
       default:
-	 PRINTF(MAA_PR,("select(2) returns %d, inLen = %d, outLen = %d\n",
-			retval,inLen,outLen));
-	 if (inLen) {
-	    if ((count = write( fileno( in ), inPt, inLen )) < 0)
-	       err_fatal_errno( __FUNCTION__, "Error writing to filter\n" );
-	    PRINTF(MAA_PR,("  wrote %d\n",count));
-	    inLen -= count;
-	    inPt  += count;
-	    if (!inLen) pr_close_nowait( in );
+	 if (dbg_test(MAA_PR)) {
+	    printf( "select(2) returns %d,"
+		    " inLen = %d, outLen = %d, outMaxLen = %d\n",
+		    retval, inLen, outLen, outMaxLen );
+	    if (FD_ISSET( in, &rfds ))  printf( "  in/read\n" );
+	    if (FD_ISSET( out, &rfds )) printf( "  out/read\n" );
+	    if (FD_ISSET( in, &wfds ))  printf( "  in/write\n" );
+	    if (FD_ISSET( out, &wfds )) printf( "  out/write\n" );
+	    if (FD_ISSET( in, &efds ))  printf( "  in/error\n" );
+	    if (FD_ISSET( out, &efds )) printf( "  out/error\n" );
 	 }
-	 if ((count = read( fileno( out ), outPt, 1 )) <= 0) {
-	    PRINTF(MAA_PR,("  read %d\n",count));
+	 if (inLen) {
+	    if ((count = write( in, inPt, inLen )) <= 0) {
+	       if (errno != EAGAIN)
+		  err_fatal_errno( __FUNCTION__, "Error writing to filter\n" );
+	    } else {
+	       PRINTF(MAA_PR,("  wrote %d\n",count));
+	       inLen -= count;
+	       inPt  += count;
+	       if (!inLen) {
+		  pr_close_nowait( in );
+		  n = out + 1;
+	       }
+	    }
+	 }
+	 if ((count = read( out, outPt, outMaxLen )) <= 0) {
 	    if (!count) {
 	       if (inLen)
 		  err_fatal( __FUNCTION__,
 			     "End of output, but input not flushed\n" );
-	       pr_close( out );
+	       if ((status = pr_close( out )))
+		  err_warning( __FUNCTION__,
+			       "Filter had non-zero exit status: 0x%x\n",
+			       status );
 	       return outLen;
 	    } else if (errno != EAGAIN)
 	       err_fatal_errno( __FUNCTION__, "Error reading from filter\n" );
 	 } else {
+	    PRINTF(MAA_PR,("  read %d\n",count));
 	    outLen    += count;
-	    outMaxLen -= count;
 	    outPt     += count;
+	    if ((outMaxLen -= count) < 0)
+	       err_fatal( __FUNCTION__, "Output buffer overflow\n" );
 	 }
 	 break;
       }
@@ -370,7 +389,7 @@ int pr_filter( const char *command,
 	       char *outBuffer, int outMaxLen )
 {
    int  pid;
-   FILE *in, *out;
+   int  in, out;
    
    pid = pr_open( command, PR_CREATE_STDIN | PR_CREATE_STDOUT,
 		  &in, &out, NULL );
