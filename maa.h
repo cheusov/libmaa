@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Fri Dec  1 11:55:46 1995 by faith@cs.unc.edu
+ * Revised: Sat Dec  2 15:06:56 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.2 1995/12/01 21:55:48 faith Exp $
+ * $Id: maa.h,v 1.3 1995/12/03 00:41:38 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -62,23 +62,8 @@
 
 /* maa.c */
 
-#define KH_FAREY     0xc0000001	/* Farey fraction generation */
-#define KH_TRE       0xc0000002	/* Tree libary */
-#define KH_SRC       0xc0000004	/* Source library */
-#define KH_PP        0xc0000008	/* Prettyprinter library */
-#define KH_PPVERBOSE 0xc0000010	/* Prettyprinter library, verbose */
-#define KH_LINE      0xc0000020	/* Line number debugging */
-#define KH_MEMORY    0xc0000040	/* Print memory usage statistics at exit */
-#define KH_TIME      0xc0000080	/* Print timer information at exit */
-#define KH_RULES     0xc0000100	/* Rule application */
-#define KH_REPLACE   0xc0000200	/* tre_replace */
-#define KH_SCOPE     0xc0000400	/* Print scopes in tre_print */
-#define KH_ENUM      0xc0000800	/* Use enumerated names in tre_print */
-#define KH_TYPE      0xc0001000	/* Print types in tre_print */
-#define KH_INFER     0xc0002000	/* Print type inferences */
-#define KH_TREES     0xc0004000	/* Print ASTs */
-#define KH_DUMP      0xc0008000	/* Print type details in tre_print */
-#define KH_SLOW      0xc0010000	/* Avoid fast_postorder walks */
+#define KH_MEMORY    0xc1000000	/* Print memory usage statistics at exit */
+#define KH_TIME      0xc2000000	/* Print timer information at exit */
 
 extern void maa_init( void );
 extern void maa_shutdown( void );

@@ -1,6 +1,6 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:34:19 1995 by faith@cs.unc.edu
+ * Revised: Sat Dec  2 15:06:57 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.1 1995/11/19 19:28:44 faith Exp $
+ * $Id: maa.c,v 1.2 1995/12/03 00:41:36 faith Exp $
  *
  * \section{General Support}
  *
@@ -32,23 +32,8 @@
 void maa_init( void )
 {
    tim_start( "total" );
-   _dbg_register( KH_FAREY,     "farey" );
-   _dbg_register( KH_TRE,       "tre" );
-   _dbg_register( KH_SRC,       "src" );
-   _dbg_register( KH_PP,        "pp" );
-   _dbg_register( KH_PPVERBOSE, "ppverbose" );
-   _dbg_register( KH_LINE,      "line" );
    _dbg_register( KH_MEMORY,    "memory" );
    _dbg_register( KH_TIME,      "time" );
-   _dbg_register( KH_RULES,     "rules" );
-   _dbg_register( KH_REPLACE,   "replace" );
-   _dbg_register( KH_SCOPE,     "scope" );
-   _dbg_register( KH_ENUM,      "enum" );
-   _dbg_register( KH_TYPE,      "type" );
-   _dbg_register( KH_INFER,     "infer" );
-   _dbg_register( KH_TREES,     "trees" );
-   _dbg_register( KH_DUMP,      "dump" );
-   _dbg_register( KH_SLOW,      "slow" );
 
 #ifndef __CHECKER__
 #ifdef HAVE_ATEXIT
