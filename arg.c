@@ -1,6 +1,6 @@
 /* arg.c -- Argument list support
  * Created: Sun Jan  7 13:39:29 1996 by r.faith@ieee.org
- * Revised: Wed Sep 25 15:38:55 1996 by faith@cs.unc.edu
+ * Revised: Sat Mar  8 15:04:54 1997 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.4 1996/09/25 20:07:50 faith Exp $
+ * $Id: arg.c,v 1.5 1997/03/08 20:07:37 faith Exp $
  *
  * \section{Argument List Routines}
  *
@@ -200,17 +200,37 @@ arg_List arg_argify( const char *string )
 {
    Arg        a = arg_create();
    const char *last;
-   const char *pt;
+   const char *pt = string;
    int        len;
    int        quote = 0;
 
    if (!string)
       err_internal( __FUNCTION__, "Cannot argify NULL pointer\n" );
 
-   for (last = pt = string, len = 0; *pt; ++pt, ++len) {
+   while (*pt && (*pt == ' '
+		  || *pt == '\t'
+		  || *pt == '\n'
+		  || *pt == '\r'
+		  || *pt == '\v'
+		  || *pt == '\f'))
+      ++pt;
+
+   for (last = pt, len = 0; *pt; ++pt, ++len) {
       switch (*pt) {
       case ' ':
+      case '\t':
+      case '\n':
+      case '\r':
+      case '\v':
+      case '\f':
 	 if (!quote) {
+	    while (pt[1] == ' '
+		   || pt[1] == '\t'
+		   || pt[1] == '\n'
+		   || pt[1] == '\r'
+		   || pt[1] == '\v'
+		   || pt[1] == '\f')
+	       ++pt;
 	    arg_grow( a, last, len );
 	    arg_finish( a );
 	    last = pt + 1;
@@ -241,7 +261,14 @@ arg_List arg_argify( const char *string )
 	 break;
       }
    }
-   arg_addn( a, last, len );
+   if (*last
+       && *last != ' '
+       && *last != '\t'
+       && *last != '\n'
+       && *last != '\r'
+       && *last != '\v'
+       && *last != '\f')
+      arg_addn( a, last, len );
 
    return a;
 }
