@@ -1,6 +1,6 @@
 /* kh.h -- Internal header file for Khepera
  * Created: Sun Nov  6 13:32:25 1994 by faith@cs.unc.edu
- * Revised: Thu Aug 24 23:17:53 1995 by r.faith@ieee.org
+ * Revised: Fri Aug 25 01:16:44 1995 by faith@cs.unc.edu
  * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.h,v 1.3 1995/08/25 04:38:27 faith Exp $
+ * $Id: kh.h,v 1.4 1995/08/25 05:20:51 faith Exp $
  */
 
 #ifndef _KH_H_
@@ -60,9 +60,14 @@ char *alloca ();
 #  define memmove(d, s, n) bcopy ((s), (d), (n))
 # endif
 #endif
-# ifndef HAVE_STRDUP
+
+#ifndef HAVE_STRDUP
 char *strdup();
-# endif
+#endif
+
+#ifndef HAVE_STRTOUL
+unsigned long int strtoul( const char *, char **, int );
+#endif
 
 /* Get time functions */
 #if TIME_WITH_SYS_TIME
@@ -104,6 +109,8 @@ declarations for standard library calls.  We provide them here for
 situations that we know about. */
 
 #if defined(__sparc__)
+extern void   bcopy( char *, char *, int );
+extern char   *memset( void *, int, int );
 extern char   *strdup( const char * );
 extern int    _flsbuf( unsigned char, FILE * );
 extern int    fflush( FILE * );

@@ -1,6 +1,6 @@
 /* memtest.c -- 
  * Created: Sat Jul  1 22:42:09 1995 by r.faith@ieee.org
- * Revised: Wed Jul 19 16:46:11 1995 by r.faith@ieee.org
+ * Revised: Fri Aug 25 01:16:43 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,12 +17,16 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: memtest.c,v 1.1 1995/08/24 14:59:19 faith Exp $
+ * $Id: memtest.c,v 1.2 1995/08/25 05:20:51 faith Exp $
  * 
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef __sparc__
+extern int printf( const char *, ... );
+#endif
 
 int main( void )
 {
