@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.27 1995/11/12 02:41:53 faith Exp $
+ * $Id: khepera.h,v 1.28 1995/11/13 06:24:14 yakowenk Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -80,6 +80,7 @@
 #define KH_TYPE      0xc0001000	/* Print types in tre_print */
 #define KH_INFER     0xc0002000	/* Print type inferences */
 #define KH_TREES     0xc0004000	/* Print ASTs */
+#define KH_DUMP      0xc0008000	/* Print type details in tre_print */
 
 extern void kh_init( void );
 extern void kh_shutdown( void );
