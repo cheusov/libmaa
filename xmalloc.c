@@ -1,6 +1,6 @@
 /* xmalloc.c -- Error-checking malloc
  * Created: Sun Nov  6 18:14:10 1994 by faith@cs.unc.edu
- * Revised: Sun Jan  8 21:52:21 1995 by faith@cs.unc.edu
+ * Revised: Thu Sep 28 18:58:11 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: xmalloc.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: xmalloc.c,v 1.2 1995/09/29 00:55:05 faith Exp $
  */
 
 #include "kh.h"
@@ -33,7 +33,7 @@ void free();
 
 #ifndef DMALLOC_FUNC_CHECK
 
-void *xmalloc( unsigned int size )
+__inline__ void *xmalloc( unsigned int size )
 {
    void *pt = malloc( size );
 
@@ -43,7 +43,7 @@ void *xmalloc( unsigned int size )
    return pt;
 }
 
-void *xcalloc( unsigned int num, unsigned int size )
+__inline__ void *xcalloc( unsigned int num, unsigned int size )
 {
    void *pt = calloc( num, size );
 
@@ -53,7 +53,7 @@ void *xcalloc( unsigned int num, unsigned int size )
    return pt;
 }
 
-void *xrealloc( void *pt, unsigned int size )
+__inline__ void *xrealloc( void *pt, unsigned int size )
 {
    void *new = realloc( pt, size );
 
@@ -65,13 +65,13 @@ void *xrealloc( void *pt, unsigned int size )
    return new;
 }
 
-void xfree( void *pt )
+__inline__ void xfree( void *pt )
 {
    if (pt) free( pt );
    else err_fatal( __FUNCTION__, "Attempt to free null pointer\n" );
 }
 
-char *xstrdup( const char *s )
+__inline__ char *xstrdup( const char *s )
 {
    char *pt = strdup( s );
 
