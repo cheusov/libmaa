@@ -1,6 +1,6 @@
 /* decl.h -- Declarations for non-ANSI hosts
  * Created: Sun Nov 19 14:04:27 1995 by faith@cs.unc.edu
- * Revised: Fri Sep 12 18:56:34 1997 by faith@acm.org
+ * Revised: Thu Sep 25 08:26:34 1997 by faith@acm.org
  * Copyright 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: decl.h,v 1.11 1997/09/12 23:38:08 faith Exp $
+ * $Id: decl.h,v 1.12 1997/09/25 12:27:15 faith Exp $
  * 
  */
 
@@ -37,6 +37,7 @@ extern void   bzero( char *b, int );
 extern long   random( void );
 extern int    srandom( unsigned );
 extern char   *index( const char *, int c );
+extern int    gethostname( char *, int );
 
 #if !defined(__svr4__)
 				/* Old braindamage for SunOS only */
@@ -68,7 +69,6 @@ extern time_t time( time_t * );
 extern void   fclose( FILE * );
 extern void   perror( const char * );
 extern int    select( int, fd_set *, fd_set *, fd_set *, struct timeval * );
-extern int    gethostname( char *, int );
 extern void   openlog( const char *ident, int, int );
 extern int    vsyslog( int, const char *, va_list );
 extern void   closelog( void );

@@ -1,6 +1,6 @@
 /* log.c -- Logging routines, for a single, program-wide logging facility
  * Created: Mon Mar 10 09:37:21 1997 by faith@cs.unc.edu
- * Revised: Fri Jun 20 17:23:49 1997 by faith@acm.org
+ * Revised: Thu Sep 25 08:26:32 1997 by faith@acm.org
  * Copyright 1997 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.4 1997/06/21 01:05:13 faith Exp $
+ * $Id: log.c,v 1.5 1997/09/25 12:27:17 faith Exp $
  * 
  */
 
@@ -131,11 +131,11 @@ void log_error_va( const char *routine, const char *format, va_list ap )
          pt = buf;
       } else {
          sprintf( buf,
-                  "%24.24s %s %s[%d]: ",
+                  "%24.24s %s %s[%ld]: ",
                   ctime(&t),
                   logHostname,
                   logIdent,
-                  getpid() );
+                  (long int)getpid() );
          pt = buf + strlen( buf );
       }
       if (routine) sprintf( pt, "(%s) ", routine );
@@ -180,11 +180,11 @@ void log_info_va( const char *format, va_list ap )
          pt = buf;
       } else {
          sprintf( buf,
-                  "%24.24s %s %s[%d]: ",
+                  "%24.24s %s %s[%ld]: ",
                   ctime(&t),
                   logHostname,
                   logIdent,
-                  getpid() );
+                  (long int)getpid() );
          pt = buf + strlen( buf );
       }
       vsprintf( pt, format, ap );
