@@ -1,0 +1,130 @@
+# Makefile.in -- Makefile for Khepera documentation
+# Created: Sun Jan  8 21:44:38 1995 by faith@cs.unc.edu
+# Revised: Sat Dec 30 21:53:30 1995 by faith@cs.unc.edu
+# Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 1, or (at your option) any
+# later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+# 
+# $Id: Makefile.in,v 1.1 1996/01/08 03:28:00 faith Exp $
+#
+
+include ../all.mk
+
+srcdir=		@srcdir@
+VPATH=		@srcdir@
+prefix=		@prefix@
+exec_prefix=	@exec_prefix@
+LATEX=		@LATEX@
+PERL=		@PERL@
+FIG2DEV=	@FIG2DEV@
+DVIPS=          @DVIPS@
+REFBIBTEX=      @REFBIBTEX@
+BIBTEX=         @BIBTEX@
+
+SHELL=	/bin/sh
+
+TREE_SOURCES= ../lib/khepera.h ../lib/tree.c
+
+TYPE_SOURCES= ../lib/typ.c ../lib/inf.c ../lib/dct.c ../lib/lnk.c
+
+GENERAL_SOURCES= ../lib/khepera.h ../lib/kh.c ../lib/parse.c \
+	../lib/parse-concrete.c ../lib/pp.c ../lib/source.c \
+	../lib/symbol.c ../lib/xfm.c
+
+LIBMAA_SOURCES=../libmaa/maa.h ../libmaa/bit.c ../libmaa/debug.c \
+	../libmaa/error.c ../libmaa/hash.c ../libmaa/list.c \
+	../libmaa/memory.c ../libmaa/prime.c ../libmaa/set.c \
+	../libmaa/stack.c ../libmaa/string.c ../libmaa/timer.c
+
+FIGS= small-tree.eepicemu # farey-example.eepicemu farey-insert.eepicemu
+SLIDEFIGS= example2-slide.eepicemu farey-slide.eepicemu farey2-slide.eepicemu \
+	small-tree-slide.eepicemu
+
+TEMPORARIES=tree.tex type.tex general.tex libmaa.tex
+
+user.dvi: user.tex $(TEMPORARIES) $(FIGS)
+
+all: slides.dvi slides.600dpi.ps user.dvi
+
+
+slides.dvi: $(SLIDEFIGS)
+
+user.bib:
+	if $(REFBIBTEX) -j user.tex $(TEMPORARIES) > $@.tmp; then touch $@; fi
+	cmp -s $@ $@.tmp || mv $@.tmp $@
+	-rm -f $@.tmp
+
+tree.tex: $(TREE_SOURCES)
+	$(PERL) extract2.pl $(TREE_SOURCES) > tree.tex
+
+type.tex: $(TYPE_SOURCES)
+	$(PERL) extract.pl $(TYPE_SOURCES) > type.tex
+
+general.tex: $(GENERAL_SOURCES)
+	$(PERL) extract.pl $(GENERAL_SOURCES) > general.tex
+
+libmaa.tex: $(LIBMAA_SOURCES)
+	$(PERL) extract.pl $(LIBMAA_SOURCES) > libmaa.tex
+
+
+small-tree.eepicemu: small-tree.fig
+	$(FIG2DEV) -L eepicemu -m 0.85 $< > $@
+
+small-tree-slide.eepicemu: small-tree.fig
+	$(FIG2DEV) -L eepicemu -m 0.55  $< | \
+		sed 's/\\\$$\(.*\)\\\$$/$$\1$$/' > $@
+
+example2-slide.eepicemu: example2.fig
+	$(FIG2DEV) -L eepicemu -m 0.55 $< > $@
+
+%.eepicemu: %.fig
+	$(FIG2DEV) -L eepicemu -m 0.65 $< > $@
+
+farey-slide.eepicemu: farey.fig
+	$(FIG2DEV) -L eepicemu -m 0.8 $< > $@
+
+farey2-slide.eepicemu: farey2.fig
+	$(FIG2DEV) -L eepicemu -m 0.45 $< > $@
+
+%.300dpi.ps: %.dvi
+	if fgrep 'LANDSCAPE MODE' $*.log > /dev/null; then \
+		$(DVIPS) -D300 -t landscape -o $@ $*; \
+	else \
+		$(DVIPS) -D300 -o $@ $*; \
+	fi
+
+%.600dpi.ps: %.dvi
+	if fgrep 'LANDSCAPE MODE' $*.log > /dev/null; then \
+		$(DVIPS) -D600 -t landscape -o $@ $*; \
+	else \
+		$(DVIPS) -D600 -o $@ $*; \
+	fi
+
+.PRECIOUS: %.aux %.bib %.bbl %.blg
+
+.PHONY: clean distclean
+clean:
+	-rm -f *.o *~ core a.out config.log $(EXES) $(FIGS) $(SLIDEFIGS)
+	-rm -f *.log *.aux *.toc *.dvi *.lj *.ps $(TEMPORARIES)
+	-rm -f *.bbl *.blg
+
+distclean: clean
+	-rm -f config.h config.cache Makefile
+
+
+# This is from the textutils-1.11 lib/Makefile.in
+subdir=doc
+Makefile: Makefile.in ../config.status
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
