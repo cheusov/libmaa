@@ -1,6 +1,6 @@
 /* settest.c -- Test program for Khepera set routines
  * Created: Wed Nov  9 15:04:25 1994 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:47 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 09:58:08 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,22 +17,37 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.5 1996/09/23 23:20:43 faith Exp $
+ * $Id: settest.c,v 1.6 1996/09/25 14:00:57 faith Exp $
  */
 
 #include "maaP.h"
 #include <math.h>
 
+#define MAXRND 1000
+
+static double rnd[MAXRND] = {
+   
+};
+
 static void init_rand( void )
 {
-   srandom(1);
+   randpt = 1;
 }
 
 static int get_rand( int ll, int ul )
 {
-   double r = ((double)random()) / ((double)RAND_MAX);
+   double r = rnd[randpt++];
+   int    val;
 
-   return floor( ll + r * (ul - ll) );
+   if (randpt >= MAXRND)
+      err_internal( __FUNCTION__, "Ran out of random numbers\n" );
+
+   val = floor( ll + r * (ul - ll) );
+   if (val > ul)
+      err_internal( __FUNCTION__, "%d > %d\n", val, ul );
+   if (val < ll)
+      err_internal( __FUNCTION__, "%d < %d\n", val, ll );
+   return val;
 }
 
 static int iterator( const void *key )
@@ -84,7 +99,7 @@ int main( int argc, char **argv )
 
       sprintf( key, "key%d", i );
       if (!set_member( t, key ))
-	    printf( "\"%s\" is not a member of the set", key );
+	    printf( "\"%s\" is not a member of the set\n", key );
    }
 
    if (count <= 200) set_iterate( t, iterator );

@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Mon Sep 23 20:50:02 1996 by faith@cs.unc.edu
+# Revised: Wed Sep 25 10:00:28 1996 by faith@cs.unc.edu
 # Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.22 1996/09/24 01:06:11 faith Exp $
+# $Id: Makefile.in,v 1.23 1996/09/25 14:00:53 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -70,7 +70,8 @@ all: $(LIBS) $(EXES) $(TESTS)
 	(cd doc && $(MAKE) $@) || exit 1;
 
 tests: $(TESTS)
-	@for i in $(TESTS); do \
+	for i in $(TESTS); do \
+		echo "Running ./$$i"; \
 		./$$i | fgrep -v ' at ' > ./$$i.out.new; \
 		if cmp ./$$i.out $$i.out.new; \
 			then echo PASSED $$i; rm -f $$i.out.new; \
@@ -128,7 +129,7 @@ clean:
 	-rm -f *.o *.s *~ core a.out config.log $(TESTS) $(EXES)
 	-rm -f *.log *.aux *.toc *.dvi *.ps *.out.new
 	-rm -f *.cfg *.dtk .inslog tca.map .pure
-	-rm -f version.stamp version.tmp
+	-rm -f version.stamp version.tmp mkrnd
 
 distclean: clean
 	@for subdir in $(subdirs); do \

@@ -1,6 +1,6 @@
 /* maaP.h -- Internal header file for libmaa
  * Created: Sun Nov 19 13:19:44 1995 by faith@cs.unc.edu
- * Revised: Mon Sep 23 21:02:23 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 09:16:14 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.6 1996/09/24 01:06:13 faith Exp $
+ * $Id: maaP.h,v 1.7 1996/09/25 14:00:56 faith Exp $
  */
 
 #ifndef _MAAP_H_
@@ -101,13 +101,15 @@ extern unsigned long int strtoul( const char *, char **, int );
 #if HAVE_GETOPT_H
 # include <getopt.h>
 #else
+#if !defined(__sparc__) && !defined(__svr4__)
 extern int  getopt( int, char **, char * );
 extern int  optind;
 extern char *optarg;
 #endif
+#endif
 
 /* We actually need a few non-ANSI C things... */
-#if defined(__linux__) && defined(__STRICT_ANSI__)
+#if defined(__STRICT_ANSI__)
 extern char     *strdup( const char * );
 extern int      fileno( FILE *stream );
 extern FILE     *fdopen( int fildes, const char *mode );
@@ -133,9 +135,6 @@ situations that we know about. */
 
 #if HAVE_LIMITS_H
 #include <limits.h>
-#endif
-#ifndef RAND_MAX
-# define RAND_MAX INT_MAX
 #endif
 
 				/* Local stuff */
