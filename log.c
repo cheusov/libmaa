@@ -1,7 +1,7 @@
 /* log.c -- Logging routines, for a single, program-wide logging facility
  * Created: Mon Mar 10 09:37:21 1997 by faith@cs.unc.edu
- * Revised: Sun Feb 22 13:44:24 1998 by faith@acm.org
- * Copyright 1997, 1998 Rickard E. Faith (faith@acm.org)
+ * Revised: Wed Dec 22 07:11:55 1999 by faith@acm.org
+ * Copyright 1997, 1998, 1999 Rickard E. Faith (faith@acm.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.8 1998/02/22 18:50:29 faith Exp $
+ * $Id: log.c,v 1.9 1999/12/22 12:12:55 faith Exp $
  * 
  */
 
@@ -151,7 +151,7 @@ void log_error_va( const char *routine, const char *format, va_list ap )
       }
    }
    
-#if !defined(__DGUX__) && !defined(__hpux__)
+#if !defined(__DGUX__) && !defined(__hpux__) && !defined(__CYGWIN__)
    if (logSyslog) {
       vsyslog( LOG_ERR, format, ap );
    }
@@ -200,7 +200,7 @@ void log_info_va( const char *format, va_list ap )
       }
    }
    
-#if !defined(__DGUX__) && !defined(__hpux__)
+#if !defined(__DGUX__) && !defined(__hpux__) && !defined(__CYGWIN__)
    if (logSyslog) {
       vsyslog( LOG_INFO, format, ap );
    }
