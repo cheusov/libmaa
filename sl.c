@@ -1,6 +1,6 @@
 /* sl.c -- Skip lists
  * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Mon Feb 26 10:01:10 1996 by faith@cs.unc.edu
+ * Revised: Tue Feb 27 13:28:23 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  *
@@ -18,7 +18,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: sl.c,v 1.5 1996/02/26 15:23:17 faith Exp $
+ * $Id: sl.c,v 1.6 1996/02/27 18:41:24 faith Exp $
  *
  * \section{Skip List Routines}
  *
@@ -41,17 +41,16 @@
 
 #include "maaP.h"
 
-#define SL_DEBUG
+#define SL_DEBUG 1		/* Debug like crazy */
 
 typedef struct _sl_Entry {
 #if MAA_MAGIC
    int              magic;
 #endif
    const void       *datum;
-#ifdef SL_DEBUG
+#if SL_DEBUG
    int              levels;	/* levels for this entry */
 #endif
-   struct _sl_Entry *backward;	/* parent */
    struct _sl_Entry *forward[1]; /* variable sized array */
 } *_sl_Entry;
 
@@ -60,6 +59,7 @@ typedef struct _sl_List {
    int              magic;
 #endif
    int              level;
+   int              count;	/* number of data */
    struct _sl_Entry *head;
    int              (*compare)( const void *key1, const void *key2 );
    const void       *(*key)( const void *datum );
@@ -67,7 +67,6 @@ typedef struct _sl_List {
 } *_sl_List;
 
 static mem_Object _sl_Memory;
-static _sl_Entry  _sl_Current;
 
 #define _sl_MaxLevel  16
 
@@ -85,6 +84,9 @@ static void _sl_check_list( _sl_List l, const char *function )
 #endif
 }
 
+#if !SL_DEBUG
+#define _sl_check_entry(e,f)	/*  */
+#else
 static int _sl_check_entry( _sl_Entry e, const char *function )
 {
    if (!e) err_internal( function, "entry is null\n" );
@@ -99,17 +101,20 @@ static int _sl_check_entry( _sl_Entry e, const char *function )
 #endif
    return 0;
 }
+#endif
 
-#ifndef SL_DEBUG
+#if !SL_DEBUG
 #define _sl_check(x) /* */
 #else
 static void _sl_check( sl_List list )
 {
-   _sl_List  l = (_sl_List)list;
+   _sl_List  l     = (_sl_List)list;
+   int       count = 0;
    _sl_Entry pt;
    
    _sl_check_list( list, __FUNCTION__ );
    for (pt = l->head->forward[0]; pt; pt = pt->forward[0] ) {
+      ++count;
       if (pt && pt->forward[0]
 	  && l->compare( l->key( pt->datum ),
 			 l->key( pt->forward[0]->datum ) ) >= 0) {
@@ -121,13 +126,10 @@ static void _sl_check( sl_List list )
 		       l->key( pt->forward[0]->datum ),
 		       (unsigned long)l->key( pt->forward[0]->datum ) );
       }
-      if (pt && pt->forward[0] && pt->forward[0]->backward != pt) {
-	 _sl_dump( list );
-	 err_internal( __FUNCTION__,
-		       "Backward pointer corrupt for 0x%p=%lu\n",
-		       l->key( pt->datum ),
-		       (unsigned long)l->key( pt->datum ) );
-      }
+   }
+   if (count != l->count) {
+      err_internal( __FUNCTION__,
+		    "Count should be %d instead of %d\n", count, l->count );
    }
 }
 #endif
@@ -187,6 +189,7 @@ sl_List sl_create( int (*compare)( const void *key1, const void *key2 ),
    l->compare = compare;
    l->key     = key;
    l->print   = print;
+   l->count   = 0;
 
    for (i = 0; i <= _sl_MaxLevel; i++) l->head->forward[i] = NULL;
 
@@ -249,8 +252,7 @@ static const char *_sl_print( const void *datum )
    return buf;
 }
 
-static _sl_Entry _sl_locate_previous( _sl_List l, const void *key,
-				      _sl_Entry update[] )
+static _sl_Entry _sl_locate( _sl_List l, const void *key, _sl_Entry update[] )
 {
    int       i;
    _sl_Entry pt;
@@ -263,7 +265,7 @@ static _sl_Entry _sl_locate_previous( _sl_List l, const void *key,
       update[i] = pt;
    }
    
-   return pt;			/* Caller must do pt = pt->forward[0] */
+   return pt->forward[0];
 }
 
 
@@ -273,7 +275,6 @@ void sl_insert( sl_List list, const void *datum )
 {
    _sl_List         l = (_sl_List)list;
    _sl_Entry        update[_sl_MaxLevel + 1];
-   _sl_Entry        backward;
    _sl_Entry        pt;
    const void       *key;
    int              i;
@@ -284,8 +285,7 @@ void sl_insert( sl_List list, const void *datum )
    
    key = l->key( datum );
 
-   backward = _sl_locate_previous( l, key, update );
-   pt       = backward->forward[0];
+   pt = _sl_locate( l, key, update );
 
    if (pt && !l->compare( l->key( pt->datum ), key ))
       err_internal( __FUNCTION__,
@@ -304,10 +304,7 @@ void sl_insert( sl_List list, const void *datum )
       update[i]->forward[i] = entry;
    }
 
-				/* Fixup backward pointers */
-   entry->backward = backward;
-   if (entry->forward[0]) entry->forward[0]->backward = entry;
-   
+   ++l->count;
    _sl_check( list );
 }
 
@@ -317,7 +314,6 @@ void sl_delete( sl_List list, const void *datum )
 {
    _sl_List         l = (_sl_List)list;
    _sl_Entry        update[_sl_MaxLevel + 1];
-   _sl_Entry        backward;
    _sl_Entry        pt;
    const void       *key;
    int              i;
@@ -326,8 +322,7 @@ void sl_delete( sl_List list, const void *datum )
    
    key = l->key( datum );
 
-   backward = _sl_locate_previous( l, key, update );
-   pt       = backward->forward[0];
+   pt = _sl_locate( l, key, update );
 
    if (!pt || l->compare( l->key( pt->datum ), key )) {
       _sl_dump( list );
@@ -335,26 +330,16 @@ void sl_delete( sl_List list, const void *datum )
 		    "Datum \"%s\" is not in list\n", PRINT(l,datum) );
    }
 
-				/* Fixup sl_iterate's position pointer */
-   if (_sl_Current && _sl_Current == pt) {
-      _sl_Current = pt->backward;
-      assert( _sl_Current );
-      PRINTF(MAA_SL,("delete: %lu => %lu\n",
-		     (unsigned long)l->key(pt->datum),
-		     _sl_Current?(unsigned long)l->key(_sl_Current->datum):0));
-   }
-
 				/* Fixup forward pointers */
    for (i = 0; i <= l->level; i++) {
       if (update[i]->forward[i] == pt)
 	 update[i]->forward[i] = pt->forward[i];
    }
-				/* Fixup backward pointer */
-   if (pt->forward[0]) pt->forward[0]->backward = backward;
    
    xfree( pt );
    while (l->level && !l->head->forward[ l->level ])
       --l->level;
+   --l->count;
    _sl_check( list );
 }
 
@@ -365,13 +350,11 @@ const void *sl_find( sl_List list, const void *key )
 {
    _sl_List         l = (_sl_List)list;
    _sl_Entry        update[_sl_MaxLevel + 1];
-   _sl_Entry        backward;
    _sl_Entry        pt;
 
    _sl_check_list( list, __FUNCTION__ );
 
-   backward = _sl_locate_previous( l, key, update );
-   pt       = backward->forward[0];
+   pt = _sl_locate( l, key, update );
 
    if (pt && !l->compare( l->key( pt->datum ), key )) return pt->datum;
    return NULL;
@@ -386,43 +369,30 @@ int sl_iterate( sl_List list, sl_Iterator f )
 {
    _sl_List   l = (_sl_List)list;
    _sl_Entry  pt;
-   _sl_Entry  next;
    int        retcode;
-   _sl_Entry  oldCurrent = _sl_Current; /* Make sl_iterate re-entrant */
-   const void *key;
+   int        count;
+   int        i;
+   const void **copy;
+   
 
    if (!list) return 0;
    _sl_check_list( list, __FUNCTION__ );
 
-   if (dbg_test(MAA_SL)) {
-      printf( __FUNCTION__ ": " );
-      for (pt = l->head->forward[0]; pt; pt = next) {
-	 next = pt->forward[0];
-	 printf( "%lu ", (unsigned long)l->key( pt->datum ) );
-      }
-      printf( "\n" );
+				/* WARNING! This *ASSUMES* that the data to
+                                   the right of the current point will
+                                   remain at its memory location during the
+                                   walk.  Only memory locations for data to
+                                   the left of the point may change! */
+   count = l->count;
+   copy = alloca( count * sizeof( void * ) );
+   for (i = 0, pt = l->head->forward[0]; pt; i++, pt = pt->forward[0]) {
+      copy[i] = pt->datum;
    }
-
-   for (pt = l->head->forward[0], _sl_Current = l->head; pt; pt = next) {
-      _sl_check_entry( pt, __FUNCTION__ );
-      key = l->key( pt->datum ); /* Save current key for comparison */
-      
-      if ((retcode = f(pt->datum))) {
-	 _sl_Current = oldCurrent; /* Restore old pointer */
-	 return retcode;
-      }
-      assert( _sl_Current );
-
-      for (next = _sl_Current->forward[0]; next; next = next->forward[0])
-	 if (l->compare( l->key( next->datum ), key ) > 0) break;
-
-      PRINTF(MAA_SL,("next = 0x%lx/%lu\n",
-		     next?(unsigned long)l->key(next->datum):0,
-		     next?(unsigned long)l->key(next->datum):0));
+   for (i = 0; i < count; i++) {
+      if ((retcode = f( copy[i] ))) return retcode;
    }
 
    _sl_check( list );
-   _sl_Current = oldCurrent;	/* Restore old pointer */
    
    return 0;
 }
@@ -436,43 +406,31 @@ int sl_iterate_arg( sl_List list, sl_IteratorArg f, void *arg )
 {
    _sl_List   l = (_sl_List)list;
    _sl_Entry  pt;
-   _sl_Entry  next;
    int        retcode;
-   _sl_Entry  oldCurrent = _sl_Current; /* Make sl_iterate re-entrant */
-   const void *key;
+   int        count;
+   int        i;
+   const void **copy;
+   
 
    if (!list) return 0;
    _sl_check_list( list, __FUNCTION__ );
 
-   if (dbg_test(MAA_SL)) {
-      printf( __FUNCTION__ ": " );
-      for (pt = l->head->forward[0]; pt; pt = next) {
-	 next = pt->forward[0];
-	 printf( "%lu ", (unsigned long)l->key( pt->datum ) );
-      }
-      printf( "\n" );
-   }
-
-   for (pt = l->head->forward[0], _sl_Current = l->head; pt; pt = next) {
+				/* WARNING! This *ASSUMES* that the data to
+                                   the right of the current point will
+                                   remain at its memory location during the
+                                   walk.  Only memory locations for data to
+                                   the left of the point may change! */
+   count = l->count;
+   copy = alloca( count * sizeof( void * ) );
+   for (i = 0, pt = l->head->forward[0]; pt; i++, pt = pt->forward[0]) {
       _sl_check_entry( pt, __FUNCTION__ );
-      key = l->key( pt->datum ); /* Save current key for comparison */
-      
-      if ((retcode = f( pt->datum, arg ))) {
-	 _sl_Current = oldCurrent; /* Restore old pointer */
-	 return retcode;
-      }
-      assert( _sl_Current );
-
-      for (next = _sl_Current->forward[0]; next; next = next->forward[0])
-	 if (l->compare( l->key( next->datum ), key ) > 0) break;
-
-      PRINTF(MAA_SL,("next = 0x%lx/%lu\n",
-		     next?(unsigned long)l->key(next->datum):0,
-		     next?(unsigned long)l->key(next->datum):0));
+      copy[i] = pt->datum;
+   }
+   for (i = 0; i < count; i++) {
+      if ((retcode = f( copy[i], arg ))) return retcode;
    }
 
    _sl_check( list );
-   _sl_Current = oldCurrent;	/* Restore old pointer */
    
    return 0;
 }
@@ -489,14 +447,13 @@ void _sl_dump( sl_List list )
 
    _sl_check_list( list, __FUNCTION__ );
 
-   printf( "Level = %d\n", l->level );
+   printf( "Level = %d, count = %d\n", l->level, l->count );
    for (pt = l->head; pt; pt = pt->forward[0]) {
-      printf( "  Entry %p (%d/%p/0x%p=%lu) has 0x%x levels (backward = %p):\n",
+      printf( "  Entry %p (%d/%p/0x%p=%lu) has 0x%x levels:\n",
 	      pt, count++, pt->datum,
 	      pt->datum ? l->key( pt->datum ) : 0,
 	      (unsigned long)(pt->datum ? l->key( pt->datum ) : 0),
-	      pt->levels,
-	      pt->backward );
+	      pt->levels );
       for (i = 0; i < pt->levels; i++)
 	 printf( "    %p\n", pt->forward[i] );
    }
