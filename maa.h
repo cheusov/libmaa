@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 19 14:01:59 1995 by faith@cs.unc.edu
+ * Revised: Fri Dec  1 11:55:46 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.1 1995/11/19 19:28:45 faith Exp $
+ * $Id: maa.h,v 1.2 1995/12/01 21:55:48 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifndef __GCC__
+#ifndef __GNUC__
 #define __inline__
 #define __attribute__(x)
 #endif
