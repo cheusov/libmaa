@@ -1,6 +1,6 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:20 1995 by faith@cs.unc.edu
+ * Revised: Sun Dec  3 09:09:19 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.7 1995/11/19 19:28:48 faith Exp $
+ * $Id: set.c,v 1.8 1995/12/04 03:52:46 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -657,7 +657,7 @@ set_Stats set_get_stats( set_Set set )
 
    if ( t->entries != s->entries )
 	 err_internal( __FUNCTION__,
-		       "Incorrect count for entries: %d vs. %d\n",
+		       "Incorrect count for entries: %l vs. %l\n",
 		       t->entries,
 		       s->entries );
 
