@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Mon Dec  9 15:12:42 1996 by faith@cs.unc.edu
+# Revised: Mon Dec  9 15:41:54 1996 by faith@cs.unc.edu
 # Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.28 1996/12/09 20:27:15 faith Exp $
+# $Id: Makefile.in,v 1.29 1996/12/09 20:43:18 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -124,7 +124,9 @@ version.c:
 ChangeLog:
 	@(echo "***** Making new ChangeLog..."; \
 	rm -f ChangeLog; \
-	AWK=gawk rcs2log > ChangeLog)
+	AWK=gawk rcs2log -i2 \
+                `find . -type f -print | egrep -v '(CVS/|version.c)'` \
+                > ChangeLog)
 
 dist: ChangeLog
 	@( echo "Consider making version.stamp to bump version number"; \
