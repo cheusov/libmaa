@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Fri Jun 20 15:53:59 1997 by faith@acm.org
+ * Revised: Thu Aug 21 13:42:50 1997 by faith@acm.org
  * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.31 1997/06/21 01:05:15 faith Exp $
+ * $Id: maa.h,v 1.32 1997/08/21 22:36:48 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -399,7 +399,8 @@ extern void           dbg_unset_flag( dbg_Type flag );
 extern __inline__ int dbg_test( dbg_Type flag );
 extern void           dbg_list( FILE *stream );
 
-#define PRINTF(flag,arg) if (dbg_test(flag)) printf arg
+#define PRINTF(flag,arg)  if (dbg_test(flag)) printf arg
+#define FPRINTF(flag,arg) if (dbg_test(flag)) fprintf arg
 
 /* flags.c */
 
