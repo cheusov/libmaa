@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Mon Nov  6 13:30:34 1995 by faith@cs.unc.edu
+ * Revised: Sat Nov 11 20:59:12 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.26 1995/11/08 05:32:06 yakowenk Exp $
+ * $Id: khepera.h,v 1.27 1995/11/12 02:41:53 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -428,6 +428,7 @@ typedef void *sym_Scope;
 #define SYM_DELIM_CHAR ':'
 
 extern void       sym_set_size( int size );
+extern int        sym_move_scope( sym_Scope scope, sym_Entry symbol );
 extern sym_Entry  sym_add( sym_Scope scope, const char *name );
 extern sym_Entry  sym_new( sym_Scope scope, const char *name );
 extern sym_Entry  sym_unique( sym_Scope scope, const char *prefix );
@@ -546,6 +547,8 @@ extern const char *tre_name( int id );
 extern const char *tre_enum_name( int id );
 extern const char *tre_node_name( tre_Node node );
 extern const char *tre_node_enum_name( tre_Node node );
+extern void       *tre_user( int id );
+extern void       tre_set_user( int id, void *user );
 extern pp_Format  tre_format( int id, int count, const char *label );
 extern tre_Node   tre_parent( tre_Node child );
 extern tre_Node   tre_child( tre_Node parent );
@@ -633,6 +636,10 @@ extern tre_Mangler tre_name_mangler(tre_Node);
 
 
 /* pp.c */
+
+#define PP_NONE        0
+#define PP_LINENUMBERS 1
+#define PP_DIRECTIVES  2
 
 typedef void *pp_Stream;
 
