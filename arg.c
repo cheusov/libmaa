@@ -1,6 +1,6 @@
 /* arg.c -- Argument list support
  * Created: Sun Jan  7 13:39:29 1996 by r.faith@ieee.org
- * Revised: Wed Mar 19 14:59:51 1997 by faith@cs.unc.edu
+ * Revised: Thu May  1 00:32:41 1997 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.7 1997/03/19 21:10:22 faith Exp $
+ * $Id: arg.c,v 1.8 1997/05/01 04:35:18 faith Exp $
  *
  * \section{Argument List Routines}
  *
@@ -243,9 +243,9 @@ arg_List arg_argify( const char *string, int quoteStyle )
 	    if (quote == *pt) {
 	       arg_grow( a, last, len );
 	       quote = 0;
-/* 	    last  = pt + 1; */
+/* 	       last  = 0; */
 	       len   = -1;
-	    } else {
+	    } else if (!quote) {
 	       arg_grow( a, last, len );
 	       quote = *pt;
 	       last  = pt + 1;
