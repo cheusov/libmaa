@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 10 12:37:22 1996 by faith@cs.unc.edu
+ * Revised: Fri Feb 28 09:23:12 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.22 1996/11/10 20:20:49 faith Exp $
+ * $Id: maa.h,v 1.23 1997/02/28 14:29:58 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -73,8 +73,8 @@ extern const char *maa_revision_string;
 #define MAA_TIME   (3<<30|1<<28) /* Print timer information at exit       */
 #define MAA_PR     (3<<30|1<<27) /* Debug process routines                */
 #define MAA_SL     (3<<30|1<<26) /* Debug skip list routines              */
-#define MAA_RES1   (3<<30|1<<25) /* Reserved                              */
-#define MAA_RES2   (3<<30|1<<24) /* Reserved                              */
+#define MAA_PARSE  (3<<30|1<<25) /* Debug parsing                         */
+#define MAA_SRC    (3<<30|1<<24) /* Source library                        */
 
 extern void       maa_init( const char *programName );
 extern void       maa_shutdown( void );
@@ -491,5 +491,56 @@ extern unsigned long b64_decode( const char *val );
 
 extern const char    *b26_encode( unsigned long val );
 extern unsigned long b26_decode( const char *val );
+
+/* source.c */
+
+typedef void *src_Type;
+
+typedef struct src_Stats {
+   int lines_used;		/* Lines used */
+   int lines_allocated;		/* Lines allocated */
+   int lines_bytes;		/* Bytes required to store lines */
+   int tokens_total;		/* Tokens used */
+   int tokens_reused;		/* Tokens reused */
+   int tokens_size;		/* Size of a token information object */
+} *src_Stats;
+
+extern void       src_create( void );
+extern void       src_destroy( void );
+extern const char *src_line( const char *line, int len );
+extern void       src_new_file( const char *filename );
+extern void       src_new_line( int line );
+extern void       src_advance( int length );
+extern void       src_cpp_line( const char *line, int length );
+extern src_Type   src_get( int length );
+extern const char *src_filename( src_Type source );
+extern int        src_linenumber( src_Type source );
+extern int        src_offset( src_Type source );
+extern int        src_length( src_Type source );
+extern const char *src_source_line( src_Type source );
+extern void       src_parse_error( FILE *stream, src_Type source,
+				   const char *message );
+extern void       src_print_error( FILE *stream, src_Type source,
+				   const char *format, ... );
+extern void       src_print_message( FILE *str, src_Type source,
+                                     const char *format, ... );
+extern void       src_print_line( FILE *stream, src_Type source );
+extern src_Stats  src_get_stats( void );
+extern void       src_print_stats( FILE *stream );
+
+/* parse.c */
+
+extern void   prs_set_debug( int debug_flag );
+extern void   prs_set_cpp_options( const char *cpp_options );
+extern void   prs_file( const char *filename );
+extern int    prs_make_integer( const char *string, int length );
+extern double prs_make_double( const char *string, int length );
+
+/* parse-concrete.c */
+
+extern void   prs_register_concrete( const char *symbol,
+				     const char *concrete );
+extern const  char *prs_concrete( const char *symbol );
+extern void   _prs_shutdown( void );
 
 #endif

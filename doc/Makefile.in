@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for Khepera documentation
 # Created: Sun Jan  8 21:44:38 1995 by faith@cs.unc.edu
-# Revised: Sat Mar 23 10:59:25 1996 by faith@cs.unc.edu
+# Revised: Fri Feb 28 09:26:09 1997 by faith@cs.unc.edu
 # Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.6 1996/03/23 22:14:27 faith Exp $
+# $Id: Makefile.in,v 1.7 1997/02/28 14:30:03 faith Exp $
 #
 
 .SUFFIXES:
@@ -37,7 +37,8 @@ SHELL=	/bin/sh
 
 LIBMAA_SOURCES= ../maa.h ../maa.c ../arg.c ../bit.c ../debug.c \
 	../error.c ../flags.c ../hash.c ../list.c ../memory.c \
-	../pr.c ../prime.c ../set.c ../sl.c ../stack.c ../timer.c
+	../parse.c ../parse-concrete.c \
+	../pr.c ../prime.c ../set.c ../sl.c ../source.c ../stack.c ../timer.c
 
 FIGS=
 SLIDEFIGS=

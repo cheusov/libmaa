@@ -1,6 +1,6 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Mon Nov 11 15:33:08 1996 by faith@cs.unc.edu
+ * Revised: Fri Feb 28 09:18:02 1997 by faith@cs.unc.edu
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.12 1996/11/11 23:44:16 faith Exp $
+ * $Id: maa.c,v 1.13 1997/02/28 14:29:57 faith Exp $
  *
  * \section{General Support}
  *
@@ -39,6 +39,8 @@ void maa_init( const char *programName )
    _dbg_register( MAA_TIME,      ".time" );
    _dbg_register( MAA_PR,        ".pr" );
    _dbg_register( MAA_SL,        ".sl" );
+   _dbg_register( MAA_SRC,       ".src" );
+   _dbg_register( MAA_PARSE,     ".parse" );
 
 #ifndef __CHECKER__
 #ifdef HAVE_ATEXIT
