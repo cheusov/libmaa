@@ -41,6 +41,9 @@
 /* Define if you have the `on_exit' function. */
 #undef HAVE_ON_EXIT
 
+/* Define if you have the `snprintf' function. */
+#undef HAVE_SNPRINTF
+
 /* Define if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 

@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.17 2002/08/02 19:43:15 faith Exp $
+ * $Id: error.c,v 1.18 2002/09/27 16:57:45 cheusov Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -81,7 +81,7 @@ void err_fatal( const char *routine, const char *format, ... )
    
    fflush( stderr );
    fflush( stdout );
-   exit( 1 );
+   exit ( 1 );
 }
 
 /* \doc |err_fatal_errno| flushes "stdout", prints a fatal error report on
