@@ -1,7 +1,7 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Thu Apr 17 11:41:07 1997 by faith@cs.unc.edu
- * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Tue May 20 14:37:10 1997 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.29 1997/04/21 15:23:36 faith Exp $
+ * $Id: maa.h,v 1.30 1997/05/20 21:30:26 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -367,6 +367,8 @@ extern str_Pool   str_pool_create( void );
 extern void       str_pool_destroy( str_Pool pool );
 extern int        str_pool_exists( str_Pool pool, const char *s );
 extern const char *str_pool_find( str_Pool pool, const char *s );
+extern const char *str_pool_copy( str_Pool pool, const char *s );
+extern const char *str_pool_copyn( str_Pool pool, const char *s, int length );
 extern void       str_pool_grow( str_Pool pool, const char *s, int length );
 extern const char *str_pool_finish( str_Pool pool );
 extern str_Stats  str_pool_get_stats( str_Pool pool );
@@ -375,6 +377,8 @@ extern void       str_pool_print_stats( str_Pool pool, FILE *stream );
 extern int        str_exists( const char *s );
 extern const char *str_find( const char *s );
 extern const char *str_findn( const char *s, int length );
+extern const char *str_copy( const char *s );
+extern const char *str_copyn( const char *s, int length );
 extern void       str_grow( const char *s, int length );
 extern const char *str_finish( void );
 extern const char *str_unique( const char *prefix );

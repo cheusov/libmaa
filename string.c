@@ -1,7 +1,7 @@
 /* string.c -- String pool for Khepera
  * Created: Wed Dec 21 21:32:34 1994 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:46 1996 by faith@cs.unc.edu
- * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Tue May 20 14:38:20 1997 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.9 1996/09/23 23:20:45 faith Exp $
+ * $Id: string.c,v 1.10 1997/05/20 21:30:27 faith Exp $
  *
  * \section{String Pool Routines}
  *
@@ -95,6 +95,31 @@ const char *str_pool_find( str_Pool pool, const char *s )
    hsh_insert( p->hash, datum, datum );
 
    return datum;
+}
+
+/* \doc |str_pool_copy| returns a copy of the string, |s|, using memory
+   from the string pool object, |pool|.  This can be used for data that is
+   known to be unique.  No checks are made for uniqueness, however; and a
+   pointer to the string is not placed in the hash table. */
+
+const char *str_pool_copy( str_Pool pool, const char *s )
+{
+   poolInfo   p = (poolInfo)pool;
+   
+   return mem_strcpy( p->string, s );
+}
+
+/* \doc |str_pool_copyn| returns a copy of the string, |s|, using memory
+   from the string pool object, |pool|.  The string will be |length| bytes
+   long, and will be "NULL" terminated.  This can be used for data that is
+   known to be unique.  No checks are made for uniqueness, however; and a
+   pointer to the string is not placed in the hash table. */
+
+const char *str_pool_copyn( str_Pool pool, const char *s, int length )
+{
+   poolInfo   p = (poolInfo)pool;
+   
+   return mem_strncpy( p->string, s, length );
 }
 
 /* \doc |str_pool_grow| will grow a string in the specified |pool| until
@@ -212,6 +237,27 @@ const char *str_findn( const char *s, int length )
    strncpy( tmp, s, length );
    tmp[ length ] = '\0';
    return str_pool_find( global, tmp );
+}
+
+/* \doc |str_copy| acts like |str_pool_copy|, except the global string pool
+   is used.  If the global string pool has not been initialized, it will be
+   initialized automatically.  Further, on systems that support |atexit| or
+   |on_exit|, |str_destroy| will be called automatically at program
+   termination. */
+
+const char *str_copy( const char *s )
+{
+   _str_check_global();
+   return str_pool_copy( global, s );
+}
+
+/* \doc |str_copyn| acts like |str_copy|, except that the length of the
+   string is specified, and the string does not have to be "NULL"
+   terminated. */
+
+const char *str_copyn( const char *s, int length )
+{
+   return str_pool_copyn( global, s, length );
 }
 
 /* \doc |str_grow| will grow a string until |str_finish| is called.  There

@@ -1,7 +1,7 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Wed Sep 25 11:21:29 1996 by faith@cs.unc.edu
- * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Tue May 20 14:32:58 1997 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.16 1996/09/25 20:31:06 faith Exp $
+ * $Id: hash.c,v 1.17 1997/05/20 21:30:24 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -474,11 +474,15 @@ void hsh_print_stats( hsh_HashTable table, FILE *stream )
 
 unsigned long hsh_string_hash( const void *key )
 {
-   const char    *pt = (char *)key;
-   unsigned long h  = 0;
+   const char           *pt = (const char *)key;
+   unsigned long        h  = 0;
+   static const char    *prev_pt = NULL;
+   static unsigned long prev_h = 0;
 
    if (!pt)
       err_internal( __FUNCTION__, "String-valued keys may not be NULL\n" );
+
+   if (prev_pt == pt) return prev_h;
 
    while (*pt) {
       h += *pt++;
@@ -489,20 +493,26 @@ unsigned long hsh_string_hash( const void *key )
 #endif
    }
 
-   return h;
+   prev_pt = pt;
+   return prev_h = h;
 }
 
 unsigned long hsh_pointer_hash( const void *key )
 {
-   const char    *pt;
-   unsigned long h   = 0;
-   int           i;
+   const char           *pt;
+   unsigned long        h   = 0;
+   int                  i;
+   static const char    *prev_pt = NULL;
+   static unsigned long prev_h = 0;
 
 #ifdef WORDS_BIGENDIAN
    pt = ((const char *)&key) + SIZEOF_VOID_P - 1;
 #else
    pt = (const char *)&key;
 #endif
+   
+   if (key == prev_pt) return prev_h;
+   
    for (i = 0; i < SIZEOF_VOID_P; i++) {
 #ifdef WORDS_BIGENDIAN
       h += *pt--;
@@ -516,7 +526,8 @@ unsigned long hsh_pointer_hash( const void *key )
 #endif
    }
 
-   return h;
+   prev_pt = pt;
+   return prev_h = h;
 }
 
 int hsh_string_compare( const void *key1, const void *key2 )
