@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Sat Jun 21 15:01:13 1997 by faith@acm.org
+ * Revised: Mon Jul  7 15:57:06 1997 by faith@acm.org
  * Copyright 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: timer.c,v 1.15 1997/06/23 11:04:36 faith Exp $
+ * $Id: timer.c,v 1.16 1997/07/07 20:08:17 faith Exp $
  *
  * \section{Timer Support}
  *
@@ -82,7 +82,8 @@ void tim_stop( const char *name )
    struct rusage   rusage;
 
 #define DIFFTIME(now,then)\
-   (((now).tv_sec - (then).tv_sec) * 1000000 + (now).tv_usec - (then).tv_usec)
+   (((now).tv_sec - (then).tv_sec)*1000 \
+    + ((now).tv_usec - (then).tv_usec)/1000)
 
    _tim_check();
 #if HAVE_GETTIMEOFDAY
@@ -135,7 +136,7 @@ double tim_get_real( const char *name )
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
       err_internal ( __FUNCTION__, "No timer: %s\n", name );
 
-   return entry->real / 1000000.0;
+   return entry->real / 1000.0;
 }
 
 /* \doc Get the number of seconds of user CPU time. */
@@ -185,7 +186,7 @@ double tim_get_user( const char *name )
 	   entry->children_mark.ru_nivcsw );
 #endif
    
-   return (entry->self_user + entry->children_user) / 1000000.0;
+   return (entry->self_user + entry->children_user) / 1000.0;
 }
 
 /* \doc Get the number of seconds of system CPU time. */
@@ -198,7 +199,7 @@ double tim_get_system( const char *name )
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
       err_internal ( __FUNCTION__, "No timer: %s\n", name );
 
-   return (entry->self_system + entry->children_system) / 1000000.0;
+   return (entry->self_system + entry->children_system) / 1000.0;
 }
 
 /* \doc Print the named timer values to |str|.  The format is similar to
