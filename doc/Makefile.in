@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.9 1997/05/21 05:01:29 faith Exp $
+# $Id: Makefile.in,v 1.10 2004/01/08 10:56:34 cheusov Exp $
 #
 
 .SUFFIXES:
@@ -37,7 +37,7 @@ SHELL=	/bin/sh
 
 LIBMAA_SOURCES= ../maa.h ../maa.c ../arg.c ../base26.c ../base64.c \
 	../bit.c ../debug.c ../error.c ../flags.c ../hash.c ../list.c \
-	../memory.c ../parse-concrete.c ../parse.c ../pr.c ../prime.c \
+	../memory.c ../parse-concrete.c ../pr.c ../prime.c \
 	../set.c ../sl.c ../source.c ../stack.c ../string.c ../text.c \
 	../timer.c
 
