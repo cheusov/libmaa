@@ -18,7 +18,7 @@ dnl You should have received a copy of the GNU General Public License along
 dnl with this program; if not, write to the Free Software Foundation, Inc.,
 dnl 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
-dnl $Id: configure.in,v 1.27 2004/05/16 14:17:28 cheusov Exp $
+dnl $Id: configure.in,v 1.28 2004/06/06 14:00:11 cheusov Exp $
 dnl
 dnl Flag conventions:
 dnl     CFLAGS and LDFLAGS should be settable on the make commandline
@@ -33,13 +33,13 @@ dnl     YCFLAGS is for yacc
 dnl     LCFLAGS is for lex
 
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.27 $)
+AC_REVISION($Revision: 1.28 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
 AC_CONFIG_HEADER(config.h)
 
 MAA_MAJOR=0
-MAA_MINOR=98
+MAA_MINOR=99
 
 echo Configuring for libmaa $MAA_MAJOR.$MAA_MINOR
 echo .
@@ -239,6 +239,9 @@ if test "$local_dmalloc" = 1; then
         fi
     fi
 fi
+
+AC_CHECK_LIB(c,getopt,,     [AC_LIBOBJ([getopt])])
+AC_CHECK_LIB(c,getopt_long,,[AC_LIBOBJ([getopt_long])])
 
 if test "$needs_xmalloc" = 1; then
     AC_LIBOBJ([xmalloc])
