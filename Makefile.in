@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Fri Jan 12 14:44:08 1996 by r.faith@ieee.org
+# Revised: Sat Jan 20 17:59:36 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.12 1996/01/15 03:47:59 faith Exp $
+# $Id: Makefile.in,v 1.13 1996/01/20 23:00:02 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -34,29 +34,25 @@ srcdir=		@srcdir@
 VPATH=		@srcdir@
 prefix=		@prefix@
 exec_prefix=	@exec_prefix@
+subdirs=        @subdirs@ doc
 
 SHELL=		/bin/sh
 
 CC=		@CC@
-CFLAGS=		@CFLAGS@
-VFLAGS=         -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
-XCFLAGS=	@EXTRACFLAGS@ @DEFS@ $(VFLAGS) @DMCFLAGS@ -I. -I..
-LDFLAGS=	@LDFLAGS@
-XLDFLAGS=	-L.
 CPP=		@CPP@
-
-LDLIBS=		-lmaa @LIBS@ @DMLIBS@ -lm
-
-LEX=		@LEX@
-LEXLIB= 	@LEXLIB@
-YACC=		@YACC@
-
-LN_S=		@LN_S@
 RANLIB=		@RANLIB@
+INSTALL=        @INSTALL@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
 
-HEADERS= config.h maa.h maaP.h decl.h obstack.h
+CFLAGS=		@CFLAGS@
+LDFLAGS=        @LDFLAGS@
+VFLAGS=         -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
+XTRACFLAGS=     @WCFLAGS@ @XTRACFLAGS@ @DEFS@ $(VFLAGS) @CPPFLAGS@ -I.
+XTRALDFLAGS=    @WLDFLAGS@ @XTRALDFLAGS@ -L.
+LDLIBS=		-lmaa @LIBS@ -lm
+
+HEADERS= config.h maa.h maaP.h decl.h obstack.h @XTRAHEADERS@
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
 	 debug.o maa.o prime.o bit.o timer.o version.o arg.o pr.o
@@ -69,6 +65,8 @@ LIBS=    libmaa.a
 lib: $(LIBS)
 
 all: $(LIBS) $(EXES) $(TESTS)
+	echo making $@ in doc; \
+	(cd doc && $(MAKE) $@) || exit 1;
 
 tests: $(TESTS)
 	@for i in $(TESTS); do \
@@ -86,16 +84,20 @@ tests-update: $(TESTS)
 	done
 
 %.o: %.c
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(XCFLAGS) $<
+	$(CC) -c $(XTRACFLAGS) $(CFLAGS) $<
 
 %: %.o
-	$(CC) $(LDFLAGS) $(XLDFLAGS) -o $@ $< $(LDLIBS)
+	$(CC) $(XTRALDFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
 $(EXES) $(TESTS): $(LIBS)
 
-ALLFLAGS=$(CPPFLAGS) $(CFLAGS) $(XCFLAGS) $(LDFLAGS) $(XLDFLAGS)
+ALLFLAGS=$(XTRACFLAGS) $(CFLAGS) $(XTRALDFLAGS) $(LDFLAGS)
 %: %.c
 	$(CC) $(ALLFLAGS) -o $@ $< $(LDLIBS)
+
+dmalloc/dmalloc.h:
+	echo making all in dmalloc
+	(cd dmalloc && $(MAKE) all) || exit 1
 
 date := $(shell date)
 version.stamp: version.c
@@ -106,24 +108,34 @@ version.stamp: version.c
 
 version.c:
 	echo "/* Stamp: `date` */" > version.c
-	echo 'const char *maa_revision_string = "$$Revision: 1.12 $$";' >> version.c
+	echo 'const char *maa_revision_string = "XRevisionX";' | \
+		sed 's/X/$$/g' >> version.c
 
 libmaa.a:: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
 	$(RANLIB) $@
 
-$(LIBOBJS): $(HEADERS)
+$(LIBOBJS): $(HEADERS) version.stamp
 $(EXES):    $(HEADERS) $(LIBS)
 
 .PHONY: clean cleandist tags
 clean:
+	@for subdir in $(subdirs); do \
+		echo making $@ in $$subdir; \
+		(cd $$subdir && $(MAKE) $@) || exit 1; \
+	done
 	-rm -f *.o *.s *~ core a.out config.log $(TESTS) $(EXES)
 	-rm -f *.log *.aux *.toc *.dvi *.ps *.out.new
 	-rm -f *.cfg *.dtk .inslog tca.map .pure
 	-rm -f version.stamp version.tmp
 
 distclean: clean
-	-rm -f config.h config.cache Makefile $(LIBS)
+	@for subdir in $(subdirs); do \
+		echo making $@ in $$subdir; \
+		(cd $$subdir && $(MAKE) $@) || exit 1; \
+	done
+	-rm -f config.h config.cache config.status stamp-h.in stamp-h
+	-rm -f Makefile $(LIBS)
 
 tags:
 	etags: *.c

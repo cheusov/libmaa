@@ -1,6 +1,6 @@
 /* pr.c -- Process creation and tracking support
  * Created: Sun Jan  7 13:34:08 1996 by r.faith@ieee.org
- * Revised: Sun Jan 14 15:23:05 1996 by r.faith@ieee.org
+ * Revised: Sat Jan 20 11:50:43 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.2 1996/01/15 03:48:07 faith Exp $
+ * $Id: pr.c,v 1.3 1996/01/20 23:00:05 faith Exp $
  *
  * \section{Process Management Routines}
  *
@@ -27,6 +27,7 @@
  */
 
 #include "maaP.h"
+#include <errno.h>
 #include <signal.h>
 #include <fcntl.h>
 

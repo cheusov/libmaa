@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for Khepera documentation
 # Created: Sun Jan  8 21:44:38 1995 by faith@cs.unc.edu
-# Revised: Sat Dec 30 21:53:30 1995 by faith@cs.unc.edu
+# Revised: Sat Jan 20 17:58:28 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,10 +17,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.1 1996/01/08 03:28:00 faith Exp $
+# $Id: Makefile.in,v 1.2 1996/01/20 23:00:09 faith Exp $
 #
-
-include ../all.mk
 
 srcdir=		@srcdir@
 VPATH=		@srcdir@
