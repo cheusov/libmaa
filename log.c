@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.6 1998/01/05 14:19:05 faith Exp $
+ * $Id: log.c,v 1.7 1998/01/16 03:51:49 faith Exp $
  * 
  */
 
@@ -151,7 +151,7 @@ void log_error_va( const char *routine, const char *format, va_list ap )
       }
    }
    
-#ifndef __DGUX__
+#if !defined(__DGUX__) && !defined(__hpux__)
    if (logSyslog) {
       vsyslog( LOG_ERR, format, ap );
    }
@@ -200,7 +200,7 @@ void log_info_va( const char *format, va_list ap )
       }
    }
    
-#ifndef __DGUX__
+#if !defined(__DGUX__) && !defined(__hpux__)
    if (logSyslog) {
       vsyslog( LOG_INFO, format, ap );
    }

@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: decl.h,v 1.12 1997/09/25 12:27:15 faith Exp $
+ * $Id: decl.h,v 1.13 1998/01/16 03:51:48 faith Exp $
  * 
  */
 
@@ -80,6 +80,11 @@ extern int    toupper( int );
 #if defined(__ultrix__) && defined(__MIPSEL__)
 extern long random( void );
 extern void srandom( int );
+#endif
+
+#ifdef __hpux__
+extern int  strncmp(const char *s1, const char *s2, size_t n);
+extern void bcopy(const void *s1, void *s2, size_t n);
 #endif
 
 #endif
