@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Mon Aug 28 22:16:05 1995 by faith@cs.unc.edu
+ * Revised: Tue Aug 29 02:51:23 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.5 1995/08/29 02:17:11 faith Exp $
+ * $Id: khepera.h,v 1.6 1995/08/29 07:10:20 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -176,7 +176,7 @@ extern int                 set_self_organization( set_Set set, int flag );
 #define SET_ITERATE(S,P,E)                                                   \
    for (SET_POSITION_INIT((P),(S));                                          \
 	SET_POSITION_OK(P) && (SET_POSITION_GET((P),(E)),1);                 \
-	SET_POSITION_NEXT((S),(P)))
+	SET_POSITION_NEXT((P),(S)))
 
 /* if the SET_ITERATE loop is exited before all element in the set are
    seen, then SET_ITERATE_END should be called.  Calling this function

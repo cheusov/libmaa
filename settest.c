@@ -1,6 +1,6 @@
 /* settest.c -- Test program for Khepera set routines
  * Created: Wed Nov  9 15:04:25 1994 by faith@cs.unc.edu
- * Revised: Thu Aug 24 23:06:00 1995 by r.faith@ieee.org
+ * Revised: Tue Aug 29 03:08:13 1995 by r.faith@ieee.org
  * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.2 1995/08/25 04:38:32 faith Exp $
+ * $Id: settest.c,v 1.3 1995/08/29 07:10:21 faith Exp $
  */
 
 #include "kh.h"
@@ -49,12 +49,14 @@ static int freer( const void *key )
 
 int main( int argc, char **argv )
 {
-   set_Set t;
-   set_Set t1;
-   set_Set t2;
-   int     i;
-   int     j;
-   int     count;
+   set_Set      t;
+   set_Set      t1;
+   set_Set      t2;
+   int          i;
+   int          j;
+   int          count;
+   set_Position p;
+   const void   *k;
 
    if (argc == 1) {
       count = 100;
@@ -162,7 +164,11 @@ int main( int argc, char **argv )
    
    printf( "\nSet 1:\n" );
    set_iterate( t1, iterator );
+
    
+   printf( "\nSet 1 (again):\n" );
+   SET_ITERATE(t1,p,k) printf( "%s\n", (const char *)k );
+
    printf( "\nSet 2:\n" );
    set_iterate( t2, iterator );
 
