@@ -1,6 +1,6 @@
 /* settest.c -- Test program for Khepera set routines
  * Created: Wed Nov  9 15:04:25 1994 by faith@cs.unc.edu
- * Revised: Wed Sep 25 10:13:58 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 10:43:44 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.7 1996/09/25 14:20:53 faith Exp $
+ * $Id: settest.c,v 1.8 1996/09/25 14:46:20 faith Exp $
  */
 
 #include "maaP.h"
@@ -97,6 +97,7 @@ int main( int argc, char **argv )
       for (j = 0; j < len; j++) key[j] = get_rand( 32, 128 );
       key[ len ] = '\0';
       set_insert( t, key );
+      printf( "item%d = %s\n", i, key );
    }
 
    init_rand();
@@ -106,6 +107,7 @@ int main( int argc, char **argv )
 
       for (j = 0; j < len; j++) key[j] = get_rand( 32, 128 );
       key[ len ] = '\0';
+      printf( "lookup%d = %s\n", i, key );
       if (!set_member( t, key ))
 	    printf( "\"%s\" is not a member of the set", key );
 
@@ -127,12 +129,14 @@ int main( int argc, char **argv )
       int  key    = get_rand( 1, 16777216 );
 
       set_insert( t, (void *)key );
+      printf( "int%d = %d\n", i, key );
    }
 
    init_rand();
    for (i = 0; i < count; i++) {
       int         key = get_rand( 1, 16777216 );
 
+      printf( "intlookup%d = %d\n", i, key );
       if (!set_member( t, (void *)key ))
 	    printf( "%d is not a member of the set", key );
    }
