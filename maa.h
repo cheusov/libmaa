@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Wed Oct  2 20:00:58 1996 by faith@cs.unc.edu
+ * Revised: Sun Nov 10 12:37:22 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.21 1996/10/03 01:36:05 faith Exp $
+ * $Id: maa.h,v 1.22 1996/11/10 20:20:49 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -346,6 +346,7 @@ extern void            mem_print_string_stats( mem_String info, FILE *stream );
 extern mem_Object      mem_create_objects( int size );
 extern void            mem_destroy_objects( mem_Object info );
 extern void            *mem_get_object( mem_Object info );
+extern void            *mem_get_empty_object( mem_Object info );
 extern void            mem_free_object( mem_Object info, void *obj );
 extern mem_ObjectStats mem_get_object_stats( mem_Object info );
 extern void            mem_print_object_stats( mem_Object info, FILE *stream );
@@ -483,7 +484,12 @@ extern const char *txt_soundex( const char *string );
 
 /* base64.c */
 
-extern const char *b64_encode( unsigned long val );
+extern const char    *b64_encode( unsigned long val );
 extern unsigned long b64_decode( const char *val );
+
+/* base26.c */
+
+extern const char    *b26_encode( unsigned long val );
+extern unsigned long b26_decode( const char *val );
 
 #endif

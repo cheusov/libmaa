@@ -1,6 +1,6 @@
 /* base64.c -- Encode/decode integers in base64 format
  * Created: Mon Sep 23 16:55:12 1996 by faith@cs.unc.edu
- * Revised: Wed Sep 25 22:06:22 1996 by faith@cs.unc.edu
+ * Revised: Sun Nov 10 11:43:41 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,11 +17,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: base64.c,v 1.2 1996/09/26 02:23:14 faith Exp $
+ * $Id: base64.c,v 1.3 1996/11/10 20:20:47 faith Exp $
  *
-
- * These routines use the 64-character subset of International Alphabet IA5
- * discussed in RFC 1421 (printeable encoding) and RFC 1522 (base64 MIME):
+ * \section{Base-64 Routines}
+ *
+ * \intro These routines use the 64-character subset of International
+ * Alphabet IA5 discussed in RFC 1421 (printeable encoding) and RFC 1522
+ * (base64 MIME).
+ *
 
    Value Encoding  Value Encoding  Value Encoding  Value Encoding
        0 A            17 R            34 i            51 z
@@ -70,9 +73,8 @@ static int b64_index[256] = {
     XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
 };
 
-/* |b64_encode| encodes |val| in a printable base 64 format.  |val| is
-   first converted to network byte order.  Then a MSB-first encoding is
-   generated. */
+/* |b64_encode| encodes |val| in a printable base 64 format.  A MSB-first
+   encoding is generated. */
 
 const char *b64_encode( unsigned long val )
 {

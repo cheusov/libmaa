@@ -1,6 +1,6 @@
 /* memory.c -- Memory management for Khepera
  * Created: Thu Dec 22 09:58:38 1994 by faith@cs.unc.edu
- * Revised: Wed Jan 31 11:06:01 1996 by r.faith@ieee.org
+ * Revised: Sun Nov 10 12:37:24 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: memory.c,v 1.6 1996/02/02 04:30:04 faith Exp $
+ * $Id: memory.c,v 1.7 1996/11/10 20:20:50 faith Exp $
  *
  * \section{Memory Management Routines}
  *
@@ -290,6 +290,19 @@ void *mem_get_object( mem_Object info )
    } else ++i->reused;
 
    ++i->used;
+   
+   return obj;
+}
+
+/* \doc |mem_get_empty_object| is exactly like |mem_get_object|, except the
+   memory associated with the object is set to all zeros. */
+
+void *mem_get_empty_object( mem_Object info )
+{
+   objectInfo  i    = (objectInfo)info;
+   void        *obj = mem_get_object( info );
+
+   memset( obj, 0, i->size );
    
    return obj;
 }
