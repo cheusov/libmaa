@@ -1,7 +1,7 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Wed Jan 31 11:06:02 1996 by r.faith@ieee.org
+ * Revised: Fri Feb  9 08:51:43 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.7 1996/02/02 04:30:02 faith Exp $
+ * $Id: list.c,v 1.8 1996/02/09 14:45:15 faith Exp $
  *
  * \section{List Routines}
  *
@@ -205,7 +205,7 @@ void *lst_nth_get( lst_List list, unsigned int n )
 /* \doc |lst_nth_set| locates the $n$-th datum in the |list| and replaces
    that datum with |datum|.  If the $n$th element does not exist, the
    program will halt with an error. (I.e., it is the programmer's
-   responsibility to check lst_length and only pass valid values of |n|.) */
+   responsibility to check |lst_length| and only pass valid values of |n|.) */
 
 void lst_nth_set( lst_List list, unsigned int n, const void *datum )
 {
@@ -297,8 +297,8 @@ void lst_truncate( lst_List list, unsigned int length )
 /* \doc |lst_truncate_position| truncates a list beyond |position| (i.e.,
    |position| is always left in the list.  If |postition| is "NULL", then
    the list is emptied.  This convention is useful when using
-   lst_last_postition to get a marker allowing an older state of a list to
-   be restored. */
+   |lst_last_postition| to get a marker allowing an older state of a list
+   to be restored. */
 
 void lst_truncate_position( lst_List list, lst_Position position )
 {

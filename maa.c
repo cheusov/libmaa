@@ -1,6 +1,6 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Wed Jan 31 11:01:29 1996 by r.faith@ieee.org
+ * Revised: Fri Feb  9 08:49:28 1996 by r.faith@ieee.org
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.7 1996/02/02 04:30:02 faith Exp $
+ * $Id: maa.c,v 1.8 1996/02/09 14:45:17 faith Exp $
  *
  * \section{General Support}
  *
@@ -27,7 +27,7 @@
 #include "maa.h"
 
 /* \doc |maa_init| should be called at the start of "main()", and serves to
-   initialize debugging and other support for \maa. */
+   initialize debugging and other support for \libmaa. */
 
 void maa_init( const char *programName )
 {
