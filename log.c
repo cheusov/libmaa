@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.15 2004/05/16 14:17:28 cheusov Exp $
+ * $Id: log.c,v 1.16 2004/10/12 10:27:13 cheusov Exp $
  * 
  */
 
@@ -166,19 +166,28 @@ void log_option( int option )
 
 void log_syslog( const char *ident )
 {
-   if (logSyslog)
-      err_internal( __FUNCTION__, "Syslog facility already open\n" );
-   
-   openlog( ident, LOG_PID|LOG_NOWAIT, logFacility );
-   ++logOpen;
-   ++logSyslog;
+   if (ident){
+      if (logSyslog)
+	 err_internal( __FUNCTION__, "Syslog facility already open\n" );
+
+      openlog( ident, LOG_PID|LOG_NOWAIT, logFacility );
+      ++logOpen;
+      ++logSyslog;
+   }else{
+      if (!logSyslog)
+	 return;
+
+      closelog ();
+      --logOpen;
+      --logSyslog;
+   }
 }
 
 static void log_mkpath(const char *filename)
 {
     char *tmp = alloca(strlen(filename) + 1);
     char *pt;
-    
+
     strcpy(tmp, filename);
     for (pt = tmp; *pt; pt++) {
         if (*pt == '/' && pt != tmp) {
@@ -212,47 +221,88 @@ static void _log_check_filename(void)
 
 void log_file( const char *ident, const char *filename )
 {
-   if (logFd >= 0)
-      err_internal( __FUNCTION__,
-		    "Log file \"%s\" open when trying to open \"%s\"\n",
-		    logFilename, filename );
+   if (ident && filename){
+      if (logFd >= 0)
+	 err_internal( __FUNCTION__,
+		       "Log file \"%s\" open when trying to open \"%s\"\n",
+		       logFilename, filename );
 
-   logIdent        = str_find( ident );
-   logFilenameOrig = str_find(filename);
-   logFilenameLen  = strlen(filename)*3+1024;
-   logFilename     = xmalloc(logFilenameLen + 1);
-   logFilenameTmp  = xmalloc(logFilenameLen + 1);
-   logFilename[0]  = '\0';
-   _log_check_filename();
-   
-   _log_set_hostname();
-   ++logOpen;
+      logIdent        = str_find( ident );
+      logFilenameOrig = str_find(filename);
+      logFilenameLen  = strlen(filename)*3+1024;
+      logFilename     = xmalloc(logFilenameLen + 1);
+      logFilenameTmp  = xmalloc(logFilenameLen + 1);
+      logFilename[0]  = '\0';
+
+      _log_check_filename();
+      _log_set_hostname();
+
+      ++logOpen;
+   }else{
+      if (logFd < 0)
+	 return;
+
+      close (logFd);
+      logFd          = -1;
+
+      if (logFilename) xfree (logFilename);
+      logFilename    = NULL;
+
+      if (logFilenameTmp) xfree (logFilenameTmp);
+      logFilenameTmp = NULL;
+
+      logFilenameLen = 0;
+
+      --logOpen;
+   }
 }
 
 void log_stream( const char *ident, FILE *stream )
 {
-   if (logUserStream)
-      err_internal( __FUNCTION__, "User stream already open\n" );
+   if (ident && stream){
+      if (logUserStream)
+	 err_internal( __FUNCTION__, "User stream already open\n" );
 
-   logUserStream = stream;
-   logIdent      = str_find( ident );
+      logUserStream = stream;
+      logIdent      = str_find( ident );
 
-   _log_set_hostname();
-   ++logOpen;
+      _log_set_hostname();
+      ++logOpen;
+   }else{
+      if (!logUserStream)
+	 return;
+
+      if (logUserStream != stdout &&
+	  logUserStream != stderr)
+      {
+	 fclose (logUserStream);
+      }
+
+      logUserStream = NULL;
+
+      --logOpen;
+   }
 }
 
 void log_close( void )
 {
-   if (logFd >= 0)    close( logFd );
-   if (logUserStream != stdout && logUserStream != stderr && logUserStream != NULL)
+   if (logFd >= 0) close( logFd );
+
+   if (logUserStream != stdout &&
+       logUserStream != stderr &&
+       logUserStream != NULL)
+   {
        fclose( logUserStream );
+   }
+
    if (logSyslog)     closelog();
    if (logFilename)   xfree(logFilename);
    if (logFilenameTmp) xfree(logFilenameTmp);
 
    logFilename    = 0;
+   logFilenameTmp = 0;
    logFilenameLen = 0;
-   
+
    logOpen       = 0;
    logFd         = -1;
    logUserStream = NULL;
@@ -267,11 +317,12 @@ static void _log_base_va(
    time_t t;
    char   buf[4096];
    char   *pt;
-   
+   char   *info_main;
+
    if (!logOpen) return;
-   
+
    time(&t);
-   
+
    if (logFd >= 0 || logUserStream) {
       if (inhibitFull) {
          pt = buf;
@@ -284,6 +335,9 @@ static void _log_base_va(
                   (long int)getpid() );
          pt = buf + strlen( buf );
       }
+
+      info_main = pt;
+
       if (routine){
 	 sprintf( pt, "(%s) ", routine );
 	 pt = buf + strlen( buf );
@@ -297,7 +351,11 @@ static void _log_base_va(
       if (logUserStream) {
          fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
                                                   open stream with "a" */
-         fprintf( logUserStream, "%s", buf );
+	 if (logUserStream == stdout || logUserStream == stderr)
+	    fprintf( logUserStream, "%s", info_main );
+	 else
+	    fprintf( logUserStream, "%s", buf );
+
          fflush( logUserStream );
       }
    }
