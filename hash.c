@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 12 22:44:33 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 19 13:30:25 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.6 1995/11/15 02:30:41 faith Exp $
+ * $Id: hash.c,v 1.7 1995/11/19 19:28:37 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -29,7 +29,7 @@
  *
  */
 
-#include "kh.h"
+#include "maaP.h"
 
 				/* A few primes, each approximately 3 times
                                    the previous prime.  */

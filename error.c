@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Fri Sep 29 21:30:55 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:30:26 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.4 1995/10/02 00:32:45 faith Exp $
+ * $Id: error.c,v 1.5 1995/11/19 19:28:36 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -27,8 +27,7 @@
  *
  */
 
-#include "kh.h"
-#include <stdarg.h>
+#include "maaP.h"
 #include <errno.h>
 
 /* \doc |err_fatal| flushes "stdout", prints a fatal error report on

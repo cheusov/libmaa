@@ -1,6 +1,6 @@
 /* hashtest.c -- Test program for Khepera hash table routines
  * Created: Sun Nov  6 18:55:23 1994 by faith@cs.unc.edu
- * Revised: Wed Aug  9 11:39:04 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:30:24 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,10 +17,10 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hashtest.c,v 1.2 1995/08/24 14:59:12 faith Exp $
+ * $Id: hashtest.c,v 1.3 1995/11/19 19:28:39 faith Exp $
  */
 
-#include "kh.h"
+#include "maaP.h"
 #include <math.h>
 
 static void init_rand( void )

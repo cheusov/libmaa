@@ -1,7 +1,7 @@
-# Makefile.in -- Makefile for Khepera
-# Created: Sun Nov  6 13:56:03 1994 by faith@cs.unc.edu
-# Revised: Sun Nov 12 11:55:57 1995 by faith@cs.unc.edu
-# Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
+# Makefile.in -- Makefile for libmaa
+# Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
+# Revised: Sun Nov 19 14:09:05 1995 by faith@cs.unc.edu
+# Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.7 1995/11/15 02:30:40 faith Exp $
+# $Id: Makefile.in,v 1.8 1995/11/19 19:28:32 faith Exp $
 #
 
 .SUFFIXES:
@@ -41,7 +41,7 @@ LDFLAGS=	@LDFLAGS@
 XLDFLAGS=	-L.
 CPP=		@CPP@
 
-LDLIBS=		-lkhepera @LIBS@ @DMLIBS@ -lm
+LDLIBS=		-lmaa @LIBS@ @DMLIBS@ -lm
 
 LEX=		@LEX@
 LEXLIB= 	@LEXLIB@
@@ -52,19 +52,17 @@ RANLIB=		@RANLIB@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
 
-HEADERS= ../config.h kh.h khepera.h obstack.h misc.h
+HEADERS= ../config.h maa.h maaP.h decl.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
-	 debug.o source.o parse.o tree.o kh.o pp.o prime.o symbol.o \
-	 parse-concrete.o bit.o timer.o xfm.o \
-	 dct.o inf.o lnk.o typ.o
-EXES=	 pptest treetest settest hashtest stringtest debugtest memtest \
-	 primetest listtest inftest bittest
+	 debug.o maa.o prime.o bit.o timer.o
+EXES=	 settest hashtest stringtest debugtest memtest \
+	 primetest listtest bittest
 
-LIBS=    libkhepera.a
+LIBS=    libmaa.a
 
-all: $(LIBS) memtest primetest inftest bittest
 tests: all $(EXES)
+all: $(LIBS) memtest primetest bittest
 
 %.o: %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(XCFLAGS) $<
@@ -76,7 +74,7 @@ ALLFLAGS=$(CPPFLAGS) $(CFLAGS) $(XCFLAGS) $(LDFLAGS) $(XLDFLAGS)
 %: %.c
 	$(CC) $(ALLFLAGS) -o $@ $< $(LDLIBS)
 
-libkhepera.a:: $(LIBOBJS)
+libmaa.a:: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
 	$(RANLIB) $@
 
@@ -97,6 +95,6 @@ tags:
 
 
 # This is from the textutils-1.11 lib/Makefile.in
-subdir=lib
+subdir=libmaa
 Makefile: Makefile.in ../config.status
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status

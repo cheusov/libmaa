@@ -1,6 +1,6 @@
 /* stringtest.c -- Test program for Khepera string table routines
  * Created: Thu Dec 22 14:05:57 1994 by faith@cs.unc.edu
- * Revised: Wed Aug  9 09:46:10 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:33:37 1995 by faith@cs.unc.edu
  * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,10 +17,10 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: stringtest.c,v 1.2 1995/08/24 14:59:28 faith Exp $
+ * $Id: stringtest.c,v 1.3 1995/11/19 19:28:51 faith Exp $
  */
 
-#include "kh.h"
+#include "maaP.h"
 #include <math.h>
 
 int main( int argc, char **argv )
@@ -30,7 +30,7 @@ int main( int argc, char **argv )
    const char    **orig;
    char          buf[100];
 
-   kh_init();
+   maa_init();
 
    if (argc == 1) {
       count = 100;

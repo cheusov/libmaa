@@ -1,6 +1,6 @@
 /* prime.c -- Find prime numbers
  * Created: Thu Jul 20 22:04:37 1995 by r.faith@ieee.org
- * Revised: Thu Jul 20 23:41:13 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:30:21 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: prime.c,v 1.1 1995/08/24 14:59:24 faith Exp $
+ * $Id: prime.c,v 1.2 1995/11/19 19:28:47 faith Exp $
  *
  * \section{Prime Number Routines}
  *
@@ -27,7 +27,7 @@
  *
  */
 
-#include "kh.h"
+#include "maaP.h"
 
 /* \doc |prm_is_prime| returns 1 if |value| is prime; 0 otherwise.
    Primality is determined by testings all odd divisors less than the

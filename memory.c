@@ -1,6 +1,6 @@
 /* memory.c -- Memory management for Khepera
  * Created: Thu Dec 22 09:58:38 1994 by faith@cs.unc.edu
- * Revised: Sun Aug 27 21:36:11 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:30:22 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: memory.c,v 1.3 1995/08/28 15:33:21 faith Exp $
+ * $Id: memory.c,v 1.4 1995/11/19 19:28:46 faith Exp $
  *
  * \section{Memory Management Routines}
  *
@@ -28,7 +28,7 @@
  *
  */
 
-#include "kh.h"
+#include "maaP.h"
 #include "obstack.h"
 
 #ifdef DMALLOC_FUNC_CHECK

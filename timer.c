@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 12 20:22:38 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 19 13:30:17 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,11 +17,11 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: timer.c,v 1.7 1995/11/15 02:30:45 faith Exp $
+ * $Id: timer.c,v 1.8 1995/11/19 19:28:52 faith Exp $
  * 
  */
 
-#include "kh.h"
+#include "maaP.h"
 
 static hsh_HashTable _tim_Hash;
 

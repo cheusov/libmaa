@@ -1,7 +1,7 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Tue Aug 29 01:07:18 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:30:24 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.4 1995/08/29 05:08:53 faith Exp $
+ * $Id: list.c,v 1.5 1995/11/19 19:28:43 faith Exp $
  *
  * \section{List Routines}
  *
@@ -31,7 +31,7 @@
  *
  */
 
-#include "kh.h"
+#include "maaP.h"
 
 typedef struct data {
    const void  *datum;

@@ -1,6 +1,6 @@
 /* stack.c -- Stack routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu
- * Revised: Wed Aug  9 14:04:15 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:30:19 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: stack.c,v 1.2 1995/08/24 14:59:27 faith Exp $
+ * $Id: stack.c,v 1.3 1995/11/19 19:28:49 faith Exp $
  *
  * \section{Stack Routines}
  *
@@ -28,7 +28,7 @@
  *
  */
 
-#include "kh.h"
+#include "maaP.h"
 #include "obstack.h"
 
 #ifdef DMALLOC_FUNC_CHECK

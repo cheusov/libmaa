@@ -1,6 +1,6 @@
 /* settest.c -- Test program for Khepera set routines
  * Created: Wed Nov  9 15:04:25 1994 by faith@cs.unc.edu
- * Revised: Tue Aug 29 03:08:13 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:30:20 1995 by faith@cs.unc.edu
  * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,10 +17,10 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.3 1995/08/29 07:10:21 faith Exp $
+ * $Id: settest.c,v 1.4 1995/11/19 19:28:49 faith Exp $
  */
 
-#include "kh.h"
+#include "maaP.h"
 #include <math.h>
 
 static void init_rand( void )

@@ -1,6 +1,6 @@
 /* xmalloc.c -- Error-checking malloc
  * Created: Sun Nov  6 18:14:10 1994 by faith@cs.unc.edu
- * Revised: Thu Sep 28 18:58:11 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 19 13:30:16 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,10 +17,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: xmalloc.c,v 1.2 1995/09/29 00:55:05 faith Exp $
+ * $Id: xmalloc.c,v 1.3 1995/11/19 19:28:52 faith Exp $
  */
 
-#include "kh.h"
+#include "maaP.h"
 
 #if STDC_HEADERS
 #include <stdlib.h>

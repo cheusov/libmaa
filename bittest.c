@@ -1,6 +1,6 @@
 /* bittest.c -- Test the bit functions, especially the counter
  * Created: Mon Oct  2 10:10:57 1995 by faith@cs.unc.edu
- * Revised: Mon Oct  2 10:23:00 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 19 13:30:30 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,11 +17,11 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: bittest.c,v 1.1 1995/10/08 00:46:33 faith Exp $
+ * $Id: bittest.c,v 1.2 1995/11/19 19:28:33 faith Exp $
  * 
  */
 
-#include "kh.h"
+#include "maaP.h"
 
 int main( int argc, char **argv )
 {

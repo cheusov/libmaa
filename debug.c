@@ -1,6 +1,6 @@
 /* debug.c -- Debugging support for Khepera
  * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Sat Oct  7 15:53:55 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 19 13:30:27 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.4 1995/10/08 00:46:34 faith Exp $
+ * $Id: debug.c,v 1.5 1995/11/19 19:28:34 faith Exp $
  *
  * \section{Debugging Support}
  *
@@ -32,7 +32,7 @@
  *
  */
 
-#include "kh.h"
+#include "maaP.h"
 
 #define TEST(flags,var) (((flags)>>31)                                     \
 			 ? (((flags)>>30)                                  \

@@ -1,6 +1,6 @@
 /* primetest.c -- 
  * Created: Thu Jul 20 22:15:54 1995 by r.faith@ieee.org
- * Revised: Thu Jul 20 22:22:36 1995 by r.faith@ieee.org
+ * Revised: Sun Nov 19 13:30:21 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,11 +17,11 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: primetest.c,v 1.3 1995/08/25 04:38:30 faith Exp $
+ * $Id: primetest.c,v 1.4 1995/11/19 19:28:47 faith Exp $
  * 
  */
 
-#include "kh.h"
+#include "maaP.h"
 
 int main( int argc, char **argv )
 {
