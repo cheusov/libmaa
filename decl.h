@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: decl.h,v 1.14 1999/12/22 17:18:56 faith Exp $
+ * $Id: decl.h,v 1.15 2000/12/31 21:14:19 faith Exp $
  * 
  */
 
@@ -35,12 +35,12 @@ extern int    getrusage( int who, struct rusage * );
 extern void   bcopy( const void *, void *, int );
 extern void   bzero( char *b, int );
 extern long   random( void );
-extern int    srandom( unsigned );
 extern char   *index( const char *, int c );
 extern int    gethostname( char *, int );
 
 #if !defined(__svr4__)
 				/* Old braindamage for SunOS only */
+extern int    srandom( unsigned );
 extern char   *memset( void *, int, int );
 extern char   *strchr( const char *, int );
 extern char   *strdup( const char * );
