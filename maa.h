@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sat Dec  2 15:06:56 1995 by faith@cs.unc.edu
+ * Revised: Mon Jan  1 14:56:32 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.3 1995/12/03 00:41:38 faith Exp $
+ * $Id: maa.h,v 1.4 1996/01/02 04:09:43 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -65,7 +65,7 @@
 #define KH_MEMORY    0xc1000000	/* Print memory usage statistics at exit */
 #define KH_TIME      0xc2000000	/* Print timer information at exit */
 
-extern void maa_init( void );
+extern void maa_init( const char *programName );
 extern void maa_shutdown( void );
 
 /* xmalloc.c */
@@ -247,13 +247,15 @@ extern void         _lst_shutdown( void );
 
 /* error.c */
 
-extern void err_fatal( const char *routine, const char *format, ... )
+extern void       err_set_program_name( const char *programName );
+extern const char *err_program_name( void );
+extern void       err_fatal( const char *routine, const char *format, ... )
    __attribute__((noreturn,format(printf, 2, 3)));
 
-extern void err_warning( const char *routine, const char *format, ... )
+extern void       err_warning( const char *routine, const char *format, ... )
    __attribute__((format(printf, 2, 3)));
 
-extern void err_internal( const char *routine, const char *format, ... )
+extern void       err_internal( const char *routine, const char *format, ... )
    __attribute__((noreturn,format(printf, 2, 3)));
 
 /* memory.c */

@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Sun Dec 10 20:23:58 1995 by r.faith@ieee.org
+ * Revised: Mon Jan  1 14:56:33 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.6 1995/12/11 15:56:56 faith Exp $
+ * $Id: error.c,v 1.7 1996/01/02 04:09:38 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -30,6 +30,27 @@
 #include "maaP.h"
 #include <errno.h>
 
+const char *_err_programName;
+
+/* \doc |err_set_program_name| records the value of |argv[0]| for the
+   calling program.  If this value is not "NULL", then it will be used when
+   printing errors and warnings. */
+
+void err_set_program_name( const char *programName )
+{
+   _err_programName = programName;
+}
+
+/* \doc |err_program_name| returns the value of |programName| that was
+   previously set with |err_set_program_name|.  This value may be
+   "NULL". */
+
+const char *err_program_name( void )
+{
+   return _err_programName;
+}
+
+
 /* \doc |err_fatal| flushes "stdout", prints a fatal error report on
    "stderr", flushes "stderr" and "stdout", and calls |exit|.  |routine| is
    the name of the routine in which the error took place. */
@@ -39,7 +60,10 @@ void err_fatal( const char *routine, const char *format, ... )
    va_list ap;
 
    fflush( stdout );
-   fprintf( stderr, "\n%s: ", routine );
+   if (_err_programName)
+      fprintf( stderr, "\n%s:%s: ", _err_programName, routine );
+   else
+      fprintf( stderr, "\n%s: ", routine );
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
@@ -62,7 +86,10 @@ void err_warning( const char *routine, const char *format, ... )
    va_list ap;
 
    fflush( stdout );
-   fprintf( stderr, "\n%s:\n   ", routine );
+   if (_err_programName)
+      fprintf( stderr, "\n%s:%s:\n   ", _err_programName, routine );
+   else
+      fprintf( stderr, "\n%s:\n   ", routine );
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
@@ -83,8 +110,11 @@ void err_internal( const char *routine, const char *format, ... )
    va_start( ap, format );
    vfprintf( stderr, format, ap );
    va_end( ap );
-   
-   fprintf( stderr, "Aborting proteus: " );
+
+   if (_err_programName)
+      fprintf( stderr, "Aborting %s: ", _err_programName );
+   else
+      fprintf( stderr, "Aborting: " );
    fflush( stderr );
    fflush( stdout );
    abort();

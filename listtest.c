@@ -1,6 +1,6 @@
 /* listtest.c -- 
  * Created: Wed Aug  9 11:36:09 1995 by r.faith@ieee.org
- * Revised: Sun Nov 19 13:35:22 1995 by faith@cs.unc.edu
+ * Revised: Mon Jan  1 15:08:52 1996 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: listtest.c,v 1.2 1995/11/19 19:28:44 faith Exp $
+ * $Id: listtest.c,v 1.3 1996/01/02 04:09:39 faith Exp $
  */
 
 #include "maaP.h"
@@ -28,14 +28,14 @@ static int print( const void *datum )
    return 0;
 }
 
-int main( void )
+int main( int argc, char **argv )
 {
    lst_List     list = lst_create();
    lst_Position p;
    char         *e;
    int          i;
 
-   maa_init();
+   maa_init( argv[0] );
 
    lst_append( list, "1" );
    lst_iterate( list, print ); printf( "\n" );

@@ -1,6 +1,6 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Sat Dec  2 15:06:57 1995 by faith@cs.unc.edu
+ * Revised: Mon Jan  1 14:38:15 1996 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.2 1995/12/03 00:41:36 faith Exp $
+ * $Id: maa.c,v 1.3 1996/01/02 04:09:41 faith Exp $
  *
  * \section{General Support}
  *
@@ -29,9 +29,12 @@
 /* \doc |maa_init| should be called at the start of "main()", and serves to
    initialize debugging and other support for \maa. */
 
-void maa_init( void )
+void maa_init( const char *programName )
 {
    tim_start( "total" );
+   
+   err_set_program_name( programName );
+   
    _dbg_register( KH_MEMORY,    "memory" );
    _dbg_register( KH_TIME,      "time" );
 

@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Mon Jan  1 15:25:12 1996 by r.faith@ieee.org
+# Revised: Mon Jan  1 16:00:54 1996 by r.faith@ieee.org
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.9 1996/01/01 20:26:16 faith Exp $
+# $Id: Makefile.in,v 1.10 1996/01/02 04:09:35 faith Exp $
 #
 
 .SUFFIXES:
@@ -67,7 +67,7 @@ lib: $(LIBS)
 all: $(LIBS) $(EXES) $(TESTS)
 
 tests: $(TESTS)
-	for i in $(TESTS); do \
+	@for i in $(TESTS); do \
 		./$$i > /tmp/$$i.out; \
 		if cmp ./$$i.out /tmp/$$i.out; \
 			then echo PASSED $$i; \
@@ -77,7 +77,7 @@ tests: $(TESTS)
 	done
 
 tests-update: $(TESTS)
-	for i in $(TESTS); do echo Writing $$i.out; ./$$i > $$i.out; done
+	@for i in $(TESTS); do echo Writing $$i.out; ./$$i > $$i.out; done
 
 %.o: %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(XCFLAGS) $<

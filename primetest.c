@@ -1,6 +1,6 @@
 /* primetest.c -- 
  * Created: Thu Jul 20 22:15:54 1995 by r.faith@ieee.org
- * Revised: Sun Nov 19 13:30:21 1995 by faith@cs.unc.edu
+ * Revised: Mon Jan  1 15:18:19 1996 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: primetest.c,v 1.4 1995/11/19 19:28:47 faith Exp $
+ * $Id: primetest.c,v 1.5 1996/01/02 04:09:45 faith Exp $
  * 
  */
 
@@ -26,9 +26,9 @@
 int main( int argc, char **argv )
 {
    if (argc != 2) {
-      fprintf( stderr, "usage: primetest value\n" );
-      return 1;
+      printf( "%lu\n", prm_next_prime( 10000 ) );
+   } else {
+      printf( "%lu\n", prm_next_prime( strtoul( argv[1], NULL, 0 ) ) );
    }
-   printf( "%lu\n", prm_next_prime( strtoul( argv[1], NULL, 0 ) ) );
    return 0;
 }
