@@ -1,6 +1,6 @@
 /* pr.c -- Process creation and tracking support
  * Created: Sun Jan  7 13:34:08 1996 by r.faith@ieee.org
- * Revised: Wed Sep 25 21:50:16 1996 by faith@cs.unc.edu
+ * Revised: Wed Oct  2 19:50:43 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,12 +17,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.6 1996/09/26 02:23:15 faith Exp $
+ * $Id: pr.c,v 1.7 1996/10/02 23:51:41 faith Exp $
  *
  * \section{Process Management Routines}
  *
  * \intro The process management routines are designed to facilitate the
- * creation and management of low-level pipelines.
+ * creation and management of child processes, coprocesses, and associated
+ * pipelines and I/O.  Some support for daemons and socket connections is
+ * also provided. 
  *
  */
 
@@ -47,7 +49,6 @@
 
 typedef struct _pr_Obj {
    int pid;
-   int fd;
 } *_pr_Obj;
 
 static _pr_Obj _pr_objects = NULL;
@@ -71,7 +72,7 @@ static void _pr_check( pr_Object object, const char *function )
 /* The idea for the max_fd call is from W. Richard Stevens; Advanced
    Programming in the UNIX Environment (Addison-Wesley Publishing Co.,
    1992); page 43.  The implementation here, however, is different from
-   that provided by Stevens for is open_max routine. */
+   that provided by Stevens for his open_max routine. */
 
 static int max_fd( void )
 {
@@ -94,29 +95,6 @@ static int max_fd( void )
 #endif
 }
 
-#if 0
-pr_Object pr_create( void )
-{
-   Obj o = xmalloc( sizeof( struct Obj ) );
-
-#if MAA_MAGIC
-   o->magic = PR_MAGIC;
-#endif
-
-   printf( "%d \n", max_fd() );
-   return o;
-}
-
-void pr_destroy( pr_Object object )
-{
-   Obj o = (Obj)object;
-
-   _pr_check( o, __FUNCTION__ );
-   o->magic = PR_MAGIC_FREED;
-   xfree( o );
-}
-#endif
-
 static void _pr_init( void )
 {
    if (!_pr_objects)
@@ -128,8 +106,14 @@ void _pr_shutdown( void )
    int i;
 
    if (_pr_objects) {
-      for (i = 0; i < max_fd(); i++)
-				/* blah */;
+      for (i = 0; i < max_fd(); i++) {
+				/* FIXME: blah */;
+	 if (_pr_objects[i].pid) {
+	    kill( _pr_objects[i].pid, SIGKILL ); /* FIXME! be gentler. */
+	    pr_wait( _pr_objects[i].pid );
+	    _pr_objects[i].pid = 0;
+	 }
+      }
       xfree( _pr_objects );
       _pr_objects = NULL;
    }
@@ -246,12 +230,6 @@ int pr_open( const char *command, int flags,
    return pid;
 }
 
-#if 0
-int pr_chain( pr_Object object, const char *command )
-{
-}
-#endif
-
 int pr_wait( int pid )
 {   
    int exitStatus = 0;
@@ -283,7 +261,7 @@ int pr_wait( int pid )
    return exitStatus;
 }
 
-int pr_close( FILE *str )
+int pr_close_nowait( FILE *str )
 {
    int fd         = fileno( str );
    int pid;
@@ -297,7 +275,106 @@ int pr_close( FILE *str )
    _pr_objects[ fd ].pid = 0;
 
    fclose( str );
+   return pid;
+}
+
+int pr_close( FILE *str )
+{
+   int pid = pr_close_nowait( str );
+   
    return pr_wait( pid );
+}
+
+int pr_readwrite( FILE *in, FILE *out,
+		  const char *inBuffer, int inLen,
+		  char *outBuffer, int outMaxLen )
+{
+   long           flags;
+   const char     *inPt  = inBuffer;
+   char           *outPt = outBuffer;
+   int            outLen = 0;
+   fd_set         rfds, wfds, efds;
+   struct timeval tv;
+   int            n;
+   int            count;
+   int            retval;
+   
+   if ((flags = fcntl( fileno( in ), F_GETFL )) < 0)
+      err_fatal_errno( __FUNCTION__, "Can't get flags for output stream\n" );
+#ifdef O_NONBLOCK
+   flags |= O_NONBLOCK;
+#else
+   flags |= FNDELAY;
+#endif
+   fcntl( fileno( in ), F_SETFL, flags );
+
+   if ((flags = fcntl( fileno( out ), F_GETFL )) < 0)
+      err_fatal_errno( __FUNCTION__, "Can't get flags for input stream\n" );
+#ifdef O_NONBLOCK
+   flags |= O_NONBLOCK;
+#else
+   flags |= FNDELAY;
+#endif
+   fcntl( fileno( out ), F_SETFL, flags );
+
+   FD_ZERO( &rfds );
+   FD_ZERO( &wfds );
+   FD_ZERO( &efds );
+   FD_SET( fileno( out ), &rfds );
+   FD_SET( fileno( in ),  &wfds );
+   FD_SET( fileno( out ), &efds );
+   FD_SET( fileno( in ),  &efds );
+   
+   n = max( fileno( in ), fileno( out ) ) + 1;
+
+   for (;;) {
+      tv.tv_sec  = 5;
+      tv.tv_usec = 0;
+      switch ((retval = select( n, &rfds, &wfds, &efds, &tv )))
+      {
+      case -1: err_fatal_errno( __FUNCTION__, "Filter failed\n" ); break;
+      case 0:  err_fatal( __FUNCTION__, "Filter hung\n" );         break;
+      default:
+	 PRINTF(MAA_PR,("select(2) returns %d, inLen = %d, outLen = %d\n",
+			retval,inLen,outLen));
+	 if (inLen) {
+	    if ((count = write( fileno( in ), inPt, inLen )) < 0)
+	       err_fatal_errno( __FUNCTION__, "Error writing to filter\n" );
+	    PRINTF(MAA_PR,("  wrote %d\n",count));
+	    inLen -= count;
+	    inPt  += count;
+	    if (!inLen) pr_close_nowait( in );
+	 }
+	 if ((count = read( fileno( out ), outPt, 1 )) <= 0) {
+	    PRINTF(MAA_PR,("  read %d\n",count));
+	    if (!count) {
+	       if (inLen)
+		  err_fatal( __FUNCTION__,
+			     "End of output, but input not flushed\n" );
+	       pr_close( out );
+	       return outLen;
+	    } else if (errno != EAGAIN)
+	       err_fatal_errno( __FUNCTION__, "Error reading from filter\n" );
+	 } else {
+	    outLen    += count;
+	    outMaxLen -= count;
+	    outPt     += count;
+	 }
+	 break;
+      }
+   }
+}
+
+int pr_filter( const char *command,
+	       const char *inBuffer, int inLen,
+	       char *outBuffer, int outMaxLen )
+{
+   int  pid;
+   FILE *in, *out;
+   
+   pid = pr_open( command, PR_CREATE_STDIN | PR_CREATE_STDOUT,
+		  &in, &out, NULL );
+   return pr_readwrite( in, out, inBuffer, inLen, outBuffer, outMaxLen );
 }
 
 int pr_spawn( const char *command )
