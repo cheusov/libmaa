@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:26 1995 by faith@cs.unc.edu
+ * Revised: Sun Dec 10 20:23:58 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.5 1995/11/19 19:28:36 faith Exp $
+ * $Id: error.c,v 1.6 1995/12/11 15:56:56 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -39,13 +39,15 @@ void err_fatal( const char *routine, const char *format, ... )
    va_list ap;
 
    fflush( stdout );
-   va_start( ap, format );
    fprintf( stderr, "\n%s: ", routine );
+   
+   va_start( ap, format );
    vfprintf( stderr, format, ap );
 #if 0
    if (errno) perror( routine );
 #endif
    va_end( ap );
+   
    fflush( stderr );
    fflush( stdout );
    exit( 1 );
@@ -60,8 +62,9 @@ void err_warning( const char *routine, const char *format, ... )
    va_list ap;
 
    fflush( stdout );
-   va_start( ap, format );
    fprintf( stderr, "\n%s:\n   ", routine );
+   
+   va_start( ap, format );
    vfprintf( stderr, format, ap );
    va_end( ap );
 }
@@ -75,10 +78,12 @@ void err_internal( const char *routine, const char *format, ... )
    va_list ap;
 
    fflush( stdout );
-   va_start( ap, format );
    fprintf( stderr, "\nInternal error in %s:\n  ", routine );
+   
+   va_start( ap, format );
    vfprintf( stderr, format, ap );
    va_end( ap );
+   
    fprintf( stderr, "Aborting proteus: " );
    fflush( stderr );
    fflush( stdout );

@@ -1,6 +1,6 @@
 /* xmalloc.c -- Error-checking malloc
  * Created: Sun Nov  6 18:14:10 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:16 1995 by faith@cs.unc.edu
+ * Revised: Mon Dec 11 10:42:34 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: xmalloc.c,v 1.3 1995/11/19 19:28:52 faith Exp $
+ * $Id: xmalloc.c,v 1.4 1995/12/11 15:56:59 faith Exp $
  */
 
 #include "maaP.h"
@@ -38,8 +38,8 @@ __inline__ void *xmalloc( unsigned int size )
    void *pt = malloc( size );
 
    if (!pt) err_fatal( __FUNCTION__,
-		       "Out of memory while allocating %ld bytes\n",
-		       size );
+		       "Out of memory while allocating %lu bytes\n",
+		       (unsigned long)size );
    return pt;
 }
 
@@ -48,8 +48,8 @@ __inline__ void *xcalloc( unsigned int num, unsigned int size )
    void *pt = calloc( num, size );
 
    if (!pt) err_fatal( __FUNCTION__,
-		       "Out of memory while allocating %ld X %ld byte block\n",
-		       num, size );
+		       "Out of memory while allocating %lu X %lu byte block\n",
+		       (unsigned long)num, (unsigned long)size );
    return pt;
 }
 
@@ -59,9 +59,9 @@ __inline__ void *xrealloc( void *pt, unsigned int size )
 
    if (!new) err_fatal( __FUNCTION__,
 			"Out of memory while reallocating block at %p to"
-			" %ld bytes\n",
+			" %lu bytes\n",
 			pt,
-			size );
+			(unsigned long)size );
    return new;
 }
 

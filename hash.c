@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Sun Dec  3 09:09:20 1995 by r.faith@ieee.org
+ * Revised: Mon Dec 11 10:46:31 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.9 1995/12/04 03:52:45 faith Exp $
+ * $Id: hash.c,v 1.10 1995/12/11 15:56:56 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -407,7 +407,7 @@ hsh_Stats hsh_get_stats( hsh_HashTable table )
    }
    if (t->entries != s->entries )
 	 err_internal( __FUNCTION__,
-		       "Incorrect count for entries: %l vs. %l\n",
+		       "Incorrect count for entries: %lu vs. %lu\n",
 		       t->entries,
 		       s->entries );
 
@@ -446,6 +446,9 @@ unsigned long hsh_string_hash( const void *key )
    const char    *pt = (char *)key;
    unsigned long h  = 0;
 
+   if (!pt)
+      err_internal( __FUNCTION__, "String-valued keys may not be NULL\n" );
+
    while (*pt) {
       h += *pt++;
 #if 0
@@ -478,6 +481,10 @@ unsigned long hsh_pointer_hash( const void *key )
 
 int hsh_string_compare( const void *key1, const void *key2 )
 {
+   if (!key1 || !key2)
+      err_internal( __FUNCTION__,
+		    "String-valued keys may not be NULL: key1=%p, key2=%p\n",
+		    key1, key2 );
    return strcmp( key1, key2 );
 }
 
