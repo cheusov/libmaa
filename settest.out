@@ -1,0 +1,141 @@
+Running test for count of 100
+"key100" is not a member of the setkey80
+key71
+key62
+key53
+key44
+key9
+key35
+key26
+key97
+key17
+key88
+key79
+key0
+key50
+key8
+key41
+key6
+key32
+key23
+key94
+key14
+key85
+key76
+key67
+key58
+key49
+key5
+key31
+key3
+key22
+key13
+key20
+key91
+key11
+key82
+key73
+key64
+key55
+key46
+key37
+key28
+key99
+key19
+key2
+key90
+key10
+key81
+key72
+key63
+key70
+key54
+key61
+key45
+key52
+key36
+key43
+key27
+key34
+key18
+key25
+key96
+key16
+key87
+key78
+key69
+key60
+key51
+key42
+key7
+key33
+key40
+key24
+key95
+key15
+key86
+key93
+key77
+key84
+key68
+key75
+key59
+key66
+key57
+key48
+key39
+key4
+key30
+key21
+key92
+key12
+key83
+key74
+key65
+key56
+key47
+key38
+key29
+key98
+key89
+key1
+Statistics for set at 0x8015000:
+   5 resizings to 347 total
+   100 entries (88 buckets used, 76 without overflow)
+   maximum list length is 2 (optimal is 1.1)
+   101 retrievals (86 from top, 1 failed)
+Statistics for set at 0x8015000:
+   5 resizings to 347 total
+   100 entries (89 buckets used, 79 without overflow)
+   maximum list length is 3 (optimal is 1.1)
+   100 retrievals (79 from top, 0 failed)
+Statistics for set at 0x8015000:
+   5 resizings to 347 total
+   100 entries (83 buckets used, 68 without overflow)
+   maximum list length is 3 (optimal is 1.2)
+   100 retrievals (70 from top, 0 failed)
+
+Set 1:
+bar
+foo
+
+Set 1 (again):
+bar
+foo
+
+Set 2:
+bar
+t2-foo
+Set 1 == Set 2 ? ===> 0
+Set 1 == Set 1 ? ===> 1
+
+Union:
+foo
+bar
+t2-foo
+
+Intersection:
+bar
+
+Difference:
+foo
