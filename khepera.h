@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Mon Sep  4 13:06:56 1995 by r.faith@ieee.org
+ * Revised: Sun Sep 10 13:01:07 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.8 1995/09/04 20:20:00 faith Exp $
+ * $Id: khepera.h,v 1.9 1995/09/11 02:20:13 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -71,6 +71,7 @@
 
 extern void kh_init( void );
 extern void kh_shutdown( void );
+extern void kh_insert_notice( FILE *str, const char *name, const char *input );
 
 /* xmalloc.c */
 
@@ -367,6 +368,14 @@ extern void   prs_set_cpp_options( const char *cpp_options );
 extern void   prs_file( const char *filename );
 extern int    prs_make_integer( const char *string, int length );
 extern double prs_make_double( const char *string, int length );
+
+/* parse-concrete.c */
+
+extern void   prs_register_concrete( const char *symbol,
+				     const char *concrete );
+extern const  char *prs_concrete( const char *symbol );
+extern void   _prs_shutdown( void );
+
 
 /* symbol.c */
 
