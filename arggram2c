@@ -2,7 +2,7 @@
 
 #
 # converts arggram.txt to arggram.c
-# usage: arggram.sh < arggram.txt > arggram.c
+# usage: arggram2c < arggram.txt > arggram.c
 #
 
 BEGIN {
