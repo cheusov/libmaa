@@ -1,7 +1,7 @@
 # Makefile.in -- Makefile for Khepera documentation
 # Created: Sun Jan  8 21:44:38 1995 by faith@cs.unc.edu
-# Revised: Fri Feb 28 09:26:09 1997 by faith@cs.unc.edu
-# Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+# Revised: Wed May 21 00:56:52 1997 by faith@acm.org
+# Copyright 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
 # 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.8 1997/02/28 14:42:18 faith Exp $
+# $Id: Makefile.in,v 1.9 1997/05/21 05:01:29 faith Exp $
 #
 
 .SUFFIXES:
@@ -93,7 +93,7 @@ general.tex: $(LIBMAA_SOURCES)
 .PHONY: clean distclean
 clean:
 	-rm -f *.o *~ core a.out config.log $(EXES) $(FIGS) $(SLIDEFIGS)
-	-rm -f *.log *.aux *.toc *.dvi *.lj *.ps $(TEMPORARIES)
+	-rm -f *.log *.aux *.toc *.dvi *.lj $(TEMPORARIES)
 	-rm -f *.bbl *.blg *.stamp
 
 distclean: clean

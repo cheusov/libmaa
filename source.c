@@ -1,6 +1,6 @@
 /* source.c -- Source code management for Libmaa
  * Created: Mon Dec 26 19:42:03 1994 by faith@cs.unc.edu
- * Revised: Fri May  9 17:05:43 1997 by faith@cs.unc.edu
+ * Revised: Wed May 21 00:45:36 1997 by faith@acm.org
  * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.5 1997/05/10 10:20:31 faith Exp $
+ * $Id: source.c,v 1.6 1997/05/21 05:01:26 faith Exp $
  *
  * \section{Source Code Management}
  *
@@ -377,7 +377,7 @@ static void _src_print_error( FILE *str, sourceType *s, int fudge )
 
    It is assumed that |message| has the format of |yyerror| so that
    massaging of the string can be performed to make it more readable (token
-   names are assumed to start with ``T_'' and will be changed to more
+   names are assumed to start with ``T\_'' and will be changed to more
    readable names).  This massaging should be done by a user-defined
    function, since it is relatively specific to this author's coding
    conventions. */
