@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sun Jan 14 13:53:13 1996 by r.faith@ieee.org
+ * Revised: Mon Jan 29 20:53:33 1996 by r.faith@ieee.org
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.6 1996/01/15 03:48:05 faith Exp $
+ * $Id: maa.h,v 1.7 1996/01/31 12:31:16 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -129,7 +129,7 @@ extern int           hsh_insert( hsh_HashTable table,
 				 const void *datum );
 extern int           hsh_delete( hsh_HashTable table, const void *key );
 extern const void    *hsh_retrieve( hsh_HashTable table, const void *key );
-extern void          hsh_iterate( hsh_HashTable table,
+extern int           hsh_iterate( hsh_HashTable table,
 				  int (*iterator)( const void *key,
 						   const void *datum ) );
 extern hsh_Stats     hsh_get_stats( hsh_HashTable table );

@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Mon Dec 11 10:46:31 1995 by r.faith@ieee.org
+ * Revised: Tue Jan 30 15:54:55 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.10 1995/12/11 15:56:56 faith Exp $
+ * $Id: hash.c,v 1.11 1996/01/31 12:31:15 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -62,7 +62,7 @@ static void _hsh_check( tableType t, const char *function )
 #if KH_MAGIC
    if (t->magic != HSH_MAGIC)
       err_internal( function,
-		    "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+		    "Magic match failed: 0x%08x (should be 0x%08x)\n",
 		    t->magic,
 		    HSH_MAGIC );
 #endif
@@ -319,13 +319,13 @@ const void *hsh_retrieve( hsh_HashTable table,
 /* \doc |hsh_iterate| is used to iterate a function over every value in the
    |table|.  The function, |iterator|, is passed the |key| and |datum| pair
    for each entry in the table.  If |iterator| returns a non-zero value,
-   the iterations stop, and |hsh_iterate| returns.  Note that the keys are
-   in some arbitrary order, and that this order may change between two
-   successive calls to |hsh_iterate|. */
+   the iterations stop, and |hsh_iterate| returns non-zero.  Note that the
+   keys are in some arbitrary order, and that this order may change between
+   two successive calls to |hsh_iterate|. */
 
-void hsh_iterate( hsh_HashTable table,
-		  int (*iterator)( const void *key,
-				   const void *datum ) )
+int hsh_iterate( hsh_HashTable table,
+		 int (*iterator)( const void *key,
+				  const void *datum ) )
 {
    tableType     t = (tableType)table;
    unsigned long i;
@@ -346,10 +346,11 @@ void hsh_iterate( hsh_HashTable table,
 	 for (pt = t->buckets[i]; pt; pt = next) {
 	    next = pt->next;
 	    if (iterator( pt->key, pt->datum ))
-	       return;
+	       return 1;
 	 }
       }
    }
+   return 0;
 }
 
 /* a function callable from hsh_iterate() to print key values */
