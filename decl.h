@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: decl.h,v 1.13 1998/01/16 03:51:48 faith Exp $
+ * $Id: decl.h,v 1.14 1999/12/22 17:18:56 faith Exp $
  * 
  */
 
@@ -28,7 +28,7 @@
 declarations for standard library calls.  We provide them here for
 situations that we know about. */
 
-#if defined(__sparc__)
+#if defined(__sparc__) && !defined(linux)
 #include <sys/resource.h>
 				/* Both SunOS and Solaris */
 extern int    getrusage( int who, struct rusage * );
