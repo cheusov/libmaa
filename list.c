@@ -1,7 +1,7 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Sun Aug 27 22:43:12 1995 by r.faith@ieee.org
+ * Revised: Tue Aug 29 01:07:18 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,12 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.3 1995/08/28 15:33:20 faith Exp $
+ * $Id: list.c,v 1.4 1995/08/29 05:08:53 faith Exp $
  *
  * \section{List Routines}
  *
  * \intro The list routines provide support for a general linked list
- * containtin objected that are pointers to "void".  The list can be viewed
+ * containting objects that are pointers to "void".  The list can be viewed
  * as a stack or queue -- data can be added to the head or the tail, but
  * can only be removed from the head (this data structure is sometimes
  * called a ``qstack'').  (If only a stack is needed, the stack routines are
