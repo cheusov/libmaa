@@ -1,6 +1,6 @@
 /* flags.c -- Flag support for Khepera
  * Created: Sat Mar 23 10:11:52 1996 by faith@cs.unc.edu
- * Revised: Sat Mar 23 15:20:30 1996 by faith@cs.unc.edu
+ * Revised: Mon Jun 17 08:34:21 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: flags.c,v 1.1 1996/03/23 22:14:04 faith Exp $
+ * $Id: flags.c,v 1.2 1996/06/17 20:10:03 faith Exp $
  *
  * \section{Flag Support}
  *
@@ -53,10 +53,10 @@ static int _flg_exists( flg_Type flag )
    return TEST( flag, usedFlags );
 }
 
-/* |_flg_name| returns a pointer to the name that was associated with the
+/* |flg_name| returns a pointer to the name that was associated with the
    |flag|. */
 
-static const char *_flg_name( flg_Type flag )
+const char *flg_name( flg_Type flag )
 {
    hsh_Position position;
    void         *key;
@@ -94,7 +94,7 @@ void flg_register( flg_Type flag, const char *name )
 		    "The flag %lx has been used for \"%s\""
 		    " and cannot be reused for \"%s\"\n",
 		    flag,
-		    _flg_name( flag ),
+		    flg_name( flag ),
 		    name );
 
    hsh_insert( hash, name, (void *)flag );

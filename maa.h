@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Mon May 27 11:06:41 1996 by r.faith@ieee.org
+ * Revised: Mon Jun 17 08:34:20 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.15 1996/05/27 16:22:15 faith Exp $
+ * $Id: maa.h,v 1.16 1996/06/17 20:10:05 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -401,6 +401,7 @@ extern void           flg_destroy( void );
 extern void           flg_set( const char *name );
 extern __inline__ int flg_test( flg_Type flag );
 extern void           flg_list( FILE *stream );
+extern const          char *flg_name( flg_Type flag );
 
 /* timer.c */
 
