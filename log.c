@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.13 2002/08/05 11:16:53 cheusov Exp $
+ * $Id: log.c,v 1.14 2004/05/16 13:55:53 cheusov Exp $
  * 
  */
 
@@ -259,7 +259,10 @@ void log_close( void )
    logSyslog     = 0;
 }
 
-void log_error_va( const char *routine, const char *format, va_list ap )
+static void _log_base_va(
+   const char *routine,
+   int log_facility,
+   const char *format, va_list ap )
 {
    time_t t;
    char   buf[4096];
@@ -281,8 +284,10 @@ void log_error_va( const char *routine, const char *format, va_list ap )
                   (long int)getpid() );
          pt = buf + strlen( buf );
       }
-      if (routine) sprintf( pt, "(%s) ", routine );
-      pt = buf + strlen( buf );
+      if (routine){
+	 sprintf( pt, "(%s) ", routine );
+	 pt = buf + strlen( buf );
+      }
       vsprintf( pt, format, ap );
       
       if (logFd >= 0) {
@@ -296,14 +301,19 @@ void log_error_va( const char *routine, const char *format, va_list ap )
          fflush( logUserStream );
       }
    }
-   
+
 #if !defined(__DGUX__) && !defined(__hpux__) && !defined(__CYGWIN__)
 #if !defined(__osf__)
    if (logSyslog) {
-      vsyslog( LOG_ERR, format, ap );
+      vsyslog( log_facility, format, ap );
    }
 #endif
 #endif
+}
+
+void log_error_va( const char *routine, const char *format, va_list ap )
+{
+   _log_base_va (routine, LOG_ERR, format, ap);
 }
 
 void log_error( const char *routine, const char *format, ... )
@@ -317,47 +327,7 @@ void log_error( const char *routine, const char *format, ... )
 
 void log_info_va( const char *format, va_list ap )
 {
-   time_t t;
-   char   buf[4096];
-   char   *pt;
-   
-   if (!logOpen) return;
-   
-   time(&t);
-   
-   if (logFd >= 0 || logUserStream) {
-      if (inhibitFull) {
-         pt = buf;
-      } else {
-         sprintf( buf,
-                  "%24.24s %s %s[%ld]: ",
-                  ctime(&t),
-                  logHostname,
-                  logIdent,
-                  (long int)getpid() );
-         pt = buf + strlen( buf );
-      }
-      vsprintf( pt, format, ap );
-      
-      if (logFd >= 0) {
-          _log_check_filename();
-          write( logFd, buf, strlen(buf) );
-      }
-      if (logUserStream) {
-         fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
-                                                  open stream with "a" */
-         fprintf( logUserStream, "%s", buf );
-         fflush( logUserStream );
-      }
-   }
-   
-#if !defined(__DGUX__) && !defined(__hpux__) && !defined(__CYGWIN__)
-#if !defined(__osf__)
-   if (logSyslog) {
-      vsyslog( LOG_INFO, format, ap );
-   }
-#endif
-#endif
+   _log_base_va (NULL, LOG_INFO, format, ap);
 }
 
 void log_info( const char *format, ... )
