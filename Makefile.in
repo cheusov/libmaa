@@ -1,0 +1,96 @@
+# Makefile.in -- Makefile for Khepera
+# Created: Sun Nov  6 13:56:03 1994 by faith@cs.unc.edu
+# Revised: Fri Apr 21 11:31:02 1995 by faith@cs.unc.edu
+# Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 1, or (at your option) any
+# later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+# 
+# $Id: Makefile.in,v 1.1 1995/04/21 15:31:47 faith Exp $
+#
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+
+ifneq (,)
+This makefile requires GNU Make.
+endif
+
+srcdir=	@srcdir@
+VPATH=	@srcdir@
+prefix=		@prefix@
+exec_prefix=	@exec_prefix@
+
+SHELL=	/bin/sh
+
+CC=	@CC@
+CFLAGS=	@CFLAGS@ @DEFS@ @DMCFLAGS@ -I. -I..
+LDFLAGS=@LDFLAGS@ -L.
+CPP=	@CPP@
+
+DEFS=	@DEFS@
+
+LDLIBS=	-lkhepera @LIBS@ @DMLIBS@ -lm
+
+LEX=	@LEX@
+LEXLIB= @LEXLIB@
+YACC=	@YACC@
+
+LN_S=	@LN_S@
+RANLIB=	@RANLIB@
+INSTALL_PROGRAM=	@INSTALL_PROGRAM@
+INSTALL_DATA=		@INSTALL_DATA@
+
+HEADERS= ../config.h kh.h khepera.h obstack.h
+LIBOBJS= @LIBOBJS@ obstack.o hash.o set.o stack.o error.o memory.o string.o \
+	 debug.o source.o tree.o kh.o
+EXES=	 treetest settest hashtest stringtest debugtest
+
+LIBS=    libkhepera.a
+
+all: $(LIBS) $(EXES)
+
+%.o: %.c
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+
+%: %.o $(LDLIBS)
+	$(CC) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+%: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+libkhepera.a:: $(LIBOBJS)
+	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
+	$(RANLIB) $@
+
+$(LIBOBJS): $(HEADERS)
+$(EXES):    $(HEADERS)
+
+.PHONY: clean cleandist tags
+clean:
+	-rm -f *.o *.s *~ core a.out config.log $(EXES)
+	-rm -f *.log *.aux *.toc *.dvi *.ps
+	-rm -f *.cfg *.dtk .inslog tca.map .pure
+
+distclean: clean
+	-rm -f config.h config.cache Makefile $(LIBS)
+
+tags:
+	etags: *.c
+
+
+# This is from the textutils-1.11 lib/Makefile.in
+subdir=lib
+Makefile: Makefile.in ../config.status
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
