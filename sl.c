@@ -1,6 +1,6 @@
 /* sl.c -- Skip lists
  * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Sat Feb 24 18:57:08 1996 by faith@cs.unc.edu
+ * Revised: Sun Feb 25 11:11:45 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  *
@@ -18,7 +18,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: sl.c,v 1.2 1996/02/25 00:08:59 faith Exp $
+ * $Id: sl.c,v 1.3 1996/02/25 16:22:00 faith Exp $
  *
  * \section{Skip List Routines}
  *
@@ -41,13 +41,18 @@
 
 #include "maaP.h"
 
+#define SL_DEBUG
+
 typedef struct _sl_Entry {
 #if MAA_MAGIC
    int              magic;
 #endif
    const void       *datum;
-   int              levels;
-   struct _sl_Entry *forward[1];	/* variable sized array */
+#ifdef SL_DEBUG
+   int              levels;	/* levels for this entry */
+#endif
+   struct _sl_Entry *backward;	/* parent */
+   struct _sl_Entry *forward[1]; /* variable sized array */
 } *_sl_Entry;
 
 typedef struct _sl_List {
@@ -96,7 +101,7 @@ static int _sl_check_entry( _sl_Entry e, const char *function )
    return 0;
 }
 
-#if 0
+#ifndef SL_DEBUG
 #define _sl_check(x) /* */
 #else
 static void _sl_check( sl_List list )
@@ -115,6 +120,13 @@ static void _sl_check( sl_List list )
 		       (unsigned long)l->key( pt->datum ),
 		       l->key( pt->forward[0]->datum ),
 		       (unsigned long)l->key( pt->forward[0]->datum ) );
+      }
+      if (pt && pt->forward[0] && pt->forward[0]->backward != pt) {
+	 _sl_dump( list );
+	 err_internal( __FUNCTION__,
+		       "Backward pointer corrupt for 0x%p=%lu\n",
+		       l->key( pt->datum ),
+		       (unsigned long)l->key( pt->datum ) );
       }
    }
 }
@@ -226,7 +238,8 @@ static const char *_sl_print( const void *datum )
    return buf;
 }
 
-static _sl_Entry _sl_locate( _sl_List l, const void *key, _sl_Entry update[] )
+static _sl_Entry _sl_locate_previous( _sl_List l, const void *key,
+				      _sl_Entry update[] )
 {
    int       i;
    _sl_Entry pt;
@@ -238,15 +251,15 @@ static _sl_Entry _sl_locate( _sl_List l, const void *key, _sl_Entry update[] )
 	 pt = pt->forward[i];
       update[i] = pt;
    }
-   pt = pt->forward[0];
    
-   return pt;
+   return pt;			/* Caller must do pt = pt->forward[0] */
 }
 
 void sl_insert( sl_List list, const void *datum )
 {
    _sl_List         l = (_sl_List)list;
    _sl_Entry        update[_sl_MaxLevel + 1];
+   _sl_Entry        backward;
    _sl_Entry        pt;
    const void       *key;
    int              i;
@@ -257,7 +270,8 @@ void sl_insert( sl_List list, const void *datum )
    
    key = KEY(l,datum);
 
-   pt = _sl_locate( l, key, update );
+   backward = _sl_locate_previous( l, key, update );
+   pt       = backward->forward[0];
 
    if (pt && !l->compare( KEY(l,pt->datum), key ))
       err_internal( __FUNCTION__,
@@ -270,10 +284,16 @@ void sl_insert( sl_List list, const void *datum )
    
    entry = _sl_create_entry( level, datum );
 
+				/* Fixup forward pointers */
    for (i = 0; i <= level; i++) {
       entry->forward[i]     = update[i]->forward[i];
       update[i]->forward[i] = entry;
    }
+
+				/* Fixup backward pointers */
+   entry->backward = backward;
+   if (entry->forward[0]) entry->forward[0]->backward = entry;
+   
    _sl_check( list );
 }
 
@@ -281,6 +301,7 @@ void sl_delete( sl_List list, const void *datum )
 {
    _sl_List         l = (_sl_List)list;
    _sl_Entry        update[_sl_MaxLevel + 1];
+   _sl_Entry        backward;
    _sl_Entry        pt;
    const void       *key;
    int              i;
@@ -289,7 +310,8 @@ void sl_delete( sl_List list, const void *datum )
    
    key = KEY(l,datum);
 
-   pt = _sl_locate( l, key, update );
+   backward = _sl_locate_previous( l, key, update );
+   pt       = backward->forward[0];
 
    if (!pt || l->compare( KEY(l,pt->datum), key )) {
       _sl_dump( list );
@@ -297,17 +319,23 @@ void sl_delete( sl_List list, const void *datum )
 		    "Datum \"%s\" is not in list\n", PRINT(l,datum) );
    }
 
+				/* Fixup sl_iterate's position pointer */
    if (_sl_Current && _sl_Current == pt) {
-      _sl_Current = pt->forward[0];	/* for sl_iterate */
+      _sl_Current = pt->backward;
+      assert( _sl_Current );
       PRINTF(MAA_SL,("delete: %lu => %lu\n",
 		     (unsigned long)l->key(pt->datum),
 		     _sl_Current?(unsigned long)l->key(_sl_Current->datum):0));
    }
 
+				/* Fixup forward pointers */
    for (i = 0; i <= l->level; i++) {
       if (update[i]->forward[i] == pt)
 	 update[i]->forward[i] = pt->forward[i];
    }
+				/* Fixup backward pointer */
+   if (pt->forward[0]) pt->forward[0]->backward = backward;
+   
    xfree( pt );
    while (l->level && !l->head->forward[ l->level ])
       --l->level;
@@ -318,11 +346,13 @@ const void *sl_find( sl_List list, const void *key )
 {
    _sl_List         l = (_sl_List)list;
    _sl_Entry        update[_sl_MaxLevel + 1];
+   _sl_Entry        backward;
    _sl_Entry        pt;
 
    _sl_check_list( list, __FUNCTION__ );
 
-   pt = _sl_locate( l, key, update );
+   backward = _sl_locate_previous( l, key, update );
+   pt       = backward->forward[0];
 
    if (pt && !l->compare( KEY(l,pt->datum), key )) return pt->datum;
    return NULL;
@@ -330,11 +360,12 @@ const void *sl_find( sl_List list, const void *key )
 
 int sl_iterate( sl_List list, int (*f)( const void *datum ) )
 {
-   _sl_List  l = (_sl_List)list;
-   _sl_Entry pt;
-   _sl_Entry next;
-   int       retcode;
-   _sl_Entry oldCurrent = _sl_Current;
+   _sl_List   l = (_sl_List)list;
+   _sl_Entry  pt;
+   _sl_Entry  next;
+   int        retcode;
+   _sl_Entry  oldCurrent = _sl_Current; /* Make sl_iterate re-entrant */
+   const void *key;
 
    if (!list) return 0;
    _sl_check_list( list, __FUNCTION__ );
@@ -350,27 +381,24 @@ int sl_iterate( sl_List list, int (*f)( const void *datum ) )
 
    for (pt = l->head->forward[0], _sl_Current = l->head; pt; pt = next) {
       _sl_check_entry( pt, __FUNCTION__ );
+      key = l->key( pt->datum ); /* Save current key for comparison */
+      
       if ((retcode = f(pt->datum))) {
-	 _sl_Current = oldCurrent;
+	 _sl_Current = oldCurrent; /* Restore old pointer */
 	 return retcode;
       }
-      if (_sl_Current) {
-	 if (_sl_Current->forward[0] == pt) {
-				/* pt not deleted */
-	    next = _sl_Current->forward[0];
-	    _sl_Current = next;
-	    if (next) next = next->forward[0];
-	 } else {
-				/* pt deleted, _sl_Current might have moved */
-	    next = _sl_Current->forward[0];
-	 }
-      } else
-	 next = NULL;
-      PRINTF(MAA_SL,("next = %lu\n",next?l->key(next->datum):0));
+      assert( _sl_Current );
+
+      for (next = _sl_Current->forward[0]; next; next = next->forward[0])
+	 if (l->compare( l->key( next->datum ), key ) > 0) break;
+
+      PRINTF(MAA_SL,("next = 0x%p/%lu\n",
+		     next?(unsigned long)l->key(next->datum):0,
+		     next?(unsigned long)l->key(next->datum):0));
    }
 
    _sl_check( list );
-   _sl_Current = oldCurrent;
+   _sl_Current = oldCurrent;	/* Restore old pointer */
    
    return 0;
 }
@@ -386,11 +414,12 @@ void _sl_dump( sl_List list )
 
    printf( "Level = %d\n", l->level );
    for (pt = l->head; pt; pt = pt->forward[0]) {
-      printf( "  Entry %p (%d/%p/0x%p=%lu) has 0x%04x levels:\n",
+      printf( "  Entry %p (%d/%p/0x%p=%lu) has 0x%x levels (backward = %p):\n",
 	      pt, count++, pt->datum,
 	      pt->datum ? l->key( pt->datum ) : 0,
 	      (unsigned long)(pt->datum ? l->key( pt->datum ) : 0),
-	      pt->levels );
+	      pt->levels,
+	      pt->backward );
       for (i = 0; i < pt->levels; i++)
 	 printf( "    %p\n", pt->forward[i] );
    }
