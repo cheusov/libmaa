@@ -1,6 +1,6 @@
 /* kh.c -- General Support for Khepera
  * Created: Fri Jan 20 14:56:18 1995 by faith@cs.unc.edu
- * Revised: Sun Oct 22 13:59:22 1995 by r.faith@ieee.org
+ * Revised: Sun Oct 22 15:23:22 1995 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.c,v 1.6 1995/10/22 18:13:30 faith Exp $
+ * $Id: kh.c,v 1.7 1995/10/22 19:23:48 faith Exp $
  *
  * \section{General Support}
  *
@@ -73,6 +73,7 @@ void kh_shutdown( void )
       tim_print_timers( stderr );
    }
    _tim_shutdown();
+   dbg_destroy();
 }
 
 void kh_insert_notice( FILE *str, const char *name, const char *input )

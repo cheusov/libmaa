@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Sun Oct 22 10:46:26 1995 by r.faith@ieee.org
+ * Revised: Sun Oct 22 15:17:41 1995 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: timer.c,v 1.2 1995/10/22 18:13:33 faith Exp $
+ * $Id: timer.c,v 1.3 1995/10/22 19:23:49 faith Exp $
  * 
  */
 
@@ -46,7 +46,7 @@ void tim_start( const char *name )
 
    _tim_check();
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ))) {
-      entry = malloc( sizeof( struct tim_Entry  ) );
+      entry = xmalloc( sizeof( struct tim_Entry  ) );
       entry->real = entry->user = entry->system = 0;
       hsh_insert( _tim_Hash, name, entry );
    }
@@ -147,5 +147,13 @@ void tim_print_timers( FILE *str )
 
 void _tim_shutdown( void )
 {
-   if (_tim_Hash) hsh_destroy( _tim_Hash );
+   static int freer( const void *key, const void *datum )
+      {
+	 xfree( (void *)datum ); /* Discard const */
+      }
+   
+   if (_tim_Hash) {
+      hsh_iterate( _tim_Hash, freer );
+      hsh_destroy( _tim_Hash );
+   }
 }
