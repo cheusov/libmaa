@@ -27,7 +27,7 @@
 
 #include "maaP.h"
 
-size_t strlcpy (
+size_t strlcpy_libmaa (
    char *dest,
    const char *src,
    size_t size)
