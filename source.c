@@ -1,6 +1,6 @@
 /* source.c -- Source code management for Libmaa
  * Created: Mon Dec 26 19:42:03 1994 by faith@cs.unc.edu
- * Revised: Fri Feb 28 10:28:41 1997 by faith@cs.unc.edu
+ * Revised: Mon Mar 17 22:09:15 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.2 1997/03/01 04:20:54 faith Exp $
+ * $Id: source.c,v 1.3 1997/03/18 12:39:06 faith Exp $
  *
  * \section{Source Code Management}
  *
@@ -307,7 +307,7 @@ void src_print_stats( FILE *stream )
 static void _src_print_yyerror( FILE *str, const char *message )
 {
    const char *pt;
-   char       buf[128];
+   char       buf[1024];
    char       *b;
    const char *concrete;
 
