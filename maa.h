@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sat Mar 23 10:59:26 1996 by faith@cs.unc.edu
+ * Revised: Wed Apr 24 15:30:48 1996 by r.faith@ieee.org
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.13 1996/03/23 22:14:06 faith Exp $
+ * $Id: maa.h,v 1.14 1996/04/24 19:34:02 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -461,5 +461,9 @@ extern const void *sl_find( sl_List list, const void *key );
 extern int        sl_iterate( sl_List list, sl_Iterator f );
 extern int        sl_iterate_arg( sl_List list, sl_IteratorArg f, void *arg );
 extern void       _sl_dump( sl_List list );
+
+/* text.c */
+
+extern const char *txt_soundex( const char *string );
 
 #endif
