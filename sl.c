@@ -1,6 +1,6 @@
 /* sl.c -- Skip lists
  * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Sun Feb 25 11:11:45 1996 by faith@cs.unc.edu
+ * Revised: Sun Feb 25 15:56:11 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  *
@@ -18,7 +18,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: sl.c,v 1.3 1996/02/25 16:22:00 faith Exp $
+ * $Id: sl.c,v 1.4 1996/02/25 22:04:02 faith Exp $
  *
  * \section{Skip List Routines}
  *
@@ -34,8 +34,8 @@
  * long as the ordering of the data stay the same.  This is essential for
  * the use of skip lists for \khepera trees.
  *
- * This code is derived from articles written by William Pugh [CITATION
- * HERE] and from a skip list implementation by Lars Nyland.
+ * This code is derived from \cite{faith:Pugh90} and from a skip list
+ * implementation by Lars Nyland.
  *
  */
 
@@ -71,7 +71,6 @@ static _sl_Entry  _sl_Current;
 
 #define _sl_MaxLevel  16
 
-#define KEY(l,d) ((l)->key ? (l)->key(d) : (d))
 #define PRINT(l,d) ((l)->print ? (l)->print(d) : _sl_print(d))
 
 static void _sl_check_list( _sl_List l, const char *function )
@@ -112,7 +111,8 @@ static void _sl_check( sl_List list )
    _sl_check_list( list, __FUNCTION__ );
    for (pt = l->head->forward[0]; pt; pt = pt->forward[0] ) {
       if (pt && pt->forward[0]
-	  && l->key( pt->datum ) >= l->key( pt->forward[0]->datum )) {
+	  && l->compare( l->key( pt->datum ),
+			 l->key( pt->forward[0]->datum ) ) >= 0) {
 	 _sl_dump( list );
 	 err_internal( __FUNCTION__,
 		       "Datum 0x%p=%lu >= 0x%p=%lu\n",
@@ -175,6 +175,8 @@ sl_List sl_create( int (*compare)( const void *key1, const void *key2 ),
 
    if (!compare)
       err_internal( __FUNCTION__, "compare fuction is NULL\n" );
+   if (!key)
+      err_internal( __FUNCTION__, "key fuction is NULL\n" );
 
    l          = mem_get_object( _sl_Memory );
 #if MAA_MAGIC
@@ -190,6 +192,11 @@ sl_List sl_create( int (*compare)( const void *key1, const void *key2 ),
 
    return l;
 }
+
+/* \doc |sl_destroy| removes all of the memory associated with the
+   maintenance of the specified skip |list|.  The pointer to the
+   user-defined |datum| is "not" freed -- this is the responsibility of the
+   user. */
 
 void sl_destroy( sl_List list )
 {
@@ -210,6 +217,10 @@ void sl_destroy( sl_List list )
 #endif
    mem_free_object( _sl_Memory, l );
 }
+
+/* \doc |_sl_shutdown| is used to free the internal data structures used by
+   the skip list package.  Since it is called automatically by \libmaa, it
+   should not be called explicitly by the user. */
 
 void _sl_shutdown( void )
 {
@@ -247,13 +258,16 @@ static _sl_Entry _sl_locate_previous( _sl_List l, const void *key,
    _sl_check( l );
    for (i = l->level, pt = l->head; i >= 0; i--) {
       while (pt->forward[i]
-	     && l->compare( KEY(l,pt->forward[i]->datum), key ) < 0)
+	     && l->compare( l->key( pt->forward[i]->datum ), key ) < 0)
 	 pt = pt->forward[i];
       update[i] = pt;
    }
    
    return pt;			/* Caller must do pt = pt->forward[0] */
 }
+
+
+/* \doc Insert |datum| into |list|. */
 
 void sl_insert( sl_List list, const void *datum )
 {
@@ -268,12 +282,12 @@ void sl_insert( sl_List list, const void *datum )
 
    _sl_check_list( list, __FUNCTION__ );
    
-   key = KEY(l,datum);
+   key = l->key( datum );
 
    backward = _sl_locate_previous( l, key, update );
    pt       = backward->forward[0];
 
-   if (pt && !l->compare( KEY(l,pt->datum), key ))
+   if (pt && !l->compare( l->key( pt->datum ), key ))
       err_internal( __FUNCTION__,
 		    "Datum \"%s\" is already in list\n", PRINT(l,datum) );
 
@@ -297,6 +311,8 @@ void sl_insert( sl_List list, const void *datum )
    _sl_check( list );
 }
 
+/* \doc Delete |datum| from |list|. */
+
 void sl_delete( sl_List list, const void *datum )
 {
    _sl_List         l = (_sl_List)list;
@@ -308,12 +324,12 @@ void sl_delete( sl_List list, const void *datum )
 
    _sl_check_list( list, __FUNCTION__ );
    
-   key = KEY(l,datum);
+   key = l->key( datum );
 
    backward = _sl_locate_previous( l, key, update );
    pt       = backward->forward[0];
 
-   if (!pt || l->compare( KEY(l,pt->datum), key )) {
+   if (!pt || l->compare( l->key( pt->datum ), key )) {
       _sl_dump( list );
       err_internal( __FUNCTION__,
 		    "Datum \"%s\" is not in list\n", PRINT(l,datum) );
@@ -342,6 +358,9 @@ void sl_delete( sl_List list, const void *datum )
    _sl_check( list );
 }
 
+/* \doc Find the datum in |list| that has an associated value of |key|.
+   Return that datum (a pointer), or "NULL" if the |key| is not found. */
+
 const void *sl_find( sl_List list, const void *key )
 {
    _sl_List         l = (_sl_List)list;
@@ -354,9 +373,14 @@ const void *sl_find( sl_List list, const void *key )
    backward = _sl_locate_previous( l, key, update );
    pt       = backward->forward[0];
 
-   if (pt && !l->compare( KEY(l,pt->datum), key )) return pt->datum;
+   if (pt && !l->compare( l->key( pt->datum ), key )) return pt->datum;
    return NULL;
 }
+
+/* \doc Iterate |f| over every datum in |list|.  If |f| returns non-zero,
+   then abort the remainder of the iteration.  Iterations are designed to
+   do something appropriate in the face of arbitrary insertions and
+   deletions performed by |f|. */
 
 int sl_iterate( sl_List list, int (*f)( const void *datum ) )
 {
@@ -392,7 +416,7 @@ int sl_iterate( sl_List list, int (*f)( const void *datum ) )
       for (next = _sl_Current->forward[0]; next; next = next->forward[0])
 	 if (l->compare( l->key( next->datum ), key ) > 0) break;
 
-      PRINTF(MAA_SL,("next = 0x%p/%lu\n",
+      PRINTF(MAA_SL,("next = 0x%x/%lu\n",
 		     next?(unsigned long)l->key(next->datum):0,
 		     next?(unsigned long)l->key(next->datum):0));
    }
@@ -402,6 +426,9 @@ int sl_iterate( sl_List list, int (*f)( const void *datum ) )
    
    return 0;
 }
+
+/* \doc Dump the internal data structures associated with |list|.  This is
+   purely for debugging. */
 
 void _sl_dump( sl_List list )
 {
