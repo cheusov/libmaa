@@ -1,7 +1,7 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Fri Nov  7 19:20:42 1997 by faith@acm.org
- * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
+ * Revised: Sun Feb 22 13:43:42 1998 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997, 1998 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.34 1997/11/08 01:33:09 faith Exp $
+ * $Id: maa.h,v 1.35 1998/02/22 18:50:29 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -560,7 +560,7 @@ extern void   _prs_shutdown( void );
 #define LOG_OPTION_FULL    1
 #define LOG_OPTION_NO_FULL 2
 
-extern void log_syslog( const char *ident, int daemon );
+extern void log_syslog( const char *ident, int daemon_flag );
 extern void log_option( int option );
 extern void log_file( const char *ident, const char *filename );
 extern void log_stream( const char *ident, FILE *stream );

@@ -1,7 +1,7 @@
 /* log.c -- Logging routines, for a single, program-wide logging facility
  * Created: Mon Mar 10 09:37:21 1997 by faith@cs.unc.edu
- * Revised: Thu Sep 25 08:26:32 1997 by faith@acm.org
- * Copyright 1997 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Sun Feb 22 13:44:24 1998 by faith@acm.org
+ * Copyright 1997, 1998 Rickard E. Faith (faith@acm.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.7 1998/01/16 03:51:49 faith Exp $
+ * $Id: log.c,v 1.8 1998/02/22 18:50:29 faith Exp $
  * 
  */
 
@@ -64,12 +64,12 @@ void log_option( int option )
    else                              inhibitFull = 0;
 }
 
-void log_syslog( const char *ident, int daemon )
+void log_syslog( const char *ident, int daemon_flag )
 {
    if (logSyslog)
       err_internal( __FUNCTION__, "Syslog facility already open\n" );
    
-   openlog( ident, LOG_PID|LOG_NOWAIT, daemon ? LOG_DAEMON : LOG_USER );
+   openlog( ident, LOG_PID|LOG_NOWAIT, daemon_flag ? LOG_DAEMON : LOG_USER );
    ++logOpen;
    ++logSyslog;
 }
