@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.7 1997/02/28 14:30:03 faith Exp $
+# $Id: Makefile.in,v 1.8 1997/02/28 14:42:18 faith Exp $
 #
 
 .SUFFIXES:
@@ -35,10 +35,11 @@ BIBTEX=         @BIBTEX@
 
 SHELL=	/bin/sh
 
-LIBMAA_SOURCES= ../maa.h ../maa.c ../arg.c ../bit.c ../debug.c \
-	../error.c ../flags.c ../hash.c ../list.c ../memory.c \
-	../parse.c ../parse-concrete.c \
-	../pr.c ../prime.c ../set.c ../sl.c ../source.c ../stack.c ../timer.c
+LIBMAA_SOURCES= ../maa.h ../maa.c ../arg.c ../base26.c ../base64.c \
+	../bit.c ../debug.c ../error.c ../flags.c ../hash.c ../list.c \
+	../memory.c ../parse-concrete.c ../parse.c ../pr.c ../prime.c \
+	../set.c ../sl.c ../source.c ../stack.c ../string.c ../text.c \
+	../timer.c
 
 FIGS=
 SLIDEFIGS=
