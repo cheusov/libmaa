@@ -1,6 +1,6 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Sun Feb 18 17:03:36 1996 by faith@cs.unc.edu
+ * Revised: Mon Feb 26 10:02:52 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.11 1996/02/23 21:29:09 faith Exp $
+ * $Id: set.c,v 1.12 1996/02/26 15:23:16 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -187,9 +187,8 @@ void set_destroy( set_Set set )
    setType       t = (setType)set;
 
    _set_check( t, __FUNCTION__ );
-
    if (t->readonly)
-      err_internal( __FUNCTION__, "Attempt to destroy readonly table\n" );
+      err_internal( __FUNCTION__, "Attempt to destroy readonly set\n" );
    _set_destroy_buckets( set );
    _set_destroy_table( set );
 }
@@ -228,9 +227,8 @@ int set_insert( set_Set set, const void *elem )
    unsigned long h;
 
    _set_check( t, __FUNCTION__ );
-
    if (t->readonly)
-      err_internal( __FUNCTION__, "Attempt to insert into readonly table\n" );
+      err_internal( __FUNCTION__, "Attempt to insert into readonly set\n" );
    
 				/* Keep table less than half full */
    if (t->entries * 2 > t->prime) {
@@ -276,7 +274,6 @@ int set_delete( set_Set set, const void *elem )
    unsigned long h = t->hash( elem ) % t->prime;
 
    _set_check( t, __FUNCTION__ );
-
    if (t->readonly)
       err_internal( __FUNCTION__, "Attempt to delete from readonly set\n" );
    
@@ -357,6 +354,41 @@ void set_iterate( set_Set set,
 	 
 	 for (pt = t->buckets[i]; pt; pt = pt->next)
 	    if (iterator( pt->elem )) {
+	       t->readonly = savedReadonly;
+	       return;
+	    }
+      }
+   }
+   
+   t->readonly = savedReadonly;
+}
+
+/* \doc |set_iterate_arg| is used to iterate a function over every |elem|
+   in the |set|.  The function, |iterator|, is passed each |elem|.  If
+   |iterator| returns a non-zero value, the iterations stop, and
+   |set_iterate| returns.  Note that the elements are in some arbitrary
+   order, and that this order may change between two successive calls to
+   |set_iterate|. */
+
+void set_iterate_arg( set_Set set,
+		      int (*iterator)( const void *elem, void *arg ),
+		      void *arg )
+{
+   setType       t = (setType)set;
+   unsigned long i;
+   int           savedReadonly;
+
+   _set_check( t, __FUNCTION__ );
+
+   savedReadonly = t->readonly;
+   t->readonly   = 1;
+   
+   for (i = 0; i < t->prime; i++) {
+      if (t->buckets[i]) {
+	 bucketType pt;
+	 
+	 for (pt = t->buckets[i]; pt; pt = pt->next)
+	    if (iterator( pt->elem, arg )) {
 	       t->readonly = savedReadonly;
 	       return;
 	    }

@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sat Feb 24 18:57:06 1996 by faith@cs.unc.edu
+ * Revised: Mon Feb 26 10:02:08 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.10 1996/02/25 00:08:58 faith Exp $
+ * $Id: maa.h,v 1.11 1996/02/26 15:23:14 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -105,6 +105,7 @@ extern unsigned long prm_next_prime( unsigned int start );
 /* hash.c */
 
 typedef void *hsh_HashTable;
+typedef void *hsh_Position;
 
 typedef struct hsh_Stats {
    unsigned long size;		 /* Size of table */
@@ -131,6 +132,11 @@ extern const void    *hsh_retrieve( hsh_HashTable table, const void *key );
 extern int           hsh_iterate( hsh_HashTable table,
 				  int (*iterator)( const void *key,
 						   const void *datum ) );
+extern int           hsh_iterate_arg( hsh_HashTable table,
+				      int (*iterator)( const void *key,
+						       const void *datum,
+						       void *arg ),
+				      void *arg );
 extern hsh_Stats     hsh_get_stats( hsh_HashTable table );
 extern void          hsh_print_stats( hsh_HashTable table, FILE *stream );
 extern unsigned long hsh_string_hash( const void *key );
@@ -139,6 +145,29 @@ extern int           hsh_string_compare( const void *key1, const void *key2 );
 extern int           hsh_pointer_compare( const void *key1, const void *key2 );
 extern void          hsh_key_strings(hsh_HashTable);
 
+extern hsh_Position  hsh_init_position( hsh_HashTable table );
+extern hsh_Position  hsh_next_position( hsh_HashTable table,
+					hsh_Position position );
+extern void          *hsh_get_position( hsh_Position position, void **key );
+extern int           hsh_readonly( hsh_HashTable table, int flag );
+
+#define HSH_POSITION_INIT(P,T)  ((P)=hsh_init_position(T))
+#define HSH_POSITION_NEXT(P,T)  ((P)=hsh_next_position(T,P))
+#define HSH_POSITION_OK(P)      (P)
+#define HSH_POSITION_GET(P,K,D) ((D)=hsh_get_position(P,&K))
+
+/* iterate over all (key, datum) pairs, (K,D), in hash table T */
+#define HSH_ITERATE(T,P,K,D)                                                 \
+   for (HSH_POSITION_INIT((P),(T));                                          \
+	HSH_POSITION_OK(P) && (HSH_POSITION_GET((P),(K),(D)),1);             \
+	HSH_POSITION_NEXT((P),(T)))
+
+/* If the HSH_ITERATE loop is exited before all elements in the table are
+   seen, then HSH_ITERATE_END should be called.  Calling this function
+   after complete loops does no harm. */
+#define HSH_ITERATE_END(T) hsh_readonly(T,0)
+
+   
 /* set.c */
 
 typedef void *set_Set;
@@ -170,6 +199,10 @@ extern int                 set_delete( set_Set set, const void *elem );
 extern int                 set_member( set_Set set, const void *elem );
 extern void                set_iterate( set_Set set,
 					int (*iterator)( const void *key ) );
+extern void                set_iterate_arg( set_Set set,
+					    int (*iterator)( const void *elem,
+							     void *arg ),
+					    void *arg );
 extern set_Set             set_union( set_Set set1, set_Set set2 );
 extern set_Set             set_inter( set_Set set1, set_Set set2 );
 extern set_Set             set_diff( set_Set set1, set_Set set2 );
@@ -194,9 +227,9 @@ extern int                 set_readonly( set_Set set, int flag );
 	SET_POSITION_OK(P) && (SET_POSITION_GET((P),(E)),1);                 \
 	SET_POSITION_NEXT((P),(S)))
 
-/* if the SET_ITERATE loop is exited before all element in the set are
+/* If the SET_ITERATE loop is exited before all elements in the set are
    seen, then SET_ITERATE_END should be called.  Calling this function
-   after complete loops does no harm.*/
+   after complete loops does no harm. */
 #define SET_ITERATE_END(S) set_readonly(S,0)
 
 /* stack.c */
@@ -227,6 +260,10 @@ extern int          lst_member( lst_List list, const void *datum );
 extern unsigned int lst_length( lst_List list );
 extern void         lst_iterate( lst_List list,
 				 int (*iterator)( const void *datum ) );
+extern void         lst_iterate_arg( lst_List list,
+				     int (*iterator)( const void *datum,
+						      void *arg ),
+				     void *arg );
 extern void         lst_truncate( lst_List list, unsigned int length );
 extern void         lst_truncate_position( lst_List list,
 					   lst_Position position );
@@ -397,6 +434,7 @@ extern void _pr_shutdown( void );
 
 typedef void *sl_List;
 typedef int (*sl_Iterator)( const void *datum );
+typedef int (*sl_IteratorArg)( const void *datum, void *arg );
 
 extern sl_List    sl_create( int (*compare)( const void *key1,
 					     const void *key2 ),
@@ -407,7 +445,8 @@ extern void       _sl_shutdown( void );
 extern void       sl_insert( sl_List list, const void *datum );
 extern void       sl_delete( sl_List list, const void *datum );
 extern const void *sl_find( sl_List list, const void *key );
-extern int         sl_iterate( sl_List list, sl_Iterator );
+extern int        sl_iterate( sl_List list, sl_Iterator f );
+extern int        sl_iterate_arg( sl_List list, sl_IteratorArg f, void *arg );
 extern void       _sl_dump( sl_List list );
 
 #endif

@@ -1,6 +1,6 @@
 /* sl.c -- Skip lists
  * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Sun Feb 25 15:56:11 1996 by faith@cs.unc.edu
+ * Revised: Mon Feb 26 10:01:10 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  *
@@ -18,7 +18,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: sl.c,v 1.4 1996/02/25 22:04:02 faith Exp $
+ * $Id: sl.c,v 1.5 1996/02/26 15:23:17 faith Exp $
  *
  * \section{Skip List Routines}
  *
@@ -382,7 +382,7 @@ const void *sl_find( sl_List list, const void *key )
    do something appropriate in the face of arbitrary insertions and
    deletions performed by |f|. */
 
-int sl_iterate( sl_List list, int (*f)( const void *datum ) )
+int sl_iterate( sl_List list, sl_Iterator f )
 {
    _sl_List   l = (_sl_List)list;
    _sl_Entry  pt;
@@ -416,7 +416,57 @@ int sl_iterate( sl_List list, int (*f)( const void *datum ) )
       for (next = _sl_Current->forward[0]; next; next = next->forward[0])
 	 if (l->compare( l->key( next->datum ), key ) > 0) break;
 
-      PRINTF(MAA_SL,("next = 0x%x/%lu\n",
+      PRINTF(MAA_SL,("next = 0x%lx/%lu\n",
+		     next?(unsigned long)l->key(next->datum):0,
+		     next?(unsigned long)l->key(next->datum):0));
+   }
+
+   _sl_check( list );
+   _sl_Current = oldCurrent;	/* Restore old pointer */
+   
+   return 0;
+}
+
+/* \doc Iterate |f| over every datum in |list|.  If |f| returns non-zero,
+   then abort the remainder of the iteration.  Iterations are designed to
+   do something appropriate in the face of arbitrary insertions and
+   deletions performed by |f|. */
+
+int sl_iterate_arg( sl_List list, sl_IteratorArg f, void *arg )
+{
+   _sl_List   l = (_sl_List)list;
+   _sl_Entry  pt;
+   _sl_Entry  next;
+   int        retcode;
+   _sl_Entry  oldCurrent = _sl_Current; /* Make sl_iterate re-entrant */
+   const void *key;
+
+   if (!list) return 0;
+   _sl_check_list( list, __FUNCTION__ );
+
+   if (dbg_test(MAA_SL)) {
+      printf( __FUNCTION__ ": " );
+      for (pt = l->head->forward[0]; pt; pt = next) {
+	 next = pt->forward[0];
+	 printf( "%lu ", (unsigned long)l->key( pt->datum ) );
+      }
+      printf( "\n" );
+   }
+
+   for (pt = l->head->forward[0], _sl_Current = l->head; pt; pt = next) {
+      _sl_check_entry( pt, __FUNCTION__ );
+      key = l->key( pt->datum ); /* Save current key for comparison */
+      
+      if ((retcode = f( pt->datum, arg ))) {
+	 _sl_Current = oldCurrent; /* Restore old pointer */
+	 return retcode;
+      }
+      assert( _sl_Current );
+
+      for (next = _sl_Current->forward[0]; next; next = next->forward[0])
+	 if (l->compare( l->key( next->datum ), key ) > 0) break;
+
+      PRINTF(MAA_SL,("next = 0x%lx/%lu\n",
 		     next?(unsigned long)l->key(next->datum):0,
 		     next?(unsigned long)l->key(next->datum):0));
    }

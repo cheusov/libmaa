@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Fri Jan 12 15:07:18 1996 by r.faith@ieee.org
+ * Revised: Mon Feb 26 10:00:03 1996 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: timer.c,v 1.10 1996/01/15 03:48:09 faith Exp $
+ * $Id: timer.c,v 1.11 1996/02/26 15:23:18 faith Exp $
  *
  * \section{Timer Support}
  *
@@ -165,33 +165,35 @@ void tim_print_timer( FILE *str, const char *name )
 	    tim_get_system( name ) );
 }
 
+static int _tim_iterator( const void *key, const void *datum, void *arg )
+{
+   FILE *str = (FILE *)arg;
+   
+   tim_print_timer( str, key );
+   return 0;
+}
+
 /* \doc Print all the timers to |str|.  The order is arbitary. */
 
 void tim_print_timers( FILE *str )
 {
-   static int iterator( const void *key, const void *datum )
-      {
-	 tim_print_timer( str, key );
-	 return 0;
-      }
-
-   if (_tim_Hash) hsh_iterate( _tim_Hash, iterator );
+   if (_tim_Hash) hsh_iterate_arg( _tim_Hash, _tim_iterator, str );
 }
 
+static int _tim_freer( const void *key, const void *datum )
+{
+   xfree( (void *)datum ); /* Discard const */
+   return 0;
+}
+   
 /* \doc Free all memory associated with the timers.  This function is
    called automatically at program termination.  There should never be a
    need to call this function in user-level code. */
 
 void _tim_shutdown( void )
 {
-   static int freer( const void *key, const void *datum )
-      {
-	 xfree( (void *)datum ); /* Discard const */
-	 return 0;
-      }
-   
    if (_tim_Hash) {
-      hsh_iterate( _tim_Hash, freer );
+      hsh_iterate( _tim_Hash, _tim_freer );
       hsh_destroy( _tim_Hash );
    }
    _tim_Hash = NULL;

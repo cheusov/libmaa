@@ -1,6 +1,6 @@
 /* debug.c -- Debugging support for Khepera
  * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:27 1995 by faith@cs.unc.edu
+ * Revised: Mon Feb 26 09:53:51 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.5 1995/11/19 19:28:34 faith Exp $
+ * $Id: debug.c,v 1.6 1996/02/26 15:23:11 faith Exp $
  *
  * \section{Debugging Support}
  *
@@ -60,19 +60,18 @@ static int _dbg_exists( dbg_Type flag )
 
 static const char *_dbg_name( dbg_Type flag )
 {
-   const char *pt = "unknown flag";
+   hsh_Position position;
+   void         *key;
+   void         *datum;
 
-   static int iterator( const void *key, const void *datum )
-	 {
-	    if (flag == (dbg_Type)datum) {
-	       pt = key;
-	       return 1;
-	    }
-	    return 0;
-	 }
+   HSH_ITERATE( hash, position, key, datum ) {
+      if (flag == (dbg_Type)datum) {
+	 HSH_ITERATE_END( hash );
+	 return key;
+      }
+   }
 
-   hsh_iterate( hash, iterator );
-   return pt;
+   return "unknown flag";
 }
 
 /* |_dbg_register| is documented in the |dbg_register| section. */
@@ -166,29 +165,33 @@ void dbg_destroy( void )
    usedFlags[0] = usedFlags[1] = usedFlags[2] = usedFlags[3] = 0;
 }
 
+
+static int _dbg_builtin( const void *key, const void *datum, void *arg )
+{
+   FILE     *stream = (FILE *)arg;
+   dbg_Type flag    = (dbg_Type)datum;
+   
+   if ((flag & 0xc0000000) != 0xc0000000)
+      fprintf( stream, "  %s\n", (char *)key );
+   return 0;
+}
+
+static int _dbg_user( const void *key, const void *datum, void *arg )
+{
+   FILE     *stream = (FILE *)arg;
+   dbg_Type flag    = (dbg_Type)datum;
+   
+   if ((flag & 0xc0000000) == 0xc0000000)
+      fprintf( stream, "  %s (builtin)\n", (char *)key );
+   return 0;
+}
+   
 /* |dbg_list| lists all of the valid user-level debugging flags to the
    specified |stream|.  Note the use of nested functions is not portable to
    non-GNU compilers. */
 
 void dbg_list( FILE *stream )
 {
-   static int builtin( const void *key, const void *datum )
-      {
-	 dbg_Type flag = (dbg_Type)datum;
-	 
-	 if ((flag & 0xc0000000) != 0xc0000000)
-	    fprintf( stream, "  %s\n", (char *)key );
-	 return 0;
-      }
-   static int user( const void *key, const void *datum )
-      {
-	 dbg_Type flag = (dbg_Type)datum;
-	 
-	 if ((flag & 0xc0000000) == 0xc0000000)
-	    fprintf( stream, "  %s (builtin)\n", (char *)key );
-	 return 0;
-      }
-   
-   hsh_iterate( hash, user );
-   hsh_iterate( hash, builtin );
+   hsh_iterate_arg( hash, _dbg_user, stream );
+   hsh_iterate_arg( hash, _dbg_builtin, stream );
 }

@@ -1,7 +1,7 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Sun Feb 18 17:03:35 1996 by faith@cs.unc.edu
- * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Mon Feb 26 09:53:52 1996 by faith@cs.unc.edu
+ * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.13 1996/02/23 21:29:04 faith Exp $
+ * $Id: hash.c,v 1.14 1996/02/26 15:23:12 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -51,6 +51,7 @@ typedef struct table {
    unsigned long misses;
    unsigned long (*hash)( const void * );
    int           (*compare)( const void *, const void * );
+   int           readonly;
 } *tableType;
    
 static void _hsh_check( tableType t, const char *function )
@@ -89,6 +90,7 @@ static hsh_HashTable _hsh_create( unsigned long seed,
    t->misses     = 0;
    t->hash       = hash ? hash : hsh_string_hash;
    t->compare    = compare ? compare : hsh_string_compare;
+   t->readonly   = 0;
 
    for (i = 0; i < prime; i++) t->buckets[i] = NULL;
 
@@ -167,6 +169,8 @@ static void _hsh_destroy_table( hsh_HashTable table )
 void hsh_destroy( hsh_HashTable table )
 {
    _hsh_check( table, __FUNCTION__ );
+   if (((tableType)table)->readonly)
+      err_internal( __FUNCTION__, "Attempt to destroy readonly table\n" );
    _hsh_destroy_buckets( table );
    _hsh_destroy_table( table );
 }
@@ -212,6 +216,8 @@ int hsh_insert( hsh_HashTable table,
    unsigned long h;
 
    _hsh_check( t, __FUNCTION__ );
+   if (t->readonly)
+      err_internal( __FUNCTION__, "Attempt to insert into readonly table\n" );
    
 				/* Keep table less than half full */
    if (t->entries * 2 > t->prime) {
@@ -258,6 +264,8 @@ int hsh_delete( hsh_HashTable table, const void *key )
    unsigned long h = t->hash( key ) % t->prime;
 
    _hsh_check( t, __FUNCTION__ );
+   if (t->readonly)
+      err_internal( __FUNCTION__, "Attempt to delete from readonly table\n" );
    
    if (t->buckets[h]) {
       bucketType pt;
@@ -299,7 +307,7 @@ const void *hsh_retrieve( hsh_HashTable table,
 	    if (!t->compare( pt->key, key )) {
 	       if (!prev) {
 		  ++t->hits;
-	       } else {
+	       } else if (!t->readonly) {
 				/* Self organize */
 		  prev->next    = pt->next;
 		  pt->next      = t->buckets[h];
@@ -327,14 +335,7 @@ int hsh_iterate( hsh_HashTable table,
    tableType     t = (tableType)table;
    unsigned long i;
    bucketType    pt;
-				/* FIXME: we should be able to say pt =
-                                   pt->next, but the iterator call seems to
-                                   corrupt pt.  Is this a compiler bug
-                                   (e.g., with trampolines)?  or is this
-                                   some horrible stack corruption bug?
-                                   Since gcc 2.7.1 will be out soon, we'll
-                                   wait and see. . . */
-   bucketType    next;
+   bucketType    next;		/* Save, because pt might vanish. */
 
    _hsh_check( t, __FUNCTION__ );
    
@@ -343,6 +344,38 @@ int hsh_iterate( hsh_HashTable table,
 	 for (pt = t->buckets[i]; pt; pt = next) {
 	    next = pt->next;
 	    if (iterator( pt->key, pt->datum ))
+	       return 1;
+	 }
+      }
+   }
+   return 0;
+}
+
+/* \doc |hsh_iterate_arg| is used to iterate a function over every value in
+   the |table|.  The function, |iterator|, is passed the |key| and |datum|
+   pair for each entry in the table.  If |iterator| returns a non-zero
+   value, the iterations stop, and |hsh_iterate| returns non-zero.  Note
+   that the keys are in some arbitrary order, and that this order may
+   change between two successive calls to |hsh_iterate|. */
+
+int hsh_iterate_arg( hsh_HashTable table,
+		     int (*iterator)( const void *key,
+				      const void *datum,
+				      void *arg ),
+		     void *arg )
+{
+   tableType     t = (tableType)table;
+   unsigned long i;
+   bucketType    pt;
+   bucketType    next;		/* Save, because pt might vanish. */
+
+   _hsh_check( t, __FUNCTION__ );
+   
+   for (i = 0; i < t->prime; i++) {
+      if (t->buckets[i]) {
+	 for (pt = t->buckets[i]; pt; pt = next) {
+	    next = pt->next;
+	    if (iterator( pt->key, pt->datum, arg ))
 	       return 1;
 	 }
       }
@@ -494,4 +527,81 @@ int hsh_pointer_compare( const void *key1, const void *key2 )
 
    for (i = 0; i < SIZEOF_VOID_P; i++) if (*p1++ != *p2++) return 1;
    return 0;
+}
+
+/* \doc |hsh_init_position| returns a position marker for some arbitary
+   first element in the table.  This marker can be used with
+   |hsh_next_position| and |hsh_get_position|. */
+
+hsh_Position hsh_init_position( hsh_HashTable table )
+{
+   tableType     t = (tableType)table;
+   unsigned long i;
+
+   _hsh_check( t, __FUNCTION__ );
+   for (i = 0; i < t->prime; i++) if (t->buckets[i]) {
+      t->readonly = 1;
+      return t->buckets[i];
+   }
+   return NULL;
+}
+
+/* \doc |hsh_next_position| returns a position marker for the next element
+   in the table.  Elements are in arbitrary order based on their positions
+   in the hash table. */
+
+hsh_Position hsh_next_position( hsh_HashTable table, hsh_Position position )
+{
+   tableType     t = (tableType)table;
+   bucketType    b = (bucketType)position;
+   unsigned long i;
+   unsigned long h;
+
+   _hsh_check( t, __FUNCTION__ );
+   
+   if (!b) {
+      t->readonly = 0;
+      return NULL;
+   }
+   
+   if (b->next) return b->next;
+
+   for (h = b->hash % t->prime, i = h + 1; i < t->prime; i++)
+      if (t->buckets[i]) return t->buckets[i];
+
+   t->readonly = 0;
+   return NULL;
+}
+
+/* \doc |hsh_get_position| returns the datum associated with the |position|
+   marker, or "NULL" if there is no such datum.  |key| is set to the key
+   associated with this datum, or "NULL" is there is no such datum. */
+
+void *hsh_get_position( hsh_Position position, void **key )
+{
+   bucketType b = (bucketType)position;
+
+   *key = NULL;
+   if (!b) return NULL;
+
+   *key = (void *)b->key;	/* Discard const */
+   return (void *)b->datum;	/* Discard const */
+}
+
+/* \doc |hsh_readonly| sets the |readonly| flag for the |table| to |flag|.
+   |flag| should be 0 or 1.  The value of the previous flag is returned.
+   When a hash table is marked as readonly, self-organization of the
+   bucket-overflow lists will not take place, and any attempt to modify the
+   list (e.g., insertion or deletion) will result in an error. */
+
+int hsh_readonly( hsh_HashTable table, int flag )
+{
+   tableType t = (tableType)table;
+   int       current;
+
+   _hsh_check( t, __FUNCTION__ );
+
+   current     = t->readonly;
+   t->readonly = flag;
+   return current;
 }
