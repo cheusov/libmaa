@@ -1,7 +1,7 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Thu Apr 17 11:41:06 1997 by faith@cs.unc.edu
- * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Sun Sep 14 08:58:09 1997 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.14 1997/04/21 15:23:37 faith Exp $
+ * $Id: set.c,v 1.15 1997/09/14 14:26:14 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -471,6 +471,76 @@ int set_readonly( set_Set set, int flag )
    current     = t->readonly;
    t->readonly = flag;
    return current;
+}
+
+/* \doc |set_add| returns |set1|, which now contains all of the elements
+   in |set1| and |set2|.  Only pointers to elements are copied, \emph{not}
+   the data pointed (this has memory management implications).  The |hash|
+   and |compare| functions must be identical for the two sets.  |set2| is
+   not changed. */
+
+set_Set set_add( set_Set set1, set_Set set2 )
+{
+   setType       t1 = (setType)set1;
+   setType       t2 = (setType)set2;
+   unsigned long i;
+
+   _set_check( t1, __FUNCTION__ );
+   _set_check( t2, __FUNCTION__ );
+   
+   if (t1->hash != t2->hash)
+	 err_fatal( __FUNCTION__,
+		    "Sets do not have identical hash functions\n" );
+
+   if ( t1->compare != t2->compare )
+	 err_fatal( __FUNCTION__,
+		    "Sets do not have identical comparison functions\n" );
+
+   for (i = 0; i < t2->prime; i++) {
+      if (t2->buckets[i]) {
+	 bucketType pt;
+	 
+	 for (pt = t2->buckets[i]; pt; pt = pt->next)
+	       set_insert( set1, pt->elem );
+      }
+   }
+
+   return set1;
+}
+
+/* \doc |set_del| returns |set1|, which now contains all of the elements in
+   |set1| other than those in |set2|.  Only pointers to elements are
+   copied, \emph{not} the data pointed (this has memory management
+   implications).  The |hash| and |compare| functions must be identical for
+   the two sets.  |set2| is not changed. */
+
+set_Set set_del( set_Set set1, set_Set set2 )
+{
+   setType       t1 = (setType)set1;
+   setType       t2 = (setType)set2;
+   unsigned long i;
+
+   _set_check( t1, __FUNCTION__ );
+   _set_check( t2, __FUNCTION__ );
+   
+   if (t1->hash != t2->hash)
+	 err_fatal( __FUNCTION__,
+		    "Sets do not have identical hash functions\n" );
+
+   if ( t1->compare != t2->compare )
+	 err_fatal( __FUNCTION__,
+		    "Sets do not have identical comparison functions\n" );
+
+   for (i = 0; i < t2->prime; i++) {
+      if (t2->buckets[i]) {
+	 bucketType pt;
+	 
+	 for (pt = t2->buckets[i]; pt; pt = pt->next)
+	       set_delete( set1, pt->elem );
+      }
+   }
+
+   return set1;
 }
 
 /* \doc |set_union| returns a new set which is the union of |set1| and

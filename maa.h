@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Thu Aug 21 13:42:50 1997 by faith@acm.org
+ * Revised: Sun Sep 14 08:58:07 1997 by faith@acm.org
  * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.32 1997/08/21 22:36:48 faith Exp $
+ * $Id: maa.h,v 1.33 1997/09/14 14:26:12 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -205,6 +205,8 @@ extern int                 set_iterate_arg( set_Set set,
 					    int (*iterator)( const void *elem,
 							     void *arg ),
 					    void *arg );
+extern set_Set             set_add( set_Set set1, set_Set set2 );
+extern set_Set             set_del( set_Set set1, set_Set set2 );
 extern set_Set             set_union( set_Set set1, set_Set set2 );
 extern set_Set             set_inter( set_Set set1, set_Set set2 );
 extern set_Set             set_diff( set_Set set1, set_Set set2 );
