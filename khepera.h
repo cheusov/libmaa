@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Tue Aug 29 03:45:53 1995 by r.faith@ieee.org
+ * Revised: Mon Sep  4 13:06:56 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.7 1995/08/29 18:16:21 faith Exp $
+ * $Id: khepera.h,v 1.8 1995/09/04 20:20:00 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -355,14 +355,18 @@ extern int        src_linenumber( src_Type source );
 extern int        src_offset( src_Type source );
 extern int        src_length( src_Type source );
 extern const char *src_source_line( src_Type source );
+extern void       src_parse_error( FILE *str, src_Type source,
+				   const char *message );
 extern src_Stats  src_get_stats( void );
 extern void       src_print_stats( FILE *stream );
 
 /* parse.c */
 
-extern void     prs_set_debug( int debug_flag );
-extern void     prs_set_cpp_options( const char *cpp_options );
-extern void     prs_file( const char *filename );
+extern void   prs_set_debug( int debug_flag );
+extern void   prs_set_cpp_options( const char *cpp_options );
+extern void   prs_file( const char *filename );
+extern int    prs_make_integer( const char *string, int length );
+extern double prs_make_double( const char *string, int length );
 
 /* symbol.c */
 
@@ -450,6 +454,7 @@ extern void tre_register_format( int id, int count, const char *label,
 				 const char *format, ... );
 
 extern const char *tre_name( int id );
+extern const char *tre_node_name( tre_Node node );
 extern pp_Format  tre_format( int id, int count, const char *label );
 extern tre_Node   tre_parent( tre_Node child );
 extern tre_Node   tre_child( tre_Node parent );

@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Sun Jan  8 21:52:23 1995 by faith@cs.unc.edu
+ * Revised: Mon Sep  4 13:06:57 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: error.c,v 1.2 1995/09/04 20:19:59 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
