@@ -1,7 +1,7 @@
 /* memtest.c -- 
- * Created: Sat Jul  1 22:42:09 1995 by r.faith@ieee.org
- * Revised: Fri Aug 25 01:16:43 1995 by faith@cs.unc.edu
- * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
+ * Created: Sat Jul  1 22:42:09 1995 by faith@dict.org
+ * Revised: Sat Mar 30 12:06:35 2002 by faith@dict.org
+ * Copyright 1995, 2002 Rickard E. Faith (faith@dict.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: memtest.c,v 1.2 1995/08/25 05:20:51 faith Exp $
+ * $Id: memtest.c,v 1.3 2002/05/03 14:12:23 faith Exp $
  * 
  */
 

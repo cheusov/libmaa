@@ -1,7 +1,7 @@
 /* stringtest.c -- Test program for Khepera string table routines
- * Created: Thu Dec 22 14:05:57 1994 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:45 1996 by faith@cs.unc.edu
- * Copyright 1994, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Created: Thu Dec 22 14:05:57 1994 by faith@dict.org
+ * Revised: Sat Mar 30 12:02:33 2002 by faith@dict.org
+ * Copyright 1994, 1996, 2002 Rickard E. Faith (faith@dict.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: stringtest.c,v 1.6 1996/09/23 23:20:46 faith Exp $
+ * $Id: stringtest.c,v 1.7 2002/05/03 14:12:23 faith Exp $
  */
 
 #include "maaP.h"

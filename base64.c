@@ -1,7 +1,7 @@
 /* base64.c -- Encode/decode integers in base64 format
- * Created: Mon Sep 23 16:55:12 1996 by faith@cs.unc.edu
- * Revised: Sun Nov 10 11:43:41 1996 by faith@cs.unc.edu
- * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Created: Mon Sep 23 16:55:12 1996 by faith@dict.org
+ * Revised: Sat Mar 30 12:02:36 2002 by faith@dict.org
+ * Copyright 1996, 2002 Rickard E. Faith (faith@dict.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: base64.c,v 1.3 1996/11/10 20:20:47 faith Exp $
+ * $Id: base64.c,v 1.4 2002/05/03 14:12:22 faith Exp $
  *
  * \section{Base-64 Routines}
  *

@@ -118,3 +118,6 @@
 
 /* Define if you have the <unistd.h> header file.  */
 #undef HAVE_UNISTD_H
+
+/* Define if you have support for SYSLOG_NAMES in sys/syslog.h */
+#undef HAVE_SYSLOG_NAMES

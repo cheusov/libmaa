@@ -1,7 +1,7 @@
 /* debug.c -- Debugging support for Khepera
- * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Fri Jun 20 17:23:48 1997 by faith@acm.org
- * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
+ * Created: Fri Dec 23 10:53:10 1994 by faith@dict.org
+ * Revised: Sat Mar 30 11:56:58 2002 by faith@dict.org
+ * Copyright 1994-1997, 2002 Rickard E. Faith (faith@dict.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.11 1997/06/21 01:05:07 faith Exp $
+ * $Id: debug.c,v 1.12 2002/05/03 14:12:22 faith Exp $
  *
  * \section{Debugging Support}
  *

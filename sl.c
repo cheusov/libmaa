@@ -1,7 +1,7 @@
 /* sl.c -- Skip lists
- * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Sat Nov 29 12:04:02 1997 by faith@acm.org
- * Copyright 1996, 1997 Rickard E. Faith (faith@acm.org)
+ * Created: Sun Feb 18 11:51:06 1996 by faith@dict.org
+ * Revised: Sat Mar 30 11:59:18 2002 by faith@dict.org
+ * Copyright 1996-1997, 2002 Rickard E. Faith (faith@dict.org)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: sl.c,v 1.10 1997/11/30 13:37:33 faith Exp $
+ * $Id: sl.c,v 1.11 2002/05/03 14:12:23 faith Exp $
  *
  * \section{Skip List Routines}
  *
@@ -472,7 +472,7 @@ void _sl_dump( sl_List list )
 	 printf( "    %p\n", pt->forward[i] );
 #else
       printf( "  Entry %p (%d/%p/0x%p=%lu)\n",
-	      pt, count++, pt->datum,
+	      (void *)pt, count++, pt->datum,
 	      pt->datum ? l->key( pt->datum ) : 0,
 	      (unsigned long)(pt->datum ? l->key( pt->datum ) : 0) );
 #endif

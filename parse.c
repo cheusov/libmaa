@@ -1,7 +1,7 @@
 /* parse.c -- Support for calling parsers from Libmaa
- * Created: Mon Apr 24 17:40:51 1995 by faith@cs.unc.edu
- * Revised: Tue May 20 23:14:32 1997 by faith@acm.org
- * Copyright 1995, 1997 Rickard E. Faith (faith@cs.unc.edu)
+ * Created: Mon Apr 24 17:40:51 1995 by faith@dict.org
+ * Revised: Sat Mar 30 12:02:34 2002 by faith@dict.org
+ * Copyright 1995, 1997, 2002 Rickard E. Faith (faith@dict.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: parse.c,v 1.5 1997/06/02 23:58:56 faith Exp $
+ * $Id: parse.c,v 1.6 2002/05/03 14:12:23 faith Exp $
  *
  * \section{Parsing (and Lexing) Support}
  * 

@@ -1,7 +1,7 @@
 /* maa.c -- General Support for libmaa
- * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Fri Feb 28 09:18:02 1997 by faith@cs.unc.edu
- * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Created: Sun Nov 19 13:24:35 1995 by faith@dict.org
+ * Revised: Sat Mar 30 12:07:16 2002 by faith@dict.org
+ * Copyright 1995, 1996, 2002 Rickard E. Faith (faith@dict.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.13 1997/02/28 14:29:57 faith Exp $
+ * $Id: maa.c,v 1.14 2002/05/03 14:12:23 faith Exp $
  *
  * \section{General Support}
  *

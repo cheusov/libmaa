@@ -1,7 +1,7 @@
 # Makefile.in -- Makefile for libmaa
-# Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Sun Jul  5 17:54:38 1998 by faith@acm.org
-# Copyright 1995, 1996, 1997, 1998 Rickard E. Faith (faith@acm.org)
+# Created: Sun Nov 19 13:32:41 1995 by faith@dict.org
+# Revised: Sat Mar 30 11:54:48 2002 by faith@dict.org
+# Copyright 1995-1998, 2002 Rickard E. Faith (faith@dict.org)
 # 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.37 1998/07/05 22:10:10 faith Exp $
+# $Id: Makefile.in,v 1.38 2002/05/03 14:12:22 faith Exp $
 #
 
 ifneq (,)

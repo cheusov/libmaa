@@ -1,7 +1,7 @@
 /* log.c -- Logging routines, for a single, program-wide logging facility
- * Created: Mon Mar 10 09:37:21 1997 by faith@cs.unc.edu
- * Revised: Wed Dec 22 08:09:59 1999 by faith@acm.org
- * Copyright 1997, 1998, 1999 Rickard E. Faith (faith@acm.org)
+ * Created: Mon Mar 10 09:37:21 1997 by faith@dict.org
+ * Revised: Sun Mar 31 11:54:19 2002 by faith@dict.org
+ * Copyright 1997-1999, 2001-2002 Rickard E. Faith (faith@dict.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -18,13 +18,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.10 1999/12/22 13:22:10 faith Exp $
+ * $Id: log.c,v 1.11 2002/05/03 14:12:23 faith Exp $
  * 
  */
 
 #include "maaP.h"
+#ifdef HAVE_SYSLOG_NAMES
+#define SYSLOG_NAMES
+#endif
 #include <syslog.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #if HAVE_SYS_PARAM_H
 # include <sys/param.h>
@@ -40,10 +44,84 @@ static int        logSyslog;
 static int        inhibitFull = 0;
 
 static int        logOpen;
+static int        logFacility = LOG_USER;
 
 static const char *logIdent;
-static const char *logFilename;
+static const char *logFilenameOrig;
+static char       *logFilename;
+static char       *logFilenameTmp;
+static int        logFilenameLen;
 static char       logHostname[MAXHOSTNAMELEN];
+
+#ifndef HAVE_SYSLOG_NAMES
+typedef struct _code {
+    const char *c_name;
+    int        c_val;
+} CODE;
+CODE facilitynames[] = {
+#if LOG_AUTH
+    { "auth",     LOG_AUTH },
+#endif
+#if LOG_AUTHPRIV
+    { "authpriv", LOG_AUTHPRIV },
+#endif
+#if LOG_CRON
+    { "cron",     LOG_CRON },
+#endif
+#if LOG_DAEMON
+    { "daemon",   LOG_DAEMON },
+#endif
+#if LOG_FTP
+    { "ftp",      LOG_FTP },
+#endif
+#if LOG_KERN
+    { "kern",     LOG_KERN },
+#endif
+#if LOG_LPR
+    { "lpr",      LOG_LPR },
+#endif
+#if LOG_MAIL
+    { "mail",     LOG_MAIL },
+#endif
+#if LOG_NEWS
+    { "news",     LOG_NEWS },
+#endif
+#if LOG_SYSLOG
+    { "syslog",   LOG_SYSLOG },
+#endif
+#if LOG_USER
+    { "user",     LOG_USER },
+#endif
+#if LOG_UUCP
+    { "uucp",     LOG_UUCP },
+#endif
+#if LOG_LOCAL0
+    { "local0",   LOG_LOCAL0 },
+#endif
+#if LOG_LOCAL1
+    { "local1",   LOG_LOCAL1 },
+#endif
+#if LOG_LOCAL2
+    { "local2",   LOG_LOCAL2 },
+#endif
+#if LOG_LOCAL3
+    { "local3",   LOG_LOCAL3 },
+#endif
+#if LOG_LOCAL4
+    { "local4",   LOG_LOCAL4 },
+#endif
+#if LOG_LOCAL5
+    { "local5",   LOG_LOCAL5 },
+#endif
+#if LOG_LOCAL6
+    { "local6",   LOG_LOCAL6 },
+#endif
+#if LOG_LOCAL7
+    { "local7",   LOG_LOCAL7 },
+#endif
+    { NULL,       -1 },
+};
+#endif
 
 static void _log_set_hostname( void )
 {
@@ -58,20 +136,78 @@ static void _log_set_hostname( void )
    }
 }
 
+void log_set_facility(const char *facility)
+{
+    CODE *pt;
+
+    for (pt = facilitynames; pt->c_name; pt++) {
+        if (!strcmp(pt->c_name, facility)) {
+            logFacility = pt->c_val;
+            return;
+        }
+    }
+    err_fatal(__FUNCTION__, "%s is not a valid facility name\n", facility);
+}
+
+const char *log_get_facility(void)
+{
+    CODE *pt;
+
+    for (pt = facilitynames; pt->c_name; pt++)
+        if (pt->c_val == logFacility) return pt->c_name;
+    return NULL;
+}
+
 void log_option( int option )
 {
    if (option == LOG_OPTION_NO_FULL) inhibitFull = 1;
    else                              inhibitFull = 0;
 }
 
-void log_syslog( const char *ident, int daemon_flag )
+void log_syslog( const char *ident )
 {
    if (logSyslog)
       err_internal( __FUNCTION__, "Syslog facility already open\n" );
    
-   openlog( ident, LOG_PID|LOG_NOWAIT, daemon_flag ? LOG_DAEMON : LOG_USER );
+   openlog( ident, LOG_PID|LOG_NOWAIT, logFacility );
    ++logOpen;
    ++logSyslog;
+}
+
+static void log_mkpath(const char *filename)
+{
+    char *tmp = alloca(strlen(filename) + 1);
+    char *pt;
+    
+    strcpy(tmp, filename);
+    for (pt = tmp; *pt; pt++) {
+        if (*pt == '/' && pt != tmp) {
+            *pt = '\0';
+            mkdir(tmp, 0755);
+            *pt = '/';
+        }
+    }
+}
+
+static void _log_check_filename(void)
+{
+   time_t    t;
+   struct tm *tm;
+   
+   if (!logFilename || !logFilenameTmp || !logFilenameLen) return;
+
+   time(&t);
+   tm = localtime(&t);
+   
+   strftime(logFilenameTmp, logFilenameLen, logFilenameOrig, tm);
+   if (strcmp(logFilenameTmp, logFilename)) {
+       strcpy(logFilename, logFilenameTmp);
+       if (logFd >= 0) close(logFd);
+       log_mkpath(logFilename);
+       if ((logFd = open( logFilename, O_WRONLY|O_CREAT|O_APPEND, 0644 )) < 0)
+           err_fatal_errno( __FUNCTION__,
+                            "Cannot open \"%s\" for append\n", logFilename );
+   }
 }
 
 void log_file( const char *ident, const char *filename )
@@ -81,12 +217,13 @@ void log_file( const char *ident, const char *filename )
 		    "Log file \"%s\" open when trying to open \"%s\"\n",
 		    logFilename, filename );
 
-   if ((logFd = open( filename, O_WRONLY|O_CREAT|O_APPEND, 0644 )) < 0)
-      err_fatal_errno( __FUNCTION__,
-		       "Cannot open \"%s\" for append\n", filename );
-
-   logIdent    = str_find( ident );
-   logFilename = str_find( filename );
+   logIdent        = str_find( ident );
+   logFilenameOrig = str_find(filename);
+   logFilenameLen  = strlen(filename)*3+1024;
+   logFilename     = xmalloc(logFilenameLen + 1);
+   logFilenameTmp  = xmalloc(logFilenameLen + 1);
+   logFilename[0]  = '\0';
+   _log_check_filename();
    
    _log_set_hostname();
    ++logOpen;
@@ -107,9 +244,15 @@ void log_stream( const char *ident, FILE *stream )
 void log_close( void )
 {
    if (logFd >= 0)    close( logFd );
-   if (logUserStream) fclose( logUserStream );
+   if (logUserStream != stdout && logUserStream != stderr)
+       fclose( logUserStream );
    if (logSyslog)     closelog();
+   if (logFilename)   xfree(logFilename);
+   if (logFilenameTmp) xfree(logFilenameTmp);
 
+   logFilename    = 0;
+   logFilenameLen = 0;
+   
    logOpen       = 0;
    logFd         = -1;
    logUserStream = NULL;
@@ -142,7 +285,10 @@ void log_error_va( const char *routine, const char *format, va_list ap )
       pt = buf + strlen( buf );
       vsprintf( pt, format, ap );
       
-      if (logFd >= 0) write( logFd, buf, strlen(buf) );
+      if (logFd >= 0) {
+          _log_check_filename();
+          write( logFd, buf, strlen(buf) );
+      }
       if (logUserStream) {
          fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
                                                   open stream with "a" */
@@ -193,7 +339,10 @@ void log_info_va( const char *format, va_list ap )
       }
       vsprintf( pt, format, ap );
       
-      if (logFd >= 0) write( logFd, buf, strlen(buf) );
+      if (logFd >= 0) {
+          _log_check_filename();
+          write( logFd, buf, strlen(buf) );
+      }
       if (logUserStream) {
          fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
                                                   open stream with "a" */

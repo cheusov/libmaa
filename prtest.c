@@ -1,7 +1,7 @@
 /* prtest.c -- 
- * Created: Fri Jan 12 14:18:32 1996 by r.faith@ieee.org
- * Revised: Wed Oct  2 20:06:41 1996 by faith@cs.unc.edu
- * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
+ * Created: Fri Jan 12 14:18:32 1996 by faith@dict.org
+ * Revised: Sat Mar 30 12:06:33 2002 by faith@dict.org
+ * Copyright 1996, 2002 Rickard E. Faith (faith@dict.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: prtest.c,v 1.3 1996/10/03 01:36:07 faith Exp $
+ * $Id: prtest.c,v 1.4 2002/05/03 14:12:23 faith Exp $
  * 
  */
 

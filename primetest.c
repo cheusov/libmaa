@@ -1,7 +1,7 @@
 /* primetest.c -- 
- * Created: Thu Jul 20 22:15:54 1995 by r.faith@ieee.org
- * Revised: Mon Sep 23 16:23:47 1996 by faith@cs.unc.edu
- * Copyright 1995, 1996 Rickard E. Faith (r.faith@ieee.org)
+ * Created: Thu Jul 20 22:15:54 1995 by faith@dict.org
+ * Revised: Sat Mar 30 12:06:34 2002 by faith@dict.org
+ * Copyright 1995, 1996, 2002 Rickard E. Faith (faith@dict.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: primetest.c,v 1.6 1996/09/23 23:20:41 faith Exp $
+ * $Id: primetest.c,v 1.7 2002/05/03 14:12:23 faith Exp $
  * 
  */
 

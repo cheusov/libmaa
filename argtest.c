@@ -1,7 +1,7 @@
 /* argtest.c -- 
- * Created: Sun Jan  7 20:23:34 1996 by r.faith@ieee.org
- * Revised: Thu May  1 00:32:59 1997 by faith@cs.unc.edu
- * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
+ * Created: Sun Jan  7 20:23:34 1996 by faith@dict.org
+ * Revised: Sat Mar 30 11:54:37 2002 by faith@dict.org
+ * Copyright 1996, 2002 Rickard E. Faith (faith@dict.org)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: argtest.c,v 1.6 1997/05/01 04:35:19 faith Exp $
+ * $Id: argtest.c,v 1.7 2002/05/03 14:12:22 faith Exp $
  */
 
 #include "maaP.h"

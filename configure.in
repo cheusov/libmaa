@@ -1,8 +1,8 @@
 dnl Process this file with autoconf to produce a configure script for libmaa.
 dnl
-dnl Created: Sun Nov  6 13:56:03 1994 by faith@cs.unc.edu
-dnl Revised: Sun Jul  5 18:14:16 1998 by faith@acm.org
-dnl Copyright 1994, 1995, 1996, 1997, 1998 Rickard E. Faith (faith@acm.org)
+dnl Created: Sun Nov  6 13:56:03 1994 by faith@dict.org
+dnl Revised: Sat Mar 30 11:56:33 2002 by faith@dict.org
+dnl Copyright 1994-1998, 2001-2002 Rickard E. Faith (faith@dict.org)
 dnl
 dnl This program is free software; you can redistribute it and/or modify it
 dnl under the terms of the GNU General Public License as published by the
@@ -18,7 +18,7 @@ dnl You should have received a copy of the GNU General Public License along
 dnl with this program; if not, write to the Free Software Foundation, Inc.,
 dnl 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
-dnl $Id: configure.in,v 1.14 1998/07/05 22:14:34 faith Exp $
+dnl $Id: configure.in,v 1.15 2002/05/03 14:12:22 faith Exp $
 dnl
 dnl Flag conventions:
 dnl     CFLAGS and LDFLAGS should be settable on the make commandline
@@ -33,12 +33,12 @@ dnl     YCFLAGS is for yacc
 dnl     LCFLAGS is for lex
 
 AC_PREREQ(2.1)
-AC_REVISION($Revision: 1.14 $)
+AC_REVISION($Revision: 1.15 $)
 AC_INIT(maa.h)
 AC_CONFIG_HEADER(config.h)
 
 MAA_MAJOR=0
-MAA_MINOR=93
+MAA_MINOR=94
 
 echo Configuring for libmaa $MAA_MAJOR.$MAA_MINOR
 echo .
@@ -69,7 +69,7 @@ local_dmalloc=0
 case "$host" in
 dnl did include: -Winline
 *linux*)
-    WCFLAGS="$WCFLAGS -pipe -Wwrite-strings -Wpointer-arith -Wcast-align \
+    WCFLAGS="$WCFLAGS -pipe -Wcast-align \
         -Wmissing-prototypes -Wshadow -Wnested-externs -Waggregate-return";;
 sparc-sun-sunos4*)
     WCFLAGS="$WCFLAGS -pipe";;
@@ -240,12 +240,24 @@ if test "$needs_xmalloc" = 1; then
 fi
 
 echo .
-echo Checking for header files
+echo Checking for header file support
 
 AC_HEADER_STDC
 AC_HEADER_TIME
 AC_CHECK_HEADERS(unistd.h strings.h getopt.h limits.h)
 AC_CHECK_HEADERS(sys/resource.h sys/time.h sys/param.h sys/wait.h)
+
+AC_MSG_CHECKING(for SYSLOG_NAMES support in syslog.h)
+AC_TRY_COMPILE([
+#define SYSLOG_NAMES
+#include <stdio.h>
+#include <syslog.h>
+], [
+CODE *p = &prioritynames[0];
+CODE *f = &facilitynames[0];
+],
+AC_DEFINE(HAVE_SYSLOG_NAMES) AC_MSG_RESULT(yes),
+AC_MSG_RESULT(no))
 
 echo .
 echo Checking for system constants

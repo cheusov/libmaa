@@ -1,7 +1,7 @@
 /* strdup.c -- String duplicate function
- * Created: Mon Nov  7 10:23:32 1994 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:46 1996 by faith@cs.unc.edu
- * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Created: Mon Nov  7 10:23:32 1994 by faith@dict.org
+ * Revised: Sat Mar 30 12:08:35 2002 by faith@dict.org
+ * Copyright 1994-1996, 2002 Rickard E. Faith (faith@dict.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: strdup.c,v 1.4 1996/09/23 23:20:44 faith Exp $
+ * $Id: strdup.c,v 1.5 2002/05/03 14:12:23 faith Exp $
  *
  */
 

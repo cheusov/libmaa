@@ -1,7 +1,7 @@
 /* timer.c -- Timer support
- * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Sun Jul  5 17:34:48 1998 by faith@acm.org
- * Copyright 1995, 1996, 1997, 1998 Rickard E. Faith (faith@acm.org)
+ * Created: Sat Oct  7 13:05:31 1995 by faith@dict.org
+ * Revised: Sat Mar 30 12:02:12 2002 by faith@dict.org
+ * Copyright 1995-1998, 2002 Rickard E. Faith (faith@dict.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: timer.c,v 1.17 1998/07/05 22:10:12 faith Exp $
+ * $Id: timer.c,v 1.18 2002/05/03 14:12:23 faith Exp $
  *
  * \section{Timer Support}
  *
@@ -85,7 +85,7 @@ void tim_stop( const char *name )
 
 #define DIFFTIME(now,then)\
    (((now).tv_sec - (then).tv_sec) \
-    + ((now).tv_usec - (then).tv_usec)/1000)
+    + ((now).tv_usec - (then).tv_usec)/1000000)
 
    _tim_check();
 #if HAVE_GETTIMEOFDAY

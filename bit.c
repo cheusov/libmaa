@@ -1,7 +1,7 @@
 /* bit.c -- 
- * Created: Thu Sep 28 18:09:30 1995 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:51 1996 by faith@cs.unc.edu
- * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Created: Thu Sep 28 18:09:30 1995 by faith@dict.org
+ * Revised: Sat Mar 30 11:55:55 2002 by faith@dict.org
+ * Copyright 1995-1996, 2002 Rickard E. Faith (faith@dict.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: bit.c,v 1.6 1999/12/23 08:43:39 faith Exp $
+ * $Id: bit.c,v 1.7 2002/05/03 14:12:22 faith Exp $
  *
  * \section{Bit manipulation routines}
  *

@@ -1,7 +1,7 @@
 /* pr.c -- Process creation and tracking support
- * Created: Sun Jan  7 13:34:08 1996 by r.faith@ieee.org
- * Revised: Wed Mar 19 13:04:19 1997 by faith@cs.unc.edu
- * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
+ * Created: Sun Jan  7 13:34:08 1996 by faith@dict.org
+ * Revised: Sat Mar 30 12:06:35 2002 by faith@dict.org
+ * Copyright 1996, 2002 Rickard E. Faith (faith@dict.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.9 1997/03/19 21:10:23 faith Exp $
+ * $Id: pr.c,v 1.10 2002/05/03 14:12:23 faith Exp $
  *
  * \section{Process Management Routines}
  *

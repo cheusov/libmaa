@@ -1,7 +1,7 @@
 /* parse-concrete.c -- Support for calling parsers from Libmaa, continued
- * Created: Mon Apr 24 17:40:51 1995 by faith@cs.unc.edu
- * Revised: Fri Feb 28 09:21:43 1997 by faith@cs.unc.edu
- * Copyright 1995, 1997 Rickard E. Faith (faith@cs.unc.edu)
+ * Created: Mon Apr 24 17:40:51 1995 by faith@dict.org
+ * Revised: Sat Mar 30 12:07:49 2002 by faith@dict.org
+ * Copyright 1995, 1997, 2002 Rickard E. Faith (faith@dict.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: parse-concrete.c,v 1.1 1997/02/28 14:29:59 faith Exp $
+ * $Id: parse-concrete.c,v 1.2 2002/05/03 14:12:23 faith Exp $
  *
  */
 
