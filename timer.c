@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: timer.c,v 1.19 2002/08/02 19:43:15 faith Exp $
+ * $Id: timer.c,v 1.20 2004/05/30 16:08:05 cheusov Exp $
  *
  * \section{Timer Support}
  *
@@ -96,7 +96,8 @@ void tim_stop( const char *name )
 #endif
    
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
-      err_internal ( __FUNCTION__, "No timer: %s\n", name );
+      err_internal ( __FUNCTION__, "No timer: %s\n",
+		     (name ? name : "<null>") );
    
    entry->real   = DIFFTIME( real, entry->real_mark );
    getrusage( RUSAGE_SELF, &rusage );
@@ -119,7 +120,8 @@ void tim_reset( const char *name )
    
    _tim_check();
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
-      err_internal ( __FUNCTION__, "No timer: %s\n", name );
+      err_internal ( __FUNCTION__, "No timer: %s\n",
+		     (name ? name : "<null>") );
 
    entry->real            = 0.0;
    entry->self_user       = 0.0;
@@ -138,7 +140,8 @@ double tim_get_real( const char *name )
    
    _tim_check();
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
-      err_internal ( __FUNCTION__, "No timer: %s\n", name );
+      err_internal ( __FUNCTION__, "No timer: %s\n",
+		     (name ? name : "<null>") );
 
    return entry->real;
 }
@@ -151,7 +154,8 @@ double tim_get_user( const char *name )
    
    _tim_check();
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
-      err_internal ( __FUNCTION__, "No timer: %s\n", name );
+      err_internal ( __FUNCTION__, "No timer: %s\n",
+		     (name ? name : "<null>") );
 
 #if 0
    printf( "self: maxrss %ld ixrss %ld idrss %ld isrss %ld minflt %ld"
@@ -201,7 +205,8 @@ double tim_get_system( const char *name )
    
    _tim_check();
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
-      err_internal ( __FUNCTION__, "No timer: %s\n", name );
+      err_internal ( __FUNCTION__, "No timer: %s\n",
+		     (name ? name : "<null>") );
 
    return (entry->self_system + entry->children_system);
 }
