@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: parse.c,v 1.4 1997/05/21 04:22:31 faith Exp $
+ * $Id: parse.c,v 1.5 1997/06/02 23:58:56 faith Exp $
  *
  * \section{Parsing (and Lexing) Support}
  * 
@@ -195,6 +195,7 @@ double prs_make_double( const char *string, int length )
 }
 
 
+#ifdef SHARED_LIBMAA
 #if defined(__linux__) && defined(__ELF__)
 #include <gnu-stabs.h>
 # ifdef weak_symbol
@@ -205,4 +206,5 @@ weak_symbol(yydebug);
 weak_symbol(yyin);
 weak_symbol(yyparse);
 # endif
+#endif
 #endif

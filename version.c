@@ -1,2 +1,2 @@
-/* Stamp: Wed May 21 00:20:40 EDT 1997 */
-const char *maa_revision_string = "$Revision: 2.0 $";
+/* Stamp: Mon Jun  2 19:57:16 EDT 1997 */
+const char *maa_revision_string = "$Revision: 2.1 $";
