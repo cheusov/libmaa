@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.15 2003/10/01 11:32:32 cheusov Exp $
+ * $Id: string.c,v 1.16 2003/12/30 16:28:20 cheusov Exp $
  *
  * \section{String Pool Routines}
  *
@@ -95,6 +95,82 @@ const char *str_pool_find( str_Pool pool, const char *s )
    hsh_insert( p->hash, datum, datum );
 
    return datum;
+}
+
+/* \doc |str_pool_iterate| is used to iterate a function over every
+   value in the |pool|.
+   The function, |iterator|, is passed the |s|
+   for each entry in the pool.  If |iterator| returns a non-zero value,
+   the iterations stop, and |str_pool_iterate| returns non-zero.  Note that the
+   keys are in some arbitrary order, and that this order may change between
+   two successive calls to |str_pool_iterate|. */
+
+int str_pool_iterate(
+   str_Pool pool,
+   int (*iterator)( const char *s ) )
+{
+   poolInfo      p = (poolInfo) pool;
+   hsh_HashTable hash = p -> hash;
+   hsh_Position  hash_pos;
+   void *key;
+   void *datum;
+
+//   printf ("inside str_pool_iterate\n");
+
+   HSH_ITERATE (hash, hash_pos, key, datum){
+      if ((*iterator) ((const char *) key))
+	 return 1;
+   }
+
+   return 0;
+}
+
+/* \doc |str_pool_iterate| is used to iterate a function over every
+   value in the |pool|.
+   The function, |iterator|, is passed the |s|
+   for each entry in the pool.  If |iterator| returns a non-zero value,
+   the iterations stop, and |str_pool_iterate| returns non-zero.  Note that the
+   keys are in some arbitrary order, and that this order may change between
+   two successive calls to |str_pool_iterate|. */
+
+int str_pool_iterate_arg(
+   str_Pool pool,
+   int (*iterator)( const char *s, void *arg ),
+   void *arg )
+{
+   poolInfo      p    = (poolInfo) pool;
+   hsh_HashTable hash = p -> hash;
+   hsh_Position  hash_pos;
+   void *key;
+   void *datum;
+
+   HSH_ITERATE (hash, hash_pos, key, datum){
+      if ((*iterator) (key, arg)){
+	 HSH_ITERATE_END (hash);
+	 return 1;
+      }
+   }
+
+   return 0;
+}
+
+str_Position str_pool_init_position (str_Pool pool)
+{
+   poolInfo p = (poolInfo) pool;
+
+   return hsh_init_position (p -> hash);
+}
+
+str_Position str_pool_next_position (str_Pool pool, str_Position position)
+{
+   poolInfo p = (poolInfo) pool;
+
+   return hsh_next_position (p -> hash, position);
+}
+
+void str_pool_get_position (str_Position position, char const * const*key)
+{
+   hsh_get_position (position, (void **) key);
 }
 
 /* \doc |str_pool_copy| returns a copy of the string, |s|, using memory

@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.40 2003/08/08 12:22:56 cheusov Exp $
+ * $Id: maa.h,v 1.41 2003/12/30 16:28:20 cheusov Exp $
  */
 
 #ifndef _MAA_H_
@@ -357,6 +357,7 @@ extern void            mem_print_object_stats( mem_Object info, FILE *stream );
 /* string.c */
 
 typedef void *str_Pool;
+typedef hsh_Position str_Position;
 
 typedef struct str_Stats {
    int count;			/* Number of strings created */
@@ -376,6 +377,40 @@ extern void       str_pool_grow( str_Pool pool, const char *s, int length );
 extern const char *str_pool_finish( str_Pool pool );
 extern str_Stats  str_pool_get_stats( str_Pool pool );
 extern void       str_pool_print_stats( str_Pool pool, FILE *stream );
+
+extern str_Position  str_pool_init_position(
+   str_Pool table );
+extern str_Position  str_pool_next_position(
+   str_Pool table,
+   str_Position position );
+extern void str_pool_get_position(
+   str_Position position,
+   char const *const *key );
+#define str_pool_readonly(pool, flag) hsh_readonly ((pool), (flag))
+
+extern int        str_pool_iterate(
+   str_Pool pool,
+   int (*iterator)( const char *s ) );
+extern int        str_pool_iterate_arg(
+   str_Pool pool,
+   int (*iterator)( const char *s, void *arg ),
+   void *arg );
+
+#define STR_POSITION_INIT(P,T)  ((P)=str_pool_init_position(T))
+#define STR_POSITION_NEXT(P,T)  ((P)=str_pool_next_position(T,P))
+#define STR_POSITION_OK(P)      (P)
+#define STR_POSITION_GET(P,K)   (str_pool_get_position(P,&K), K)
+
+/* iterate over all keys (K) in string pool T */
+#define STR_ITERATE(T,P,K)                                                   \
+   for (STR_POSITION_INIT((P),(T));                                          \
+	STR_POSITION_OK(P) && (STR_POSITION_GET((P),(K)),1);                 \
+	STR_POSITION_NEXT((P),(T)))
+
+/* If the STR_ITERATE loop is exited before all elements in the table are
+   seen, then STR_ITERATE_END should be called.  Calling this function
+   after complete loops does no harm. */
+#define STR_ITERATE_END(T) str_readonly(T,0)
 
 extern int        str_exists( const char *s );
 extern const char *str_find( const char *s );
