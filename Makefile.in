@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Sun Nov 10 11:54:32 1996 by faith@cs.unc.edu
+# Revised: Mon Dec  9 15:12:42 1996 by faith@cs.unc.edu
 # Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,11 +17,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.27 1996/11/10 20:20:45 faith Exp $
+# $Id: Makefile.in,v 1.28 1996/12/09 20:27:15 faith Exp $
 #
 
 MAA_MAJOR=0
-MAA_MINOR=9
+MAA_MINOR=90
 
 .SUFFIXES:
 .SUFFIXES: .c .o
@@ -120,6 +120,35 @@ version.c:
 	echo "/* Stamp: `date` */" > version.c
 	echo 'const char *maa_revision_string = "XRevisionX";' | \
 		sed 's/X/$$/g' >> version.c
+
+ChangeLog:
+	@(echo "***** Making new ChangeLog..."; \
+	rm -f ChangeLog; \
+	AWK=gawk rcs2log > ChangeLog)
+
+dist: ChangeLog
+	@( echo "Consider making version.stamp to bump version number"; \
+	CVSROOT=`cat CVS/Root`; \
+	export CVSROOT; \
+	VERSION=$(MAA_MAJOR).$(MAA_MINOR).`fgrep Revision version.c \
+		| head -1 \
+		| sed 's,^.*Revision: [^.]*.,,' \
+		| sed 's, $$.*$$,,'`; \
+	export VERSION; \
+	echo "***** Copying ChangeLog for libmaa-$${VERSION}..."; \
+	cp ChangeLog /tmp; \
+	echo "***** Exporting files for libmaa-$${VERSION}..."; \
+	cd /tmp; \
+	rm -rf /tmp/libmaa-$${VERSION}; \
+	cvs export -fNd libmaa-$${VERSION} -r HEAD libmaa; \
+	cd libmaa-$${VERSION}; \
+	autoconf; \
+	mv ../ChangeLog .; \
+	cd ..; \
+	echo "***** Taring and zipping libmaa-$${VERSION}.tar.gz..."; \
+	tar cvvf libmaa-$${VERSION}.tar libmaa-$${VERSION}; \
+	gzip -9 libmaa-$${VERSION}.tar; \
+	echo "***** Done making /tmp/libmaa-$${VERSION}.tar.gz")
 
 .PHONY: clean cleandist tags
 clean:

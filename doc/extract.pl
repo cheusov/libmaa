@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl
 # This file is -*- perl -*- source.
 # Created: Wed Jan 4 13:04:37 1995 by faith@cs.unc.edu
-# Revised: Sat Dec 30 20:13:12 1995 by faith@cs.unc.edu
+# Revised: Mon Dec  9 15:22:26 1996 by faith@cs.unc.edu
 # Public domain 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
 # Special thanks to Nick Simicich (njs@scifi.gate.net) and Nicolai
@@ -19,6 +19,20 @@ $oldfh = select(STDOUT); $| = 1; select($oldfh);
 $defaultCurrent = 0;
 $current = $defaultCurrent;
 $figextension = ".eepicemu";
+
+sub bf {
+    local($tmp) = $_[0];
+    $tmp =~ s/_/\\_/g;
+    $tmp =~ s/#/\\#/g;
+    return "\\textbf{${tmp}}";
+}
+
+sub tt {
+    local($tmp) = $_[0];
+    $tmp =~ s/_/\\_/g;
+    $tmp =~ s/#/\\#/g;
+    return "\\emph{${tmp}}";
+}
 
 sub figure {
     local($tmp) = $_[0];
@@ -180,18 +194,6 @@ sub print_doc {
 	$line =~ s/\s*$/\n/;
 	print $line;
     }
-}
-
-sub bf {
-    $_[0] =~ s/_/\\_/g;
-    $_[0] =~ s/#/\\#/g;
-    return "\\textbf{${_[0]}}";
-}
-
-sub tt {
-    $_[0] =~ s/_/\\_/g;
-    $_[0] =~ s/#/\\#/g;
-    return "\\emph{${_[0]}}";
 }
 
 sub print_values {
