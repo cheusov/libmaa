@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.15 2002/08/02 19:43:15 faith Exp $
+ * $Id: maa.c,v 1.16 2004/03/18 19:43:31 cheusov Exp $
  *
  * \section{General Support}
  *
@@ -41,16 +41,6 @@ void maa_init( const char *programName )
    _dbg_register( MAA_SL,        ".sl" );
    _dbg_register( MAA_SRC,       ".src" );
    _dbg_register( MAA_PARSE,     ".parse" );
-
-#ifndef __CHECKER__
-#ifdef HAVE_ATEXIT
-      atexit( maa_shutdown );
-#else
-# ifdef HAVE_ON_EXIT
-      on_exit( maa_shutdown, NULL );
-# endif
-#endif
-#endif
 }
 
 void maa_shutdown( void )
