@@ -1,6 +1,6 @@
 /* sl.c -- Skip lists
  * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:46 1996 by faith@cs.unc.edu
+ * Revised: Fri Mar 14 19:00:07 1997 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  * 
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: sl.c,v 1.8 1996/09/23 23:20:44 faith Exp $
+ * $Id: sl.c,v 1.9 1997/03/15 03:20:17 faith Exp $
  *
  * \section{Skip List Routines}
  *
