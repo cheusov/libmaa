@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Sat Jan 20 17:59:36 1996 by faith@cs.unc.edu
+# Revised: Mon Jan 22 21:46:21 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.13 1996/01/20 23:00:02 faith Exp $
+# $Id: Makefile.in,v 1.14 1996/01/23 02:51:05 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -89,8 +89,6 @@ tests-update: $(TESTS)
 %: %.o
 	$(CC) $(XTRALDFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
-$(EXES) $(TESTS): $(LIBS)
-
 ALLFLAGS=$(XTRACFLAGS) $(CFLAGS) $(XTRALDFLAGS) $(LDFLAGS)
 %: %.c
 	$(CC) $(ALLFLAGS) -o $@ $< $(LDLIBS)
@@ -98,6 +96,14 @@ ALLFLAGS=$(XTRACFLAGS) $(CFLAGS) $(XTRALDFLAGS) $(LDFLAGS)
 dmalloc/dmalloc.h:
 	echo making all in dmalloc
 	(cd dmalloc && $(MAKE) all) || exit 1
+
+libmaa.a:: $(LIBOBJS)
+	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
+	$(RANLIB) $@
+
+$(LIBOBJS): $(HEADERS) version.stamp
+$(EXES):    $(HEADERS) $(LIBS)
+$(TESTS):   $(HEADERS) $(LIBS)
 
 date := $(shell date)
 version.stamp: version.c
@@ -110,13 +116,6 @@ version.c:
 	echo "/* Stamp: `date` */" > version.c
 	echo 'const char *maa_revision_string = "XRevisionX";' | \
 		sed 's/X/$$/g' >> version.c
-
-libmaa.a:: $(LIBOBJS)
-	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
-	$(RANLIB) $@
-
-$(LIBOBJS): $(HEADERS) version.stamp
-$(EXES):    $(HEADERS) $(LIBS)
 
 .PHONY: clean cleandist tags
 clean:
