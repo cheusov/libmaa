@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Wed Sep 25 10:00:28 1996 by faith@cs.unc.edu
+# Revised: Wed Sep 25 10:15:40 1996 by faith@cs.unc.edu
 # Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.23 1996/09/25 14:00:53 faith Exp $
+# $Id: Makefile.in,v 1.24 1996/09/25 14:20:50 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -94,6 +94,8 @@ tests-update: $(TESTS)
 ALLFLAGS=$(XTRACFLAGS) $(CFLAGS) $(XTRALDFLAGS) $(LDFLAGS)
 %: %.c
 	$(CC) $(ALLFLAGS) -o $@ $< $(LDLIBS)
+%test: %test.c
+	$(CC) $(ALLFLAGS) -o $@ $< rnd.o $(LDLIBS)
 
 dmalloc/dmalloc.h:
 	echo making all in dmalloc
@@ -105,7 +107,7 @@ libmaa.a:: $(LIBOBJS)
 
 $(LIBOBJS): $(HEADERS) version.stamp
 $(EXES):    $(HEADERS) $(LIBS)
-$(TESTS):   $(HEADERS) $(LIBS)
+$(TESTS):   $(HEADERS) $(LIBS) rnd.o
 
 date := $(shell date)
 version.stamp: version.c

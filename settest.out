@@ -1,5 +1,6 @@
 Running test for count of 100
-"key100" is not a member of the setkey80
+"key100" is not a member of the set
+key80
 key71
 key62
 key53
@@ -104,13 +105,13 @@ key1
    maximum list length is 2 (optimal is 1.1)
    101 retrievals (86 from top, 1 failed)
    5 resizings to 347 total
-   100 entries (89 buckets used, 79 without overflow)
-   maximum list length is 3 (optimal is 1.1)
-   100 retrievals (79 from top, 0 failed)
+   100 entries (87 buckets used, 74 without overflow)
+   maximum list length is 2 (optimal is 1.1)
+   100 retrievals (75 from top, 0 failed)
    5 resizings to 347 total
-   100 entries (83 buckets used, 68 without overflow)
-   maximum list length is 3 (optimal is 1.2)
-   100 retrievals (70 from top, 0 failed)
+   100 entries (89 buckets used, 78 without overflow)
+   maximum list length is 2 (optimal is 1.1)
+   100 retrievals (79 from top, 0 failed)
 
 Set 1:
 bar

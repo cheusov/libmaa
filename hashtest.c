@@ -1,6 +1,6 @@
 /* hashtest.c -- Test program for Khepera hash table routines
  * Created: Sun Nov  6 18:55:23 1994 by faith@cs.unc.edu
- * Revised: Wed Sep 25 09:34:24 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 10:16:27 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,29 +17,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hashtest.c,v 1.4 1996/09/25 14:00:55 faith Exp $
+ * $Id: hashtest.c,v 1.5 1996/09/25 14:20:51 faith Exp $
  */
 
 #include "maaP.h"
-#include <math.h>
 
-static void init_rand( void )
-{
-   srandom(1);
-}
-
-static int get_rand( int ll, int ul )
-{
-   double r = ((double)random()) / ((double)INT_MAX);
-   int    val;
-
-   val = floor( ll + r * (ul - ll) );
-   if (val > ul)
-      err_internal( __FUNCTION__, "%d > %d\n", val, ul );
-   if (val < ll)
-      err_internal( __FUNCTION__, "%d < %d\n", val, ll );
-   return val;
-}
+extern void init_rand( void );
+extern int get_rand( int ll, int ul );
 
 static int iterator( const void *key, const void *datum )
 {
