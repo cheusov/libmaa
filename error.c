@@ -1,7 +1,7 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Mon Mar 10 10:34:38 1997 by faith@cs.unc.edu
- * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Fri Jul 11 16:16:05 1997 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.14 1997/03/10 21:39:43 faith Exp $
+ * $Id: error.c,v 1.15 1997/07/11 20:17:48 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -65,10 +65,14 @@ void err_fatal( const char *routine, const char *format, ... )
    va_list ap;
 
    fflush( stdout );
-   if (_err_programName)
-      fprintf( stderr, "%s (%s): ", _err_programName, routine );
-   else
-      fprintf( stderr, "%s: ", routine );
+   if (_err_programName) {
+      if (routine)
+	 fprintf( stderr, "%s (%s): ", _err_programName, routine );
+      else
+	 fprintf( stderr, "%s: ", _err_programName );
+   } else {
+      if (routine) fprintf( stderr, "%s: ", routine );
+   }
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
@@ -91,10 +95,14 @@ void err_fatal_errno( const char *routine, const char *format, ... )
    int     errorno = errno;
 
    fflush( stdout );
-   if (_err_programName)
-      fprintf( stderr, "%s (%s): ", _err_programName, routine );
-   else
-      fprintf( stderr, "%s: ", routine );
+   if (_err_programName) {
+      if (routine)
+	 fprintf( stderr, "%s (%s): ", _err_programName, routine );
+      else
+	 fprintf( stderr, "%s: ", _err_programName );
+   } else {
+      if (routine) fprintf( stderr, "%s: ", routine );
+   }
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
@@ -125,10 +133,14 @@ void err_warning( const char *routine, const char *format, ... )
 
    fflush( stdout );
    fflush( stderr );
-   if (_err_programName)
-      fprintf( stderr, "%s (%s): ", _err_programName, routine );
-   else
-      fprintf( stderr, "%s: ", routine );
+   if (_err_programName) {
+      if (routine)
+	 fprintf( stderr, "%s (%s): ", _err_programName, routine );
+      else
+	 fprintf( stderr, "%s: ", _err_programName );
+   } else {
+      if (routine) fprintf( stderr, "%s: ", routine );
+   }
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
@@ -145,11 +157,16 @@ void err_internal( const char *routine, const char *format, ... )
    va_list ap;
 
    fflush( stdout );
-   if (_err_programName)
-      fprintf( stderr,
-	       "%s (%s): Internal error\n   ", _err_programName, routine );
-   else
-      fprintf( stderr, "%s: Internal error\n   ", routine );
+   if (_err_programName) {
+      if (routine)
+	 fprintf( stderr, "%s (%s): Internal error\n     ",
+		  _err_programName, routine );
+      else
+	 fprintf( stderr, "%s: Internal error\n     ", _err_programName );
+   } else {
+      if (routine) fprintf( stderr, "%s: Internal error\n     ", routine );
+      else         fprintf( stderr, "Internal error\n     " );
+   }
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
