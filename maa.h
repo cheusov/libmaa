@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.38 2002/08/05 11:16:53 cheusov Exp $
+ * $Id: maa.h,v 1.39 2003/07/07 12:01:00 cheusov Exp $
  */
 
 #ifndef _MAA_H_
@@ -538,16 +538,6 @@ extern void       src_print_message( FILE *str, src_Type source,
 extern void       src_print_line( FILE *stream, src_Type source );
 extern src_Stats  src_get_stats( void );
 extern void       src_print_stats( FILE *stream );
-
-/* parse.c */
-
-extern void   prs_set_debug( int debug_flag );
-extern void   prs_set_cpp_options( const char *cpp_options );
-extern void   prs_file( const char *filename );
-extern void   prs_file_nocpp( const char *filename );
-extern void   prs_stream( FILE *str, const char *name );
-extern int    prs_make_integer( const char *string, int length );
-extern double prs_make_double( const char *string, int length );
 
 /* parse-concrete.c */
 

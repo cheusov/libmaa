@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.41 2002/09/16 12:48:39 cheusov Exp $
+# $Id: Makefile.in,v 1.42 2003/07/07 12:01:00 cheusov Exp $
 #
 
 ifneq (,)
@@ -65,7 +65,7 @@ HEADERS= config.h maa.h maaP.h decl.h obstack.h @XTRAHEADERS@
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
 	 debug.o flags.o maa.o prime.o bit.o timer.o version.o \
-	 arg.o pr.o sl.o base64.o base26.o source.o parse.o parse-concrete.o \
+	 arg.o pr.o sl.o base64.o base26.o source.o parse-concrete.o \
 	 text.o log.o
 TESTS=	 settest hashtest stringtest debugtest \
 	 primetest listtest bittest argtest sltest prtest basetest
@@ -89,6 +89,9 @@ install: $(LIBS)
 		ln -s libmaa.so.$(VERSION) libmaa.so; \
 		ln -s libmaa.so.$(VERSION) libmaa.so.$(VER); \
 	fi
+
+uninstall:
+	rm -f $(libdir)/libmaa.{a,so,so.$(VER),so.$(VERSION)} $(includedir)/maa.h
 
 tests: $(TESTS)
 	@for i in $(TESTS); do \
@@ -125,11 +128,9 @@ libmaa.a: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
 	-@ ($(RANLIB) $@ || true) 2> /dev/null
 
+.PHONY : libmaa.so
 libmaa.so: $(LIBOBJS)
 	$(LDSHARED) -o libmaa.so.$(VERSION) $(LIBOBJS)
-	-rm -f libmaa.so libmaa.so.$(VER)
-	ln -s libmaa.so.$(VERSION) libmaa.so.$(VER)
-	ln -s libmaa.so.$(VERSION) libmaa.so
 
 $(LIBOBJS): $(HEADERS) # version.stamp # don't automatically bump version
 $(EXES):    $(HEADERS) $(LIBS)
