@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Tue Jan 30 15:54:55 1996 by r.faith@ieee.org
+ * Revised: Wed Jan 31 11:01:30 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.11 1996/01/31 12:31:15 faith Exp $
+ * $Id: hash.c,v 1.12 1996/02/02 04:30:01 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -42,7 +42,7 @@ typedef struct bucket {
 } *bucketType;
 
 typedef struct table {
-#if KH_MAGIC
+#if MAA_MAGIC
    int           magic;
 #endif
    unsigned long prime;
@@ -59,7 +59,7 @@ typedef struct table {
 static void _hsh_check( tableType t, const char *function )
 {
    if (!t) err_internal( function, "table is null\n" );
-#if KH_MAGIC
+#if MAA_MAGIC
    if (t->magic != HSH_MAGIC)
       err_internal( function,
 		    "Magic match failed: 0x%08x (should be 0x%08x)\n",
@@ -80,7 +80,7 @@ static hsh_HashTable _hsh_create( unsigned long seed,
    unsigned long prime = prm_next_prime( seed );
    
    t             = xmalloc( sizeof( struct table ) );
-#if KH_MAGIC
+#if MAA_MAGIC
    t->magic      = HSH_MAGIC;
 #endif
    t->prime      = prime;
@@ -153,7 +153,7 @@ static void _hsh_destroy_table( hsh_HashTable table )
 {
    tableType t = (tableType)table;
    
-#if KH_MAGIC
+#if MAA_MAGIC
    t->magic = HSH_MAGIC_FREED;
 #endif
    xfree( t );			/* terminal */

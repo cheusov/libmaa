@@ -1,6 +1,6 @@
 /* arg.c -- Argument list support
  * Created: Sun Jan  7 13:39:29 1996 by r.faith@ieee.org
- * Revised: Sun Jan 14 13:53:14 1996 by r.faith@ieee.org
+ * Revised: Wed Jan 31 11:06:02 1996 by r.faith@ieee.org
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.2 1996/01/15 03:48:00 faith Exp $
+ * $Id: arg.c,v 1.3 1996/02/02 04:29:59 faith Exp $
  *
  * \section{Argument List Routines}
  *
@@ -30,7 +30,7 @@
 #include "maaP.h"
 
 typedef struct Arg {
-#if KH_MAGIC
+#if MAA_MAGIC
    int        magic;
 #endif
    int        argc;		/* Current count */
@@ -44,7 +44,7 @@ static void _arg_check( arg_List arg, const char *function )
    Arg a = (Arg)arg;
    
    if (!a) err_internal( function, "arg is null\n" );
-#if KH_MAGIC
+#if MAA_MAGIC
    if (a->magic != ARG_MAGIC)
       err_internal( function,
 		    "Magic match failed: 0x%08x (should be 0x%08x)\n",
@@ -59,7 +59,7 @@ arg_List arg_create( void )
 {
    Arg a = xmalloc( sizeof( struct Arg ) );
 
-#if KH_MAGIC
+#if MAA_MAGIC
    a->magic   = ARG_MAGIC;
 #endif
    a->argc    = 0;
@@ -81,7 +81,9 @@ void arg_destroy( arg_List arg )
    _arg_check( a, __FUNCTION__ );
    mem_destroy_strings( a->object );
    xfree( a->argv );
+#if MAA_MAGIC
    a->magic = ARG_MAGIC_FREED;
+#endif
    xfree( a );
 }
 

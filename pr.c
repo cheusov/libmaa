@@ -1,6 +1,6 @@
 /* pr.c -- Process creation and tracking support
  * Created: Sun Jan  7 13:34:08 1996 by r.faith@ieee.org
- * Revised: Sat Jan 20 11:50:43 1996 by faith@cs.unc.edu
+ * Revised: Wed Jan 31 11:01:29 1996 by r.faith@ieee.org
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.3 1996/01/20 23:00:05 faith Exp $
+ * $Id: pr.c,v 1.4 1996/02/02 04:30:05 faith Exp $
  *
  * \section{Process Management Routines}
  *
@@ -58,7 +58,7 @@ static void _pr_check( pr_Object object, const char *function )
    Obj o = (Obj)object;
 
    if (!o) err_internal( function, "object is null\n" );
-#if KH_MAGIC
+#if MAA_MAGIC
    if (o->magic != PR_MAGIC)
       err_internal( function,
 		    "Magic match failed: 0x%08x (should be 0x%08x)\n",
@@ -99,7 +99,7 @@ pr_Object pr_create( void )
 {
    Obj o = xmalloc( sizeof( struct Obj ) );
 
-#if KH_MAGIC
+#if MAA_MAGIC
    o->magic = PR_MAGIC;
 #endif
 

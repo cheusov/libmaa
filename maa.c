@@ -1,6 +1,6 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Sun Jan 28 15:44:11 1996 by faith@cs.unc.edu
+ * Revised: Wed Jan 31 11:01:29 1996 by r.faith@ieee.org
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.6 1996/01/28 22:33:31 faith Exp $
+ * $Id: maa.c,v 1.7 1996/02/02 04:30:02 faith Exp $
  *
  * \section{General Support}
  *
@@ -35,8 +35,8 @@ void maa_init( const char *programName )
    
    err_set_program_name( programName );
    
-   _dbg_register( KH_MEMORY,    ".memory" );
-   _dbg_register( KH_TIME,      ".time" );
+   _dbg_register( MAA_MEMORY,    ".memory" );
+   _dbg_register( MAA_TIME,      ".time" );
    _dbg_register( MAA_PR,       ".pr" );
 
 #ifndef __CHECKER__
@@ -52,9 +52,9 @@ void maa_init( const char *programName )
 
 void maa_shutdown( void )
 {
-   if (dbg_test(KH_MEMORY) || dbg_test(KH_TIME))
+   if (dbg_test(MAA_MEMORY) || dbg_test(MAA_TIME))
       fprintf( stderr, "%s\n", maa_version() );
-   if (dbg_test(KH_MEMORY)) {
+   if (dbg_test(MAA_MEMORY)) {
       str_print_stats( stderr );
    }
 
@@ -63,7 +63,7 @@ void maa_shutdown( void )
    _lst_shutdown();
 
    tim_stop( "total" );
-   if (dbg_test(KH_TIME)) {
+   if (dbg_test(MAA_TIME)) {
       tim_print_timers( stderr );
    }
    _tim_shutdown();

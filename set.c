@@ -1,6 +1,6 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Sun Dec 10 11:54:49 1995 by r.faith@ieee.org
+ * Revised: Wed Jan 31 11:01:30 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.9 1995/12/11 15:56:57 faith Exp $
+ * $Id: set.c,v 1.10 1996/02/02 04:30:06 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -43,7 +43,7 @@ typedef struct bucket {
 } *bucketType;
 
 typedef struct set {
-#if KH_MAGIC
+#if MAA_MAGIC
    int           magic;
 #endif
    unsigned long prime;
@@ -61,7 +61,7 @@ typedef struct set {
 static void _set_check( setType t, const char *function )
 {
    if (!t) err_internal( function, "set is null\n" );
-#if KH_MAGIC
+#if MAA_MAGIC
    if (t->magic != SET_MAGIC)
       err_internal( function,
 		    "Incorrect magic: 0x%08x (should be 0x%08x)\n",
@@ -79,7 +79,7 @@ static set_Set _set_create( unsigned long seed,
    unsigned long prime = prm_next_prime( seed );
    
    t               = xmalloc( sizeof( struct set ) );
-#if KH_MAGIC
+#if MAA_MAGIC
    t->magic        = SET_MAGIC;
 #endif
    t->prime        = prime;
@@ -168,7 +168,7 @@ static void _set_destroy_table( set_Set set )
    
    _set_check( t, __FUNCTION__ );
    
-#if KH_MAGIC
+#if MAA_MAGIC
    t->magic = SET_MAGIC_FREED;
 #endif
    xfree( t );			/* terminal */

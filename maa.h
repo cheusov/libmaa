@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Mon Jan 29 20:53:33 1996 by r.faith@ieee.org
+ * Revised: Wed Jan 31 11:01:27 1996 by r.faith@ieee.org
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.7 1996/01/31 12:31:16 faith Exp $
+ * $Id: maa.h,v 1.8 1996/02/02 04:30:03 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -31,17 +31,17 @@
 #define __attribute__(x)
 #endif
 
-				/* If KH_MAGIC is non-zero, important
+				/* If MAA_MAGIC is non-zero, important
                                    structures will be tagged with a magic
                                    number which will be checked for
                                    integrity at each access.  This uses up
                                    more memory, and is slightly slower, but
                                    helps debugging quite a bit. */
-#ifndef KH_MAGIC
-#define KH_MAGIC 1
+#ifndef MAA_MAGIC
+#define MAA_MAGIC 1
 #endif
 
-#if KH_MAGIC
+#if MAA_MAGIC
 #define HSH_MAGIC               0x01020304
 #define HSH_MAGIC_FREED         0x10203040
 #define SET_MAGIC               0x02030405
@@ -52,12 +52,6 @@
 #define MEM_STRINGS_MAGIC_FREED 0x32323232
 #define MEM_OBJECTS_MAGIC       0x42424242
 #define MEM_OBJECTS_MAGIC_FREED 0x24242424
-#define TRE_MAGIC               0x012bb0bd
-#define TRE_MAGIC_FREED         0x10b20bbd
-#define SYM_SCOPE_MAGIC         0x12345678
-#define SYM_SCOPE_MAGIC_FREED   0x21436587
-#define SYM_SYMBOL_MAGIC        0xfedcba98
-#define SYM_SYMBOL_MAGIC_FREED  0xefcdab89
 #define ARG_MAGIC               0xfeedbead
 #define ARG_MAGIC_FREED         0xefdeebda
 #define PR_MAGIC                0x0bad7734
@@ -71,9 +65,9 @@ extern const char *maa_revision_string;
 
 /* maa.c */
 
-#define KH_MEMORY    0xc8000000	/* Print memory usage statistics at exit */
-#define KH_TIME      0xc4000000	/* Print timer information at exit       */
-#define MAA_PR       0xc2000000	/* Debug process routines                */
+#define MAA_MEMORY   0xc1000000	/* Print memory usage statistics at exit */
+#define MAA_TIME     0xc2000000	/* Print timer information at exit       */
+#define MAA_PR       0xc4000000	/* Debug process routines                */
 
 extern void       maa_init( const char *programName );
 extern void       maa_shutdown( void );

@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Sun Jan 14 13:42:40 1996 by r.faith@ieee.org
+ * Revised: Wed Jan 31 10:33:33 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.8 1996/01/15 03:48:03 faith Exp $
+ * $Id: error.c,v 1.9 1996/02/02 04:30:00 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -115,10 +115,11 @@ void err_warning( const char *routine, const char *format, ... )
    va_list ap;
 
    fflush( stdout );
+   fflush( stderr );
    if (_err_programName)
-      fprintf( stderr, "\n%s:%s:\n   ", _err_programName, routine );
+      fprintf( stderr, "%s:%s:\n   ", _err_programName, routine );
    else
-      fprintf( stderr, "\n%s:\n   ", routine );
+      fprintf( stderr, "%s:\n   ", routine );
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );

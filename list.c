@@ -1,7 +1,7 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Sun Dec 31 20:26:48 1995 by r.faith@ieee.org
+ * Revised: Wed Jan 31 11:06:02 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.6 1996/01/01 14:45:47 faith Exp $
+ * $Id: list.c,v 1.7 1996/02/02 04:30:02 faith Exp $
  *
  * \section{List Routines}
  *
@@ -39,7 +39,7 @@ typedef struct data {
 } *dataType;
 
 typedef struct list {
-#if KH_MAGIC
+#if MAA_MAGIC
    int          magic;
 #endif
    struct data  *head;
@@ -52,7 +52,7 @@ mem_Object mem;
 static void _lst_check( listType l, const char *function )
 {
    if (!l) err_internal( function, "list is null\n" );
-#if KH_MAGIC
+#if MAA_MAGIC
    if (l->magic != LST_MAGIC)
       err_internal( function,
 		    "Incorrect magic: 0x%08x (should be 0x%08x)\n",
@@ -67,7 +67,7 @@ lst_List lst_create( void )
 {
    listType l = xmalloc( sizeof( struct list ) );
 
-#if KH_MAGIC
+#if MAA_MAGIC
    l->magic = LST_MAGIC;
 #endif
    l->head  = NULL;
@@ -102,7 +102,7 @@ void lst_destroy( lst_List list )
       d = next;
    }
 
-#if KH_MAGIC
+#if MAA_MAGIC
    l->magic = LST_MAGIC_FREED;
 #endif
    xfree( list );

@@ -1,6 +1,6 @@
 /* memory.c -- Memory management for Khepera
  * Created: Thu Dec 22 09:58:38 1994 by faith@cs.unc.edu
- * Revised: Sun Jan  7 21:48:32 1996 by r.faith@ieee.org
+ * Revised: Wed Jan 31 11:06:01 1996 by r.faith@ieee.org
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: memory.c,v 1.5 1996/01/08 03:26:51 faith Exp $
+ * $Id: memory.c,v 1.6 1996/02/02 04:30:04 faith Exp $
  *
  * \section{Memory Management Routines}
  *
@@ -41,7 +41,7 @@
 #endif
 
 typedef struct stringInfo {
-#if KH_MAGIC
+#if MAA_MAGIC
    int            magic;
 #endif   
    int            count;
@@ -50,7 +50,7 @@ typedef struct stringInfo {
 } *stringInfo;
 
 typedef struct objectInfo {
-#if KH_MAGIC
+#if MAA_MAGIC
    int            magic;
 #endif
    int            total;
@@ -62,7 +62,7 @@ typedef struct objectInfo {
 } *objectInfo;
 
 
-#if !KH_MAGIC
+#if !MAA_MAGIC
 #define _mem_magic_strings(i,function)                                        \
    do {                                                                       \
       if (!i) err_internal( function, "mem_String is null\n" );               \
@@ -86,7 +86,7 @@ mem_String mem_create_strings( void )
 {
    stringInfo info = xmalloc( sizeof( struct stringInfo ) );
 
-#if KH_MAGIC
+#if MAA_MAGIC
    info->magic   = MEM_STRINGS_MAGIC;
 #endif
    info->count   = 0;
@@ -109,7 +109,7 @@ void mem_destroy_strings( mem_String info )
    stringInfo i = (stringInfo)info;
 
    _mem_magic_strings( i, __FUNCTION__ );
-#if KH_MAGIC
+#if MAA_MAGIC
    i->magic = MEM_STRINGS_MAGIC_FREED;
 #endif
    
@@ -215,7 +215,7 @@ void mem_print_string_stats( mem_String info, FILE *stream )
    xfree( s );			/* rare */
 }
 
-#if !KH_MAGIC
+#if !MAA_MAGIC
 #define _mem_magic_objects(i,function) /*  */
 #else
 static void _mem_magic_objects( objectInfo i, const char *function )
@@ -237,7 +237,7 @@ mem_Object mem_create_objects( int size )
 {
    objectInfo info = xmalloc( sizeof ( struct objectInfo ) );
 
-#if KH_MAGIC
+#if MAA_MAGIC
    info->magic   = MEM_OBJECTS_MAGIC;
 #endif
    info->total   = 0;
@@ -261,7 +261,7 @@ void mem_destroy_objects( mem_Object info )
    objectInfo i = (objectInfo)info;
    
    _mem_magic_objects( i, __FUNCTION__ );
-#if KH_MAGIC
+#if MAA_MAGIC
    i->magic = MEM_OBJECTS_MAGIC_FREED;
 #endif
    

@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Mon Jan 29 14:47:39 1996 by faith@cs.unc.edu
+# Revised: Wed Jan 31 11:09:36 1996 by r.faith@ieee.org
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.16 1996/01/30 00:06:39 faith Exp $
+# $Id: Makefile.in,v 1.17 1996/02/02 04:29:58 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -34,7 +34,7 @@ srcdir=		@srcdir@
 VPATH=		@srcdir@
 prefix=		@prefix@
 exec_prefix=	@exec_prefix@
-subdirs=        @subdirs@ doc
+subdirs=        @subdirs@ # doc
 
 SHELL=		/bin/sh
 
