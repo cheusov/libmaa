@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.11 1996/02/26 15:23:14 faith Exp $
+ * $Id: maa.h,v 1.12 1996/03/11 17:49:49 yakowenk Exp $
  */
 
 #ifndef _MAA_H_
@@ -274,6 +274,7 @@ extern lst_Position lst_nth_position( lst_List list, unsigned int n );
 extern void         *lst_get_position( lst_Position position );
 extern void         lst_set_position( lst_Position position,
 				      const void *datum );
+extern void         lst_dump( lst_List list );
 extern void         _lst_shutdown( void );
 
 #define LST_POSITION_INIT(P,L) ((P)=lst_init_position(L))
