@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.14 1995/10/11 15:29:54 faith Exp $
+ * $Id: khepera.h,v 1.15 1995/10/22 05:29:31 yakowenk Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -469,7 +469,6 @@ extern const char *sym_mangle_function_name(tre_Node);
    unsigned long          bits;                 \
    sym_Scope              scope;                \
    typ_Expr               exprType;             \
-   sym_Scope              symbolTable;          \
    tre_SetTree            polymorphicVars
 
 #if KH_MAGIC
@@ -659,6 +658,7 @@ extern dct_Position dct_next_position(dct_Position);
 
 /* inf.c */
 
+#define INF_PRETYP	"predef.txt"
 extern src_Type   inf_CurrentSourcePosition;
 extern void       inf_infer(tre_Node);
 extern boolean    inf_infer_definition(tre_Node,tre_Node);
@@ -705,11 +705,14 @@ extern typ_Expr      typ_instance(typ_Expr, tre_SetTree, dct_Dict);
 extern boolean       typ_mgu(typ_Expr, typ_Expr, lst_List);
 extern void          typ_apply_mgu(dct_Dict);
 extern boolean       typ_unify(typ_Expr, typ_Expr);
-extern boolean       typ_unify_ast_types( tre_Node n1, tre_Node n2 );
-extern void          typ_read_typerule( tre_Node where );
+extern boolean       typ_unify_ast_types(tre_Node, tre_Node);
+extern void          typ_read_typerule();
+extern void          typ_read_typerule(tre_Node);
 extern tre_Node      typ_ast_instance(tre_Node);
+extern void          typ_ast_dump(tre_Node);
 extern void          typ_unlink(void *);
 extern void          typ_destroy(typ_Expr);
+extern int           typ_tre_unlink(tre_Node);
 extern unsigned long typ_hash(const typ_Expr);
 extern int           typ_compare(const typ_Expr, const typ_Expr);
 extern void          typ_dump(typ_Expr);
