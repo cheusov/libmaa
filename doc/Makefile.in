@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for Khepera documentation
 # Created: Sun Jan  8 21:44:38 1995 by faith@cs.unc.edu
-# Revised: Sat Jan 20 17:58:28 1996 by faith@cs.unc.edu
+# Revised: Sat Jan 20 18:21:29 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,8 +17,10 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.2 1996/01/20 23:00:09 faith Exp $
+# $Id: Makefile.in,v 1.3 1996/01/20 23:36:08 faith Exp $
 #
+
+.SUFFIXES:
 
 srcdir=		@srcdir@
 VPATH=		@srcdir@
@@ -90,12 +92,6 @@ example2-slide.eepicemu: example2.fig
 %.eepicemu: %.fig
 	$(FIG2DEV) -L eepicemu -m 0.65 $< > $@
 
-farey-slide.eepicemu: farey.fig
-	$(FIG2DEV) -L eepicemu -m 0.8 $< > $@
-
-farey2-slide.eepicemu: farey2.fig
-	$(FIG2DEV) -L eepicemu -m 0.45 $< > $@
-
 %.300dpi.ps: %.dvi
 	if fgrep 'LANDSCAPE MODE' $*.log > /dev/null; then \
 		$(DVIPS) -D300 -t landscape -o $@ $*; \
@@ -109,6 +105,28 @@ farey2-slide.eepicemu: farey2.fig
 	else \
 		$(DVIPS) -D600 -o $@ $*; \
 	fi
+
+%.stamp: %.tex
+	test -f $*.stamp || cp $*.aux $*.stamp || touch $*.stamp
+	$(LATEX) $*
+	cmp -s $*.stamp $*.aux || cp $*.aux $*.stamp
+
+%.dvi: %.bbl %.tex %.stamp
+	if fgrep 'LaTeX Warning: Label' $*.log>/dev/null; then $(LATEX) $*; fi
+	if fgrep 'LaTeX Warning: Label' $*.log>/dev/null; then $(LATEX) $*; fi
+	if fgrep 'LaTeX Warning: Label' $*.log>/dev/null; then $(LATEX) $*; fi
+
+ifneq (,)
+%.bib: %.tex
+	if $(REFBIBTEX) -j $* > $@.tmp; then touch $@; fi
+	cmp -s $@ $@.tmp || mv $@.tmp $@
+	-rm -f $@.tmp
+endif
+
+
+%.bbl: %.bib %.stamp
+	test ! -s $*.bib || $(BIBTEX) $*
+
 
 .PRECIOUS: %.aux %.bib %.bbl %.blg
 
