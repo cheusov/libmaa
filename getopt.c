@@ -44,6 +44,11 @@ Cambridge, MA 02139, USA.  */
 
 #include <stdio.h>
 
+#ifdef __sparc__
+extern int fprintf( FILE *, const char *, ... );
+extern int strncmp( const char *, const char *, int n );
+#endif
+
 /* Comment out all this code if we are using the GNU C Library, and are not
    actually compiling the library itself.  This code is part of the GNU C
    Library, but also included in many other GNU distributions.  Compiling
@@ -476,7 +481,7 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
       const struct option *pfound = NULL;
       int exact = 0;
       int ambig = 0;
-      int indfound;
+      int indfound = 0;
       int option_index;
 
       for (nameend = nextchar; *nameend && *nameend != '='; nameend++)
