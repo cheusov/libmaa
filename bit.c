@@ -1,6 +1,6 @@
 /* bit.c -- 
  * Created: Thu Sep 28 18:09:30 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:29 1995 by faith@cs.unc.edu
+ * Revised: Sat Dec 30 21:23:08 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,26 +17,40 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: bit.c,v 1.3 1995/11/19 19:28:33 faith Exp $
- * 
+ * $Id: bit.c,v 1.4 1995/12/31 03:12:39 faith Exp $
+ *
+ * \section{Bit manipulation routines}
+ *
+ * \intro These are a set of simple routine to manipulate bits in an
+ * integer.
+ *
  */
 
 #include "maaP.h"
+
+/* \doc Set |bit| in |flags|. */
 
 __inline__ void bit_set( unsigned long *flags, int bit )
 {
    *flags |= (1 << bit);
 }
 
+/* \doc Clear |bit| in |flags|. */
+
 __inline__ void bit_clr( unsigned long *flags, int bit )
 {
    *flags &= ~(1 << bit);
 }
 
+/* \doc Test |bit| in |flags|, returning non-zero if the bit is set and
+   zero if the bit is clear. */
+
 __inline__ int bit_tst( unsigned long *flags, int bit )
 {
    return (*flags & (1 << bit));
 }
+
+/* \doc Return a count of the number of bits set in |flags|. */
 
 __inline__ int bit_cnt( unsigned long *flags )
 {

@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:17 1995 by faith@cs.unc.edu
+ * Revised: Sat Dec 30 21:19:07 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,8 +17,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: timer.c,v 1.8 1995/11/19 19:28:52 faith Exp $
- * 
+ * $Id: timer.c,v 1.9 1995/12/31 03:12:41 faith Exp $
+ *
+ * \section{Timer Support}
+ *
+ * \intro These routines provide access to a microsecond-resolution time
+ * that can be used for profiling.
+ *
  */
 
 #include "maaP.h"
@@ -38,6 +43,8 @@ static void _tim_check( void )
 {
    if (!_tim_Hash) _tim_Hash = hsh_create( NULL, NULL );
 }
+
+/* \doc Start the named timer. */
 
 void tim_start( const char *name )
 {
@@ -60,6 +67,8 @@ void tim_start( const char *name )
 	   sizeof( struct timeval ) );
 }
 
+/* \doc Stop the named timer. */
+
 void tim_stop( const char *name )
 {
    tim_Entry entry;
@@ -80,6 +89,8 @@ void tim_stop( const char *name )
    entry->system += DIFFTIME( rusage.ru_stime, entry->system_mark );
 }
 
+/* \doc Reset the named timer to zero. */
+
 void tim_reset( const char *name )
 {
    tim_Entry entry;
@@ -90,6 +101,10 @@ void tim_reset( const char *name )
 
    entry->real = entry->user = entry->system = 0;
 }
+
+/* \doc Get the wall time in seconds from the named timer.  The return
+   value is a |double| and has microsecond resolution if the current system
+   provides that accuracy (most don't). */
 
 double tim_get_real( const char *name )
 {
@@ -102,6 +117,8 @@ double tim_get_real( const char *name )
    return entry->real / 1000000.0;
 }
 
+/* \doc Get the number of seconds of user CPU time. */
+
 double tim_get_user( const char *name )
 {
    tim_Entry entry;
@@ -112,6 +129,8 @@ double tim_get_user( const char *name )
 
    return entry->user / 1000000.0;
 }
+
+/* \doc Get the number of seconds of system CPU time. */
 
 double tim_get_system( const char *name )
 {
@@ -124,6 +143,9 @@ double tim_get_system( const char *name )
    return entry->system / 1000000.0;
 }
 
+/* \doc Print the named timer values to |str|.  The format is similar to
+   "time(1)". */
+
 void tim_print_timer( FILE *str, const char *name )
 {
    fprintf( str, "%-20s %0.3fr %0.3fu %0.3fs\n",
@@ -132,6 +154,8 @@ void tim_print_timer( FILE *str, const char *name )
 	    tim_get_user( name ),
 	    tim_get_system( name ) );
 }
+
+/* \doc Print all the timers to |str|.  The order is arbitary. */
 
 void tim_print_timers( FILE *str )
 {
@@ -143,6 +167,10 @@ void tim_print_timers( FILE *str )
 
    if (_tim_Hash) hsh_iterate( _tim_Hash, iterator );
 }
+
+/* \doc Free all memory associated with the timers.  This function is
+   called automatically at program termination.  There should never be a
+   need to call this function in user-level code. */
 
 void _tim_shutdown( void )
 {

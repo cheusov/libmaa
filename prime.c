@@ -1,6 +1,6 @@
 /* prime.c -- Find prime numbers
  * Created: Thu Jul 20 22:04:37 1995 by r.faith@ieee.org
- * Revised: Sun Nov 19 13:30:21 1995 by faith@cs.unc.edu
+ * Revised: Sat Dec 30 21:57:59 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: prime.c,v 1.2 1995/11/19 19:28:47 faith Exp $
+ * $Id: prime.c,v 1.3 1995/12/31 03:12:39 faith Exp $
  *
  * \section{Prime Number Routines}
  *
@@ -32,7 +32,7 @@
 /* \doc |prm_is_prime| returns 1 if |value| is prime; 0 otherwise.
    Primality is determined by testings all odd divisors less than the
    square root of |value|.  For 32-bit integers, this may mean that we will
-   test about $\frac{\sqrt(2^32-1)}{2} = 32768$ odd values instead of the
+   test about $\frac{\sqrt{2^{32}-1}}{2} = 32768$ odd values instead of the
    6542 primes that would actually need to be tested.  (A table of
    pre-computed primes using less than 26kB of memory could be used to
    recover this factor of 5 performance loss.) */

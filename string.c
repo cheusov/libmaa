@@ -1,6 +1,6 @@
 /* string.c -- String pool for Khepera
  * Created: Wed Dec 21 21:32:34 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:18 1995 by faith@cs.unc.edu
+ * Revised: Sat Dec 30 21:36:38 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.5 1995/11/19 19:28:50 faith Exp $
+ * $Id: string.c,v 1.6 1995/12/31 03:12:40 faith Exp $
  *
  * \section{String Pool Routines}
  *
@@ -246,7 +246,7 @@ void str_destroy( void )
 }
 
 /* \doc |str_get_stats| returns statistics about the global string pool.
-   The |str_Stats| structure is shown in \grind{str_Stats}. */
+   The |str_Stats| structure is shown in \grindref{fig:strStats}. */
 
 str_Stats str_get_stats( void )
 {
