@@ -1,7 +1,7 @@
 /* debugtest.c -- 
  * Created: Sun Dec 25 18:57:38 1994 by faith@cs.unc.edu
- * Revised: Mon Jan  1 15:18:19 1996 by r.faith@ieee.org
- * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Mon Sep 23 16:23:50 1996 by faith@cs.unc.edu
+ * Copyright 1994, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debugtest.c,v 1.4 1996/01/02 04:09:36 faith Exp $
+ * $Id: debugtest.c,v 1.5 1996/09/23 23:20:36 faith Exp $
  */
 
 #include "maaP.h"

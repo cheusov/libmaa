@@ -1,7 +1,7 @@
 /* listtest.c -- 
  * Created: Wed Aug  9 11:36:09 1995 by r.faith@ieee.org
- * Revised: Mon Jan  1 15:08:52 1996 by r.faith@ieee.org
- * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
+ * Revised: Mon Sep 23 16:23:48 1996 by faith@cs.unc.edu
+ * Copyright 1995, 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: listtest.c,v 1.3 1996/01/02 04:09:39 faith Exp $
+ * $Id: listtest.c,v 1.4 1996/09/23 23:20:40 faith Exp $
  */
 
 #include "maaP.h"

@@ -1,7 +1,7 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Mon Feb 26 10:02:52 1996 by faith@cs.unc.edu
- * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Mon Sep 23 16:23:47 1996 by faith@cs.unc.edu
+ * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.12 1996/02/26 15:23:16 faith Exp $
+ * $Id: set.c,v 1.13 1996/09/23 23:20:42 faith Exp $
  *
  * \section{Set Routines}
  *

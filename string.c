@@ -1,7 +1,7 @@
 /* string.c -- String pool for Khepera
  * Created: Wed Dec 21 21:32:34 1994 by faith@cs.unc.edu
- * Revised: Sat Jun 22 17:09:37 1996 by faith@cs.unc.edu
- * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Mon Sep 23 16:23:46 1996 by faith@cs.unc.edu
+ * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.8 1996/06/24 20:22:18 faith Exp $
+ * $Id: string.c,v 1.9 1996/09/23 23:20:45 faith Exp $
  *
  * \section{String Pool Routines}
  *

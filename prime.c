@@ -1,23 +1,24 @@
 /* prime.c -- Find prime numbers
  * Created: Thu Jul 20 22:04:37 1995 by r.faith@ieee.org
- * Revised: Sat Dec 30 21:57:59 1995 by faith@cs.unc.edu
- * Copyright 1995 Rickard E. Faith (r.faith@ieee.org)
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 2, or (at your option) any
- * later version.
+ * Revised: Mon Sep 23 16:23:48 1996 by faith@cs.unc.edu
+ * Copyright 1995, 1996 Rickard E. Faith (r.faith@ieee.org)
  * 
- * This program is distributed in the hope that it will be useful, but
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Library General Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
+ * Library General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: prime.c,v 1.3 1995/12/31 03:12:39 faith Exp $
+ * 
+ * $Id: prime.c,v 1.4 1996/09/23 23:20:41 faith Exp $
  *
  * \section{Prime Number Routines}
  *

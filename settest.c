@@ -1,7 +1,7 @@
 /* settest.c -- Test program for Khepera set routines
  * Created: Wed Nov  9 15:04:25 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:20 1995 by faith@cs.unc.edu
- * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Mon Sep 23 16:23:47 1996 by faith@cs.unc.edu
+ * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.4 1995/11/19 19:28:49 faith Exp $
+ * $Id: settest.c,v 1.5 1996/09/23 23:20:43 faith Exp $
  */
 
 #include "maaP.h"

@@ -1,8 +1,8 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Mon Feb 26 10:00:03 1996 by faith@cs.unc.edu
- * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Mon Sep 23 16:23:49 1996 by faith@cs.unc.edu
+ * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.11 1996/03/29 19:15:50 yakowenk Exp $
+ * $Id: list.c,v 1.12 1996/09/23 23:20:38 faith Exp $
  *
  * \section{List Routines}
  *
