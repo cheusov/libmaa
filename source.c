@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.10 2003/08/06 17:55:54 cheusov Exp $
+ * $Id: source.c,v 1.11 2003/09/19 18:18:53 cheusov Exp $
  *
  * \section{Source Code Management}
  *
@@ -131,8 +131,8 @@ void src_cpp_line( const char *line, int length )
    char     *tmp = alloca( length + 1 );
    int      lineno;
 
-   strlcpy( tmp, line, length + 1 );
-   tmp[ length ] = '\0';
+   strncpy( tmp, line, length );
+   tmp [ length ] = '\0';
 
    args = arg_argify( tmp, 0 );
 
