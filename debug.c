@@ -1,7 +1,7 @@
 /* debug.c -- Debugging support for Khepera
  * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:50 1996 by faith@cs.unc.edu
- * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Fri Jun 20 17:23:48 1997 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.10 1996/09/23 23:20:35 faith Exp $
+ * $Id: debug.c,v 1.11 1997/06/21 01:05:07 faith Exp $
  *
  * \section{Debugging Support}
  *
@@ -172,7 +172,7 @@ void dbg_unset_flag( dbg_Type flag )
    setFlags[ flag >> 30 ] &= ~flag;
 }
 
-/* \doc Thsi inlined function tests the |flag|, returning non-zero if the
+/* \doc This inlined function tests the |flag|, returning non-zero if the
    |flag| is set, and zero otherwise. */
 
 __inline__ int dbg_test( dbg_Type flag )

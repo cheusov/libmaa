@@ -1,6 +1,6 @@
 /* log.c -- Logging routines, for a single, program-wide logging facility
  * Created: Mon Mar 10 09:37:21 1997 by faith@cs.unc.edu
- * Revised: Tue Mar 11 15:58:25 1997 by faith@cs.unc.edu
+ * Revised: Fri Jun 20 17:23:49 1997 by faith@acm.org
  * Copyright 1997 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.3 1997/03/12 01:11:30 faith Exp $
+ * $Id: log.c,v 1.4 1997/06/21 01:05:13 faith Exp $
  * 
  */
 
@@ -37,6 +37,7 @@
 static int        logFd = -1;
 static FILE       *logUserStream;
 static int        logSyslog;
+static int        inhibitFull = 0;
 
 static int        logOpen;
 
@@ -55,6 +56,12 @@ static void _log_set_hostname( void )
       if ((pt = strchr(logHostname, '.'))) *pt = '\0';
       ++hostnameSet;
    }
+}
+
+void log_option( int option )
+{
+   if (option == LOG_OPTION_NO_FULL) inhibitFull = 1;
+   else                              inhibitFull = 0;
 }
 
 void log_syslog( const char *ident, int daemon )
@@ -120,13 +127,17 @@ void log_error_va( const char *routine, const char *format, va_list ap )
    time(&t);
    
    if (logFd >= 0 || logUserStream) {
-      sprintf( buf,
-	       "%24.24s %s %s[%d]: ",
-	       ctime(&t),
-	       logHostname,
-	       logIdent,
-	       getpid() );
-      pt = buf + strlen( buf );
+      if (inhibitFull) {
+         pt = buf;
+      } else {
+         sprintf( buf,
+                  "%24.24s %s %s[%d]: ",
+                  ctime(&t),
+                  logHostname,
+                  logIdent,
+                  getpid() );
+         pt = buf + strlen( buf );
+      }
       if (routine) sprintf( pt, "(%s) ", routine );
       pt = buf + strlen( buf );
       vsprintf( pt, format, ap );
@@ -165,13 +176,17 @@ void log_info_va( const char *format, va_list ap )
    time(&t);
    
    if (logFd >= 0 || logUserStream) {
-      sprintf( buf,
-	       "%24.24s %s %s[%d]: ",
-	       ctime(&t),
-	       logHostname,
-	       logIdent,
-	       getpid() );
-      pt = buf + strlen( buf );
+      if (inhibitFull) {
+         pt = buf;
+      } else {
+         sprintf( buf,
+                  "%24.24s %s %s[%d]: ",
+                  ctime(&t),
+                  logHostname,
+                  logIdent,
+                  getpid() );
+         pt = buf + strlen( buf );
+      }
       vsprintf( pt, format, ap );
       
       if (logFd >= 0) write( logFd, buf, strlen(buf) );
