@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.18 1995/10/23 03:45:39 faith Exp $
+ * $Id: khepera.h,v 1.19 1995/10/23 21:46:49 yakowenk Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -597,6 +597,7 @@ extern tre_Stats  tre_get_stats( void );
 extern void       tre_print_stats( FILE *stream );
 extern void       _tre_shutdown( void );
 
+extern boolean     tre_wild(tre_Node);
 extern tre_SetTree tre_polymorphic_vars(tre_Node);
 extern void        tre_polymorphic_vars_set(tre_Node,tre_SetTree);
 extern typ_Expr    tre_expr_type(tre_Node);
