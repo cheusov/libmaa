@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.13 2004/11/17 12:39:46 cheusov Exp $
+ * $Id: arg.c,v 1.14 2004/11/17 16:37:03 cheusov Exp $
  *
  * \section{Argument List Routines}
  *
@@ -274,7 +274,7 @@ arg_List arg_argify( const char *string, int quoteStyle )
 
 	 break;
       case ACTION_FINISH:
-//	 assert (last);
+/*	 assert (last);*/
 	 if (last){
 	    arg_grow (a, last, pt - last);
 	    arg_finish (a);
@@ -291,13 +291,13 @@ arg_List arg_argify( const char *string, int quoteStyle )
 
    switch (state){
    case -1:
-      // Fine! Normal exit
+      /* Fine! Normal exit*/
       break;
    case -2:
-      // Parsing error
+      /* Parsing error */
       break;
    default:
-      // Oooops!
+      /* Oooops! */
       err_internal( __FUNCTION__, "arg.c:arg_argify is buggy!!!:\n");
    }
 
