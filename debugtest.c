@@ -1,6 +1,6 @@
 /* debugtest.c -- 
  * Created: Sun Dec 25 18:57:38 1994 by faith@cs.unc.edu
- * Revised: Fri Jan 20 09:49:58 1995 by faith@cs.unc.edu
+ * Revised: Wed Aug  9 09:47:23 1995 by r.faith@ieee.org
  * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debugtest.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: debugtest.c,v 1.2 1995/08/24 14:59:08 faith Exp $
  */
 
 #include "kh.h"
@@ -29,6 +29,8 @@
 int main( int argc, char **argv )
 {
    int c;
+
+   kh_init();
 
    dbg_register( DBG_VERBOSE, "verbose" );
    dbg_register( DBG_TEST, "test" );

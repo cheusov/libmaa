@@ -1,7 +1,7 @@
 /* hashtest.c -- Test program for Khepera hash table routines
  * Created: Sun Nov  6 18:55:23 1994 by faith@cs.unc.edu
- * Revised: Mon Feb 27 16:30:07 1995 by faith@cs.unc.edu
- * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Wed Aug  9 11:39:04 1995 by r.faith@ieee.org
+ * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hashtest.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: hashtest.c,v 1.2 1995/08/24 14:59:12 faith Exp $
  */
 
 #include "kh.h"

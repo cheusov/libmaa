@@ -1,6 +1,6 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Thu Mar  9 09:56:31 1995 by faith@cs.unc.edu
+ * Revised: Tue Aug  8 17:53:30 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: set.c,v 1.2 1995/08/24 14:59:26 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -43,36 +43,38 @@ typedef struct bucket {
 } *bucketType;
 
 typedef struct set {
-   int            prime;
-   int            entries;
+   unsigned long prime;
+   unsigned long entries;
    bucketType    *buckets;
-   int            retrievals;
-   int            hits;
-   int            misses;
-   unsigned int (*hash)( const void * );
-   int          (*compare)( const void *, const void * );
+   unsigned long resizings;
+   unsigned long retrievals;
+   unsigned long hits;
+   unsigned long misses;
+   unsigned long (*hash)( const void * );
+   int           (*compare)( const void *, const void * );
 } *setType;
    
 
-static set_Set _set_create( int prime,
-			    unsigned int (*hash)( const void * ),
+static set_Set _set_create( unsigned long seed,
+			    unsigned long (*hash)( const void * ),
 			    int (*compare)( const void *, const void * ) )
 {
-   setType t;
-   int     i;
-   int     size = _hsh_primes[ prime ];
+   setType       t;
+   unsigned long i;
+   unsigned long prime = prm_next_prime( seed );
    
    t             = xmalloc( sizeof( struct set ) );
    t->prime      = prime;
    t->entries    = 0;
-   t->buckets    = xmalloc( size * sizeof( struct bucket ) );
+   t->buckets    = xmalloc( t->prime * sizeof( struct bucket ) );
+   t->resizings  = 0;
    t->retrievals = 0;
    t->hits       = 0;
    t->misses     = 0;
    t->hash       = hash ? hash : hsh_string_hash;
    t->compare    = compare ? compare : hsh_string_compare;
 
-   for (i = 0; i < size; i++) t->buckets[i] = NULL;
+   for (i = 0; i < t->prime; i++) t->buckets[i] = NULL;
 
    return t;
 }
@@ -81,9 +83,7 @@ static set_Set _set_create( int prime,
    pointers to "void".
 
    The internal representation of the set will grow automatically when an
-   insertion is performed and the table is more than half full.  The table
-   size progresses through the following series of primes:
-   \val{_hsh_primes}.
+   insertion is performed and the table is more than half full.
 
    The |hash| function should take a pointer to a |elem| and return an
    "unsigned int".  If |hash| is "NULL", then the |elem| is assumed to be a
@@ -101,7 +101,7 @@ static set_Set _set_create( int prime,
    pointer as the element.  These functions are often useful for
    maintaining sets of objects. */
 
-set_Set set_create( unsigned int (*hash)( const void * ),
+set_Set set_create( unsigned long (*hash)( const void * ),
 		    int (*compare)( const void *,
 				    const void * ) )
 {
@@ -110,28 +110,27 @@ set_Set set_create( unsigned int (*hash)( const void * ),
 
 static void _set_destroy_buckets( set_Set set )
 {
-   int     i;
-   setType t = (setType)set;
-   int     size = _hsh_primes[ t->prime ];
+   unsigned long i;
+   setType       t = (setType)set;
 
-   for (i = 0; i < size; i++) {
+   for (i = 0; i < t->prime; i++) {
       bucketType b = t->buckets[i];
 
       while (b) {
 	 bucketType next = b->next;
 	 
-	 xfree( b );
+	 xfree( b );		/* terminal */
 	 b = next;
       }
    }
 
-   xfree( t->buckets );
+   xfree( t->buckets );		/* terminal */
    t->buckets = NULL;
 }
 
 static void _set_destroy_table( set_Set set )
 {
-   xfree( set );
+   xfree( set );		/* terminal */
 }
 
 /* \doc |set_destroy| frees all of the memory associated with the set
@@ -150,10 +149,9 @@ void set_destroy( set_Set set )
 
 static void _set_insert( set_Set set, unsigned int hash, const void *elem )
 {
-   setType    t    = (setType)set;
-   int        size = _hsh_primes[ t->prime ];
-   int        h    = hash % size;
-   bucketType b;
+   setType       t = (setType)set;
+   unsigned long h = hash % t->prime;
+   bucketType    b;
 
    b        = xmalloc( sizeof( struct bucket ) );
    b->hash  = hash;
@@ -176,17 +174,16 @@ static void _set_insert( set_Set set, unsigned int hash, const void *elem )
 
 int set_insert( set_Set set, const void *elem )
 {
-   setType      t         = (setType)set;
-   int          size      = _hsh_primes[ t->prime ];
-   unsigned int hashValue = t->hash( elem );
-   unsigned int h;
+   setType       t         = (setType)set;
+   unsigned long hashValue = t->hash( elem );
+   unsigned long h;
 
 				/* Keep table less than half full */
-   if (t->entries * 2 > size && _hsh_primes[ t->prime + 1 ]) {
-      setType new = _set_create( t->prime + 1, t->hash, t->compare );
-      int     i;
+   if (t->entries * 2 > t->prime) {
+      setType       new = _set_create( t->prime * 3, t->hash, t->compare );
+      unsigned long i;
 
-      for (i = 0; i < size; i++) {
+      for (i = 0; i < t->prime; i++) {
 	 if (t->buckets[i]) {
 	    bucketType pt;
 
@@ -197,14 +194,13 @@ int set_insert( set_Set set, const void *elem )
 
 				/* fixup values */
       _set_destroy_buckets( t );
-      ++t->prime;
+      t->prime = new->prime;
       t->buckets = new->buckets;
       _set_destroy_table( new );
-      
-      size       = _hsh_primes[ t->prime ];
+      ++t->resizings;
    }
    
-   h = hashValue % size;
+   h = hashValue % t->prime;
 
    if (t->buckets[h]) {		/* Assert uniqueness */
       bucketType pt;
@@ -222,9 +218,8 @@ int set_insert( set_Set set, const void *elem )
 
 int set_delete( set_Set set, const void *elem )
 {
-   setType    t    = (setType)set;
-   int        size = _hsh_primes[ t->prime ];
-   int        h    = t->hash( elem ) % size;
+   setType       t = (setType)set;
+   unsigned long h = t->hash( elem ) % t->prime;
 
    if (t->buckets[h]) {
       bucketType pt;
@@ -250,9 +245,8 @@ int set_delete( set_Set set, const void *elem )
 
 int set_member( set_Set set, const void *elem )
 {
-   setType      t    = (setType)set;
-   int          size = _hsh_primes[ t->prime ];
-   unsigned int h    = t->hash( elem ) % size;
+   setType       t = (setType)set;
+   unsigned long h = t->hash( elem ) % t->prime;
 
    ++t->retrievals;
    if (t->buckets[h]) {
@@ -287,11 +281,10 @@ int set_member( set_Set set, const void *elem )
 void set_iterate( set_Set set,
 		  int (*iterator)( const void *elem ) )
 {
-   setType   t    = (setType)set;
-   int       size = _hsh_primes[ t->prime ];
-   int       i;
+   setType       t = (setType)set;
+   unsigned long i;
 
-   for (i = 0; i < size; i++) {
+   for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
 	 bucketType pt;
 	 
@@ -309,12 +302,10 @@ void set_iterate( set_Set set,
 
 set_Set set_union( set_Set set1, set_Set set2 )
 {
-   setType t1    = (setType)set1;
-   setType t2    = (setType)set2;
-   int     size1 = _hsh_primes[ t1->prime ];
-   int     size2 = _hsh_primes[ t2->prime ];
-   set_Set set;
-   int     i;
+   setType       t1 = (setType)set1;
+   setType       t2 = (setType)set2;
+   set_Set       set;
+   unsigned long i;
 
    if (t1->hash != t2->hash)
 	 err_fatal( __FUNCTION__,
@@ -326,7 +317,7 @@ set_Set set_union( set_Set set1, set_Set set2 )
 
    set = set_create( t1->hash, t1->compare );
 
-   for (i = 0; i < size1; i++) {
+   for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
 	 
@@ -335,7 +326,7 @@ set_Set set_union( set_Set set1, set_Set set2 )
       }
    }
    
-   for (i = 0; i < size2; i++) {
+   for (i = 0; i < t2->prime; i++) {
       if (t2->buckets[i]) {
 	 bucketType pt;
 	 
@@ -354,11 +345,10 @@ set_Set set_union( set_Set set1, set_Set set2 )
 
 set_Set set_inter( set_Set set1, set_Set set2 )
 {
-   setType t1    = (setType)set1;
-   setType t2    = (setType)set2;
-   int     size1 = _hsh_primes[ t1->prime ];
-   set_Set set;
-   int     i;
+   setType       t1 = (setType)set1;
+   setType       t2 = (setType)set2;
+   set_Set       set;
+   unsigned long i;
 
    if (t1->hash != t2->hash)
 	 err_fatal( __FUNCTION__,
@@ -370,7 +360,7 @@ set_Set set_inter( set_Set set1, set_Set set2 )
 
    set = set_create( t1->hash, t1->compare );
 
-   for (i = 0; i < size1; i++) {
+   for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
 	 
@@ -391,11 +381,10 @@ set_Set set_inter( set_Set set1, set_Set set2 )
 
 set_Set set_diff( set_Set set1, set_Set set2 )
 {
-   setType t1    = (setType)set1;
-   setType t2    = (setType)set2;
-   int     size1 = _hsh_primes[ t1->prime ];
-   set_Set set;
-   int     i;
+   setType       t1 = (setType)set1;
+   setType       t2 = (setType)set2;
+   set_Set       set;
+   unsigned long i;
 
    if (t1->hash != t2->hash)
 	 err_fatal( __FUNCTION__,
@@ -407,7 +396,7 @@ set_Set set_diff( set_Set set1, set_Set set2 )
 
    set = set_create( t1->hash, t1->compare );
 
-   for (i = 0; i < size1; i++) {
+   for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
 	 
@@ -420,19 +409,25 @@ set_Set set_diff( set_Set set1, set_Set set2 )
    return set;
 }
 
+int set_count( set_Set set )
+{
+   setType t = (setType)set;
+
+   return t->entries;
+}
+
 /* \doc |set_get_stats| returns statistics about the |set|.  The
    |set_Stats| structure is shown in \grind{set_Stats}. */
 
 set_Stats set_get_stats( set_Set set )
 {
-   setType   t    = (setType)set;
-   int       size = _hsh_primes[ t->prime ];
-   set_Stats s    = xmalloc( sizeof( struct set_Stats ) );
-   int       i;
-   int       count;
+   setType       t = (setType)set;
+   set_Stats     s = xmalloc( sizeof( struct set_Stats ) );
+   unsigned long i;
+   unsigned long count;
 
-   s->size           = size;
-   s->resizings      = t->prime;
+   s->size           = t->prime;
+   s->resizings      = t->resizings;
    s->entries        = 0;
    s->buckets_used   = 0;
    s->singletons     = 0;
@@ -441,7 +436,7 @@ set_Stats set_get_stats( set_Set set )
    s->hits           = t->hits;
    s->misses         = t->misses;
    
-   for (i = 0; i < size; i++) {
+   for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
 	 bucketType pt;
 	 
@@ -473,17 +468,17 @@ void set_print_stats( set_Set set, FILE *stream )
    set_Stats  s   = set_get_stats( t );
 
    fprintf( str, "Statistics for set at %p:\n", set );
-   fprintf( str, "   %d resizings to %d total\n", s->resizings, s->size );
-   fprintf( str, "   %d entries (%d buckets used, %d without overflow)\n",
+   fprintf( str, "   %lu resizings to %lu total\n", s->resizings, s->size );
+   fprintf( str, "   %lu entries (%lu buckets used, %lu without overflow)\n",
 	    s->entries, s->buckets_used, s->singletons );
-   fprintf( str, "   maximum list length is %d", s->maximum_length );
+   fprintf( str, "   maximum list length is %lu", s->maximum_length );
    if (s->buckets_used)
 	 fprintf( str, " (optimal is %.1f)\n",
 		  (double)s->entries / (double)s->buckets_used );
    else
 	 fprintf( str, "\n" );
-   fprintf( str, "   %d retrievals (%d from top, %d failed)\n",
+   fprintf( str, "   %lu retrievals (%lu from top, %lu failed)\n",
 	    s->retrievals, s->hits, s->misses );
 
-   xfree( s );
+   xfree( s );			/* rare */
 }

@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Thu Mar  9 10:13:05 1995 by faith@cs.unc.edu
+ * Revised: Tue Jul 25 14:40:12 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: hash.c,v 1.2 1995/08/24 14:59:11 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -34,48 +34,47 @@
 				/* A few primes, each approximately 3 times
                                    the previous prime.  */
 
-int _hsh_primes[] = { 5, 17, 53, 163, 491, 1481, 4447, 13367, 40111,
-		      120349, 361069, 1083211, 3249641, 9748927, 0 };
-
 typedef struct bucket {
    const void    *key;
-   unsigned int   hash;
+   unsigned int  hash;
    const void    *datum;
    struct bucket *next;
 } *bucketType;
 
 typedef struct table {
-   int            prime;
-   int            entries;
+   unsigned long prime;
+   unsigned long entries;
    bucketType    *buckets;
-   int            retrievals;
-   int            hits;
-   int            misses;
-   unsigned int (*hash)( const void * );
-   int          (*compare)( const void *, const void * );
+   unsigned long resizings;
+   unsigned long retrievals;
+   unsigned long hits;
+   unsigned long misses;
+   unsigned long (*hash)( const void * );
+   int           (*compare)( const void *, const void * );
 } *tableType;
    
 
-static hsh_HashTable _hsh_create( int prime,
-				  unsigned int (*hash)( const void * ),
+static hsh_HashTable _hsh_create( unsigned long seed,
+				  unsigned long (*hash)( const void * ),
 				  int (*compare)( const void *,
 						  const void * ))
 {
-   tableType t;
-   int       i;
-   int       size = _hsh_primes[ prime ];
+   tableType     t;
+   unsigned long i;
+   unsigned long prime = prm_next_prime( seed );
    
    t             = xmalloc( sizeof( struct table ) );
    t->prime      = prime;
    t->entries    = 0;
-   t->buckets    = xmalloc( size * sizeof( struct bucket ) );
+   t->buckets    = xmalloc( prime * sizeof( struct bucket ) );
+   t->resizings  = 0;
    t->retrievals = 0;
    t->hits       = 0;
    t->misses     = 0;
    t->hash       = hash ? hash : hsh_string_hash;
    t->compare    = compare ? compare : hsh_string_compare;
 
-   for (i = 0; i < size; i++) t->buckets[i] = NULL;
+   for (i = 0; i < prime; i++) t->buckets[i] = NULL;
 
    return t;
 }
@@ -85,8 +84,6 @@ static hsh_HashTable _hsh_create( int prime,
 
    The internal representation of the hash table will grow automatically
    when an insertion is performed and the table is more than half full.
-   The table size progresses through the following series of primes:
-   \val{_hsh_primes}.
 
    The |hash| function should take a pointer to a |key| and return an
    "unsigned int".  If |hash| is "NULL", then the |key| is assumed to be a
@@ -105,7 +102,7 @@ static hsh_HashTable _hsh_create( int prime,
    pointer as the key.  These functions are often useful for maintaining
    sets of objects. */
 
-hsh_HashTable hsh_create( unsigned int (*hash)( const void * ),
+hsh_HashTable hsh_create( unsigned long (*hash)( const void * ),
 			  int (*compare)( const void *,
 					  const void * ) )
 {
@@ -114,28 +111,27 @@ hsh_HashTable hsh_create( unsigned int (*hash)( const void * ),
 
 static void _hsh_destroy_buckets( hsh_HashTable table )
 {
-   int       i;
-   tableType t    = (tableType)table;
-   int       size = _hsh_primes[ t->prime ];
+   unsigned long i;
+   tableType     t    = (tableType)table;
 
-   for (i = 0; i < size; i++) {
+   for (i = 0; i < t->prime; i++) {
       bucketType b = t->buckets[i];
 
       while (b) {
 	 bucketType next = b->next;
 
-	 xfree( b );
+	 xfree( b );		/* terminal */
 	 b = next;
       }
    }
 
-   xfree( t->buckets );
+   xfree( t->buckets );		/* terminal */
    t->buckets = NULL;
 }
 
 static void _hsh_destroy_table( hsh_HashTable table )
 {
-   xfree( table );
+   xfree( table );		/* terminal */
 }
 
 /* \doc |hsh_destroy| frees all of the memory associated with the hash
@@ -157,10 +153,9 @@ static void _hsh_insert( hsh_HashTable table,
 			 const void *key,
 			 const void *datum )
 {
-   tableType    t    = (tableType)table;
-   int          size = _hsh_primes[ t->prime ];
-   unsigned int h    = hash % size;
-   bucketType   b;
+   tableType     t = (tableType)table;
+   unsigned long h = hash % t->prime;
+   bucketType    b;
    
    b        = xmalloc( sizeof( struct bucket ) );
    b->key   = key;
@@ -187,17 +182,16 @@ int hsh_insert( hsh_HashTable table,
 		const void *key,
 		const void *datum )
 {
-   tableType    t         = (tableType)table;
-   int          size      = _hsh_primes[ t->prime ];
-   unsigned int hashValue = t->hash( key );
-   unsigned int h;
+   tableType     t         = (tableType)table;
+   unsigned long hashValue = t->hash( key );
+   unsigned long h;
 
 				/* Keep table less than half full */
-   if (t->entries * 2 > size && _hsh_primes[ t->prime + 1 ]) {
-      tableType new = _hsh_create( t->prime + 1, t->hash, t->compare );
-      int       i;
+   if (t->entries * 2 > t->prime) {
+      tableType     new = _hsh_create( t->prime * 3, t->hash, t->compare );
+      unsigned long i;
 
-      for (i = 0; i < size; i++) {
+      for (i = 0; i < t->prime; i++) {
 	 if (t->buckets[i]) {
 	    bucketType pt;
 
@@ -208,14 +202,13 @@ int hsh_insert( hsh_HashTable table,
 
 				/* fixup values */
       _hsh_destroy_buckets( t );
-      ++t->prime;
+      t->prime   = new->prime;
       t->buckets = new->buckets;
       _hsh_destroy_table( new );
-      
-      size       = _hsh_primes[ t->prime ];
+      ++t->resizings;
    }
 
-   h = hashValue % size;
+   h = hashValue % t->prime;
 
    if (t->buckets[h]) {		/* Assert uniqueness */
       bucketType pt;
@@ -234,9 +227,8 @@ int hsh_insert( hsh_HashTable table,
 
 int hsh_delete( hsh_HashTable table, const void *key )
 {
-   tableType    t    = (tableType)table;
-   int          size = _hsh_primes[ t->prime ];
-   unsigned int h    = t->hash( key ) % size;
+   tableType     t = (tableType)table;
+   unsigned long h = t->hash( key ) % t->prime;
 
    if (t->buckets[h]) {
       bucketType pt;
@@ -264,9 +256,8 @@ int hsh_delete( hsh_HashTable table, const void *key )
 const void *hsh_retrieve( hsh_HashTable table,
 			  const void *key )
 {
-   tableType    t    = (tableType)table;
-   int          size = _hsh_primes[ t->prime ];
-   unsigned int h    = t->hash( key ) % size;
+   tableType     t = (tableType)table;
+   unsigned long h = t->hash( key ) % t->prime;
 
    ++t->retrievals;
    if (t->buckets[h]) {
@@ -302,11 +293,10 @@ void hsh_iterate( hsh_HashTable table,
 		  int (*iterator)( const void *key,
 				   const void *datum ) )
 {
-   tableType    t    = (tableType)table;
-   int          size = _hsh_primes[ t->prime ];
-   unsigned int i;
+   tableType     t = (tableType)table;
+   unsigned long i;
 
-   for (i = 0; i < size; i++) {
+   for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
 	 bucketType pt;
 	 
@@ -322,14 +312,13 @@ void hsh_iterate( hsh_HashTable table,
 
 hsh_Stats hsh_get_stats( hsh_HashTable table )
 {
-   tableType    t    = (tableType)table;
-   int          size = _hsh_primes[ t->prime ];
-   hsh_Stats    s    = xmalloc( sizeof( struct hsh_Stats ) );
-   int          i;
-   int          count;
+   tableType     t = (tableType)table;
+   hsh_Stats     s = xmalloc( sizeof( struct hsh_Stats ) );
+   unsigned long i;
+   int           count;
 
-   s->size           = size;
-   s->resizings      = t->prime;
+   s->size           = t->prime;
+   s->resizings      = t->resizings;
    s->entries        = 0;
    s->buckets_used   = 0;
    s->singletons     = 0;
@@ -338,7 +327,7 @@ hsh_Stats hsh_get_stats( hsh_HashTable table )
    s->hits           = t->hits;
    s->misses         = t->misses;
    
-   for (i = 0; i < size; i++) {
+   for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
 	 bucketType pt;
 	 
@@ -368,43 +357,51 @@ void hsh_print_stats( hsh_HashTable table, FILE *stream )
    hsh_Stats s    = hsh_get_stats( table );
 
    fprintf( str, "Statistics for hash table at %p:\n", table );
-   fprintf( str, "   %d resizings to %d total\n", s->resizings, s->size );
-   fprintf( str, "   %d entries (%d buckets used, %d without overflow)\n",
+   fprintf( str, "   %lu resizings to %lu total\n", s->resizings, s->size );
+   fprintf( str, "   %lu entries (%lu buckets used, %lu without overflow)\n",
 	    s->entries, s->buckets_used, s->singletons );
-   fprintf( str, "   maximum list length is %d", s->maximum_length );
+   fprintf( str, "   maximum list length is %lu", s->maximum_length );
    if (s->buckets_used)
 	 fprintf( str, " (optimal is %.1f)\n",
 		  (double)s->entries / (double)s->buckets_used );
    else
 	 fprintf( str, "\n" );
-   fprintf( str, "   %d retrievals (%d from top, %d failed)\n",
+   fprintf( str, "   %lu retrievals (%lu from top, %lu failed)\n",
 	    s->retrievals, s->hits, s->misses );
 
-   xfree( s );
+   xfree( s );			/* rare */
 }
 
-unsigned int hsh_string_hash( const void *key )
+unsigned long hsh_string_hash( const void *key )
 {
-   const char   *pt = (char *)key;
-   unsigned int  h  = 0;
+   const char    *pt = (char *)key;
+   unsigned long h  = 0;
 
    while (*pt) {
       h += *pt++;
+#if 0
       h *= 65599L;		/* prime near %$2^{16}$% */
+#else
+      h *= 2654435789U;		/* prime near %$\frac{\sqrt{5}-1}{2}2^{32}$% */
+#endif
    }
 
    return h;
 }
 
-unsigned int hsh_pointer_hash( const void *key )
+unsigned long hsh_pointer_hash( const void *key )
 {
-   const char   *pt = (char *)&key;
-   unsigned int  h  = 0;
-   int          i;
+   const char    *pt = (char *)&key;
+   unsigned long h  = 0;
+   int           i;
 
    for (i = 0; i < SIZEOF_VOID_P; i++) {
       h += *pt++;
+#if 0
       h *= 65599L;		/* prime near %$2^{16}$% */
+#else
+      h *= 2654435789U;		/* prime near %$\frac{\sqrt{5}-1}{2}2^{32}$% */
+#endif
    }
 
    return h;

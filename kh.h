@@ -1,6 +1,6 @@
 /* kh.h -- Internal header file for Khepera
  * Created: Sun Nov  6 13:32:25 1994 by faith@cs.unc.edu
- * Revised: Tue Mar 14 11:20:28 1995 by faith@cs.unc.edu
+ * Revised: Fri Jun 30 14:14:12 1995 by r.faith@ieee.org
  * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.h,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: kh.h,v 1.2 1995/08/24 14:59:13 faith Exp $
  */
 
 #ifndef _KH_H_
@@ -81,9 +81,7 @@ char *strdup();
 #if HAVE_UNISTD_H
 # include <sys/types.h>
 # include <unistd.h>
-# if 1 || !(defined(__sparc__) && defined(DMALLOC_FUNC_CHECK))
-#  include <stdlib.h>
-# endif
+# include <stdlib.h>
 #endif
 
 /* Handle getopt correctly */
@@ -97,6 +95,9 @@ extern char *optarg;
 
 /* Provide assert() */
 #include <assert.h>
+
+/* Provide stdarg support */
+#include <stdarg.h>
 
 /* System dependent declarations: Many brain damaged systems don't provide
 declarations for standard library calls.  We provide them here for
@@ -130,8 +131,8 @@ extern long random( void );
 extern void srandom( int );
 #endif
 
+#include <limits.h>
 #ifndef RAND_MAX
-# include <limits.h>
 # define RAND_MAX INT_MAX
 #endif
 

@@ -1,6 +1,6 @@
 /* stack.c -- Stack routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu
- * Revised: Sun Jan  8 21:52:25 1995 by faith@cs.unc.edu
+ * Revised: Wed Aug  9 14:04:15 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,17 +17,28 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: stack.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: stack.c,v 1.2 1995/08/24 14:59:27 faith Exp $
  *
  * \section{Stack Routines}
  *
  * \intro The stack routines provide support for a general stack of
  * pointers to "void".  Because of the simplicity of the stack object, no
- * statistics are maintained.
+ * statistics are maintained.  (Althought the list routines can also be used
+ * as a stack, the stack implemented here is more efficient.)
  *
  */
 
 #include "kh.h"
+#include "obstack.h"
+
+#ifdef DMALLOC_FUNC_CHECK
+                                /* Must be true functions */
+#define obstack_chunk_alloc malloc
+#define obstack_chunk_free  free
+#else
+#define obstack_chunk_alloc xmalloc
+#define obstack_chunk_free  xfree
+#endif
 
 typedef struct data {
    const void  *datum;
@@ -35,16 +46,22 @@ typedef struct data {
 } *dataType;
 
 typedef struct stack {
-   struct data *data;
+   struct data    *data;
+   struct obstack *obstack;
 } *stackType;
 
 /* \doc |stk_create| initializes a stack object. */
 
 stk_Stack stk_create( void )
 {
-   stackType s = xmalloc( sizeof( struct stack ) );
+   stackType s;
 
-   s->data = NULL;
+   s          = xmalloc( sizeof( struct stack ) );
+   s->data    = NULL;
+   s->obstack = xmalloc( sizeof( struct obstack ) );
+   
+   obstack_init( s->obstack );
+
    return s;
 }
 
@@ -55,15 +72,10 @@ stk_Stack stk_create( void )
 void stk_destroy( stk_Stack stack )
 {
    stackType s = (stackType)stack;
-   dataType  d;
 
-   for (d = s->data; d;) {
-      dataType prev = d->prev;
-      xfree( d );
-      d = prev;
-   }
-
-   xfree( stack );
+   obstack_free( s->obstack, NULL );
+   xfree( s->obstack );
+   xfree( stack );		/* terminal */
 }
 
 /* \doc |stk_push| places |datum| on the top of the |stack|. */
@@ -71,7 +83,7 @@ void stk_destroy( stk_Stack stack )
 void stk_push( stk_Stack stack, void *datum )
 {
    stackType s = (stackType)stack;
-   dataType  d = xmalloc( sizeof( struct data ) );
+   dataType  d = obstack_alloc( s->obstack, sizeof( struct data ) );
 
    d->datum = datum;
    d->prev  = s->data;
@@ -91,7 +103,7 @@ void *stk_pop( stk_Stack stack )
 
       datum = (void *)old->datum; /* Discard const */
       s->data = s->data->prev;
-      xfree( old );
+      obstack_free( s->obstack, old );
    }
    
    return datum;

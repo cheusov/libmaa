@@ -1,6 +1,6 @@
 /* memory.c -- Memory management for Khepera
  * Created: Thu Dec 22 09:58:38 1994 by faith@cs.unc.edu
- * Revised: Mon Jan 23 10:02:58 1995 by faith@cs.unc.edu
+ * Revised: Wed Aug  9 16:13:03 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: memory.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: memory.c,v 1.2 1995/08/24 14:59:18 faith Exp $
  *
  * \section{Memory Management Routines}
  *
@@ -41,19 +41,41 @@
 #endif
 
 typedef struct stringInfo {
+#if KH_MAGIC
+   int            magic;
+#endif   
    int            count;
    int            bytes;
    struct obstack *obstack;
 } *stringInfo;
 
 typedef struct objectInfo {
-   int             total;
-   int             used;
-   int             reused;
-   int             size;
-   void           *stack;	/* for free list */
+#if KH_MAGIC
+   int            magic;
+#endif
+   int            total;
+   int            used;
+   int            reused;
+   int            size;
+   stk_Stack      stack;	/* for free list */
    struct obstack *obstack;
 } *objectInfo;
+
+
+#if !KH_MAGIC
+#define _mem_magic_strings(i,function) /*  */
+#else
+static void _mem_magic_strings( stringInfo i, const char *function )
+{
+   if (!i) err_internal( function, "mem_String is null\n" );
+   
+   if (i->magic != MEM_STRINGS_MAGIC)
+      err_internal( function,
+		    "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+		    i->magic,
+		    MEM_STRINGS_MAGIC );
+}
+#endif
 
 /* \doc |mem_create_strings| creates a memory object for storing strings. */
 
@@ -61,6 +83,9 @@ mem_String mem_create_strings( void )
 {
    stringInfo info = xmalloc( sizeof( struct stringInfo ) );
 
+#if KH_MAGIC
+   info->magic   = MEM_STRINGS_MAGIC;
+#endif
    info->count   = 0;
    info->bytes   = 0;
    info->obstack = xmalloc( sizeof( struct obstack ) );
@@ -79,20 +104,27 @@ mem_String mem_create_strings( void )
 void mem_destroy_strings( mem_String info )
 {
    stringInfo i = (stringInfo)info;
+
+   _mem_magic_strings( i, __FUNCTION__ );
+#if KH_MAGIC
+   i->magic = MEM_STRINGS_MAGIC_FREED;
+#endif
    
    obstack_free( i->obstack, NULL );
-   xfree( i->obstack );
-   xfree( i );
+   xfree( i->obstack );		/* terminal */
+   xfree( i );			/* terminal */
 }
 
 /* \doc |mem_strcpy| copies a |string| into the memory object pointed to by
    |info|. */
 
-char *mem_strcpy( mem_String info, const char *string )
+const char *mem_strcpy( mem_String info, const char *string )
 {
    stringInfo i   = (stringInfo)info;
    int        len = strlen( string );
 
+   _mem_magic_strings( i, __FUNCTION__ );
+   
    ++i->count;
    i->bytes += len + 1;
    
@@ -103,15 +135,46 @@ char *mem_strcpy( mem_String info, const char *string )
    pointed to by |info|.  A null is added to the end of the copied
    sequence. */
 
-char *mem_strncpy( mem_String info,
-		   const char *string, int len )
+const char *mem_strncpy( mem_String info,
+			 const char *string, int len )
 {
-   stringInfo i   = (stringInfo)info;
+   stringInfo i = (stringInfo)info;
 
+   _mem_magic_strings( i, __FUNCTION__ );
+   
    ++i->count;
    i->bytes += len + 1;
    
    return obstack_copy0( i->obstack, string, len );
+}
+
+/* \doc |mem_grow| copies |len| of |string| onto the top of the memory
+   opnect pointed to by |info|.  Several calls to |mem_grow| should be
+   followed by a single call to |mem_finish| without any intervening calls
+   to other functions which modify |info|. */
+
+void mem_grow( mem_String info, const char *string, int len )
+{
+   stringInfo i = (stringInfo)info;
+   
+   _mem_magic_strings( i, __FUNCTION__ );
+   
+   i->bytes += len;
+   obstack_grow( i->obstack, string, len );
+}
+
+/* \doc |mem_finish| finishes the growth of the object performed by
+   |mem_grow|. */
+
+const char *mem_finish( mem_String info )
+{
+   stringInfo i = (stringInfo)info;
+   
+   _mem_magic_strings( i, __FUNCTION__ );
+   
+   ++i->count;
+   i->bytes += 1;
+   return obstack_finish( i->obstack );
 }
 
 /* \doc |mem_get_string_stats| returns statistics about the memory object
@@ -123,6 +186,8 @@ mem_StringStats mem_get_string_stats( mem_String info )
    stringInfo      i = (stringInfo)info;
    mem_StringStats s = xmalloc( sizeof( struct mem_StringStats ) );
 
+   _mem_magic_strings( i, __FUNCTION__ );
+   
    s->count = i->count;
    s->bytes = i->bytes;
 
@@ -138,11 +203,28 @@ void mem_print_string_stats( mem_String info, FILE *stream )
    FILE            *str = stream ? stream : stdout;
    mem_StringStats s    = mem_get_string_stats( info );
 
+   _mem_magic_strings( info, __FUNCTION__ );
+   
    fprintf( str, "Statistics for string memory manager at %p:\n", info );
    fprintf( str, "   %d strings, using %d bytes\n", s->count, s->bytes );
 
-   xfree( s );
+   xfree( s );			/* rare */
 }
+
+#if !KH_MAGIC
+#define _mem_magic_objects(i,function) /*  */
+#else
+static void _mem_magic_objects( objectInfo i, const char *function )
+{
+   if (!i) err_internal( function, "mem_Object is null\n" );
+   
+   if (i->magic != MEM_OBJECTS_MAGIC)
+      err_internal( function,
+		    "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+		    i->magic,
+		    MEM_OBJECTS_MAGIC );
+}
+#endif
 
 /* \doc |mem_create_objects| creates a memory storage object for object of
    |size| bytes.  */
@@ -151,6 +233,9 @@ mem_Object mem_create_objects( int size )
 {
    objectInfo info = xmalloc( sizeof ( struct objectInfo ) );
 
+#if KH_MAGIC
+   info->magic   = MEM_OBJECTS_MAGIC;
+#endif
    info->total   = 0;
    info->used    = 0;
    info->reused  = 0;
@@ -171,10 +256,15 @@ void mem_destroy_objects( mem_Object info )
 {
    objectInfo i = (objectInfo)info;
    
+   _mem_magic_objects( i, __FUNCTION__ );
+#if KH_MAGIC
+   i->magic = MEM_OBJECTS_MAGIC_FREED;
+#endif
+   
    stk_destroy( i->stack );
    obstack_free( i->obstack, NULL );
-   xfree( i->obstack );
-   xfree( i );
+   xfree( i->obstack );		/* terminal */
+   xfree( i );			/* terminal */
 }
 
 /* \doc |mem_get_object| returns a pointer to a block of memory which is
@@ -187,6 +277,8 @@ void *mem_get_object( mem_Object info )
 {
    objectInfo  i   = (objectInfo)info;
    void       *obj = stk_pop( i->stack );
+
+   _mem_magic_objects( i, __FUNCTION__ );
 
    if (!obj) {
       obj = obstack_alloc( i->obstack, i->size );
@@ -207,6 +299,8 @@ void mem_free_object( mem_Object info, void *obj )
 {
    objectInfo i = (objectInfo)info;
 
+   _mem_magic_objects( i, __FUNCTION__ );
+
    stk_push( i->stack, obj );
    --i->used;
 }
@@ -220,9 +314,19 @@ mem_ObjectStats mem_get_object_stats( mem_Object info )
    objectInfo      i = (objectInfo)info;
    mem_ObjectStats s = xmalloc( sizeof( struct mem_ObjectStats ) );
 
-   s->total  = i->total;
-   s->used   = i->used;
-   s->reused = i->reused;
+   _mem_magic_objects( i, __FUNCTION__ );
+
+   if (info) {
+      s->total  = i->total;
+      s->used   = i->used;
+      s->reused = i->reused;
+      s->size   = i->size;
+   } else {
+      s->total  = 0;
+      s->used   = 0;
+      s->reused = 0;
+      s->size   = 0;
+   }
 
    return s;
 }
@@ -236,11 +340,13 @@ void mem_print_object_stats( mem_Object info, FILE *stream )
    FILE            *str = stream ? stream : stdout;
    mem_ObjectStats s    = mem_get_object_stats( info );
 
+   _mem_magic_objects( info, __FUNCTION__ );
+
    fprintf( str, "Statistics for object memory manager at %p:\n", info );
    fprintf( str,
 	    "   %d objects allocated, of which %d are in use\n",
 	    s->total, s->used );
    fprintf( str, "   %d objects have been reused\n", s->reused );
 
-   xfree( s );
+   xfree( s );			/* rare */
 }

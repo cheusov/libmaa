@@ -1,6 +1,6 @@
 /* debug.c -- Debugging support for Khepera
  * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Fri Jan 20 15:06:09 1995 by faith@cs.unc.edu
+ * Revised: Fri Jul  7 08:58:14 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: debug.c,v 1.2 1995/08/24 14:59:07 faith Exp $
  *
  * \section{Debugging Support}
  *
@@ -88,18 +88,7 @@ void _dbg_register( dbg_Type flag, const char *name )
 		    " a single low-order bit must be set\n",
 		    flag );
    
-   if (!hash) {
-      hash = hsh_create( NULL, NULL );
-#ifndef __CHECKER__
-#ifdef HAVE_ATEXIT
-      atexit( dbg_destroy );
-#else
-# ifdef HAVE_ON_EXIT
-      on_exit( dbg_destroy, NULL );
-# endif
-#endif
-#endif
-   }
+   if (!hash) hash = hsh_create( NULL, NULL );
    
    if (_dbg_exists( flag ))
 	 err_fatal( __FUNCTION__,
@@ -123,7 +112,7 @@ void _dbg_register( dbg_Type flag, const char *name )
 void dbg_register( dbg_Type flag, const char *name )
 {
 				/* These values are reserved for Khepera */
-   if ((flag & 0x30000000) == 0x30000000)
+   if ((flag & 0xc0000000) == 0xc0000000)
 	 err_fatal( __FUNCTION__,
 		    "Flag (%lx) may not have both high-order bits set\n",
 		    flag );
@@ -145,10 +134,13 @@ void dbg_set( const char *name )
       return;
    }
 
-   if (!(flag = (dbg_Type)hsh_retrieve( hash, name )))
-	 err_fatal( __FUNCTION__,
-		    "\"%s\" is not a valid debugging flag\n",
-		    name );
+   if (!(flag = (dbg_Type)hsh_retrieve( hash, name ))) {
+      fprintf( stderr, "Valid debugging flags are:\n" );
+      dbg_list( stderr );
+      err_fatal( __FUNCTION__,
+		 "\"%s\" is not a valid debugging flag\n",
+		 name );
+   }
 
    setFlags[ flag >> 30 ] |= flag;
 }
@@ -172,4 +164,22 @@ void dbg_destroy( void )
    hash = NULL;
    setFlags[0] = setFlags[1] = setFlags[2] = setFlags[3] = 0;
    usedFlags[0] = usedFlags[1] = usedFlags[2] = usedFlags[3] = 0;
+}
+
+/* |dbg_list| lists all of the valid user-level debugging flags to the
+   specified |stream|.  Note the use of nested functions is not portable to
+   non-GNU compilers. */
+
+void dbg_list( FILE *stream )
+{
+   static int iterator( const void *key, const void *datum )
+      {
+	 dbg_Type flag = (dbg_Type)datum;
+	 
+	 if ((flag & 0xc0000000) != 0xc0000000)
+	    fprintf( stream, "  %s\n", (char *)key );
+	 return 0;
+      }
+   
+   hsh_iterate( hash, iterator );
 }
