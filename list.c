@@ -1,8 +1,8 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Thu Apr 17 11:41:09 1997 by faith@cs.unc.edu
- * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Fri Nov  7 19:20:43 1997 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.13 1997/04/21 15:23:34 faith Exp $
+ * $Id: list.c,v 1.14 1997/11/08 01:33:09 faith Exp $
  *
  * \section{List Routines}
  *
@@ -47,7 +47,8 @@ typedef struct list {
    unsigned int count;
 } *listType;
 
-mem_Object mem;
+static mem_Object mem;
+static long int   _lst_allocated;
 
 static void _lst_check( listType l, const char *function )
 {
@@ -61,12 +62,18 @@ static void _lst_check( listType l, const char *function )
 #endif
 }
 
+long int lst_total_allocated( void )
+{
+   return _lst_allocated;
+}
+
 /* \doc |lst_create| initializes a list object. */
 
 lst_List lst_create( void )
 {
    listType l = xmalloc( sizeof( struct list ) );
 
+   _lst_allocated += sizeof(struct list);
 #if MAA_MAGIC
    l->magic = LST_MAGIC;
 #endif
@@ -115,6 +122,7 @@ void lst_append( lst_List list, const void *datum )
    listType l = (listType)list;
    dataType d = mem_get_object( mem );
 
+   _lst_allocated += sizeof(struct data);
    _lst_check( l, __FUNCTION__ );
    
    d->datum = datum;
@@ -135,6 +143,7 @@ void lst_push( lst_List list, const void *datum )
    listType l = (listType)list;
    dataType d = mem_get_object( mem );
 
+   _lst_allocated += sizeof(struct data);
    _lst_check( l, __FUNCTION__ );
    
    d->datum = datum;
