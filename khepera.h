@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.25 1995/11/07 01:35:09 faith Exp $
+ * $Id: khepera.h,v 1.26 1995/11/08 05:32:06 yakowenk Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -78,6 +78,8 @@
 #define KH_SCOPE     0xc0000400	/* Print scopes in tre_print */
 #define KH_ENUM      0xc0000800	/* Use enumerated names in tre_print */
 #define KH_TYPE      0xc0001000	/* Print types in tre_print */
+#define KH_INFER     0xc0002000	/* Print type inferences */
+#define KH_TREES     0xc0004000	/* Print ASTs */
 
 extern void kh_init( void );
 extern void kh_shutdown( void );
@@ -494,7 +496,7 @@ extern void       sym_dump( FILE *stream, sym_Scope scope );
    sym_Scope              scope;                \
    sym_Entry              symbol;               \
    typ_Expr               exprType;             \
-   tre_SetTree            polymorphicVars;      \
+   tre_SetTree            monomorphicVars;      \
    tre_Node               typeTree
    
 
@@ -609,14 +611,15 @@ extern int        tre_iterate( tre_Node parent,
 extern int        tre_apply_rule( tre_Node root,
 				  int (*f)( int *count, tre_Node node ) );
 extern void       tre_print( tre_Node parent, FILE *stream );
+extern void       tre_print_offset(tre_Node parent,int offset,FILE *stream);
 extern void       _tre_rb_dump( int id );
 extern tre_Stats  tre_get_stats( void );
 extern void       tre_print_stats( FILE *stream );
 extern void       _tre_shutdown( void );
 
 extern boolean     tre_wild(tre_Node);
-extern tre_SetTree tre_polymorphic_vars(tre_Node);
-extern void        tre_polymorphic_vars_set(tre_Node,tre_SetTree);
+extern tre_SetTree tre_monomorphic_vars(tre_Node);
+extern void        tre_monomorphic_vars_set(tre_Node,tre_SetTree);
 extern typ_Expr    tre_type_expr(tre_Node);
 extern void        tre_type_expr_set(tre_Node,typ_Expr);
 extern tre_Node    tre_type_tree( tre_Node n );
@@ -738,10 +741,12 @@ extern typ_Expr      typ_new_intc(int);
 extern typ_Expr      typ_new_plus(typ_Expr,typ_Expr);
 extern typ_Expr      typ_new_base_type(const char *, int);
 extern typ_Expr      typ_instance(typ_Expr, tre_SetTree, dct_Dict);
-extern boolean       typ_mgu(typ_Expr, typ_Expr, lst_List);
+extern boolean       typ_mgu(typ_Expr, typ_Expr, lst_List, set_Set);
 extern void          typ_apply_mgu(dct_Dict);
 extern boolean       typ_unify(typ_Expr, typ_Expr);
 extern boolean       typ_unify_ast_types(tre_Node, tre_Node);
+extern typ_Expr      typ_clash1(void);
+extern typ_Expr      typ_clash2(void);
 extern void          typ_read_typerule(tre_Node);
 extern tre_Node      typ_ast_instance(tre_Node);
 extern void          typ_ast_dump(tre_Node);
@@ -754,6 +759,7 @@ extern void          typ_dump(typ_Expr);
 extern void          typ_print(typ_Expr);
 extern lst_List      typ_constraints_get(typ_Expr);
 extern void          typ_constraints_set(typ_Expr, lst_List);
+extern void          typ_constraint_add(typ_Expr);
 extern src_Type      typ_trace_info_get(typ_Expr);
 extern void          typ_trace_info_set(typ_Expr, src_Type);
 extern typ_Expr      typ_dup_expr_tree(typ_Expr);

@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.c,v 1.10 1995/10/27 04:20:07 faith Exp $
+ * $Id: kh.c,v 1.11 1995/11/08 05:32:05 yakowenk Exp $
  *
  * \section{General Support}
  *
@@ -44,6 +44,8 @@ void kh_init( void )
    _dbg_register( KH_SCOPE,     "scope" );
    _dbg_register( KH_ENUM,      "enum" );
    _dbg_register( KH_TYPE,      "type" );
+   _dbg_register( KH_INFER,     "infer" );
+   _dbg_register( KH_TREES,     "trees" );
 
 #ifndef __CHECKER__
 #ifdef HAVE_ATEXIT
