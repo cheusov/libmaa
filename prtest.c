@@ -1,6 +1,6 @@
 /* prtest.c -- 
  * Created: Fri Jan 12 14:18:32 1996 by r.faith@ieee.org
- * Revised: Sun Jan 14 22:10:31 1996 by r.faith@ieee.org
+ * Revised: Mon May  6 12:45:32 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: prtest.c,v 1.1 1996/01/15 03:48:07 faith Exp $
+ * $Id: prtest.c,v 1.2 1996/05/27 16:22:17 faith Exp $
  * 
  */
 
@@ -25,12 +25,35 @@
 
 int main( int argc, char **argv )
 {
-   FILE *instr, *outstr;
-   char buf[100];
-   
-   maa_init( argv[0] );
-   dbg_set( "pr" );
+   FILE *prev = NULL;
+   FILE *next; 
+   char buf[BUFSIZ];
+   int  c;
+   int  i;
 
+   while ((c = getopt( argc, argv, "D" )) != EOF)
+      switch (c) {
+      case 'D': dbg_set( ".pr" ); break;
+      }
+
+   maa_init( argv[0] );
+
+   if (argc-optind == 0) {
+      pr_open( "echo foo", PR_USE_STDIN | PR_CREATE_STDOUT,
+	       &prev, &next, NULL );
+   } else {
+      for (i = optind; i < argc; i++) {
+	 pr_open( argv[i], PR_USE_STDIN | PR_CREATE_STDOUT,
+		  &prev, &next, NULL );
+	 prev = next;
+      }
+   }
+   
+   while ((fgets( buf, BUFSIZ, next )))
+      printf( "Got: \"%s\"\n", buf );
+   printf( "status = 0x%02x\n", pr_close( next ) );
+   
+#if 0
    printf( "%s\n", maa_version() );
 
    pr_open( "echo foobar", PR_USE_STDIN | PR_CREATE_STDOUT,
@@ -51,6 +74,7 @@ int main( int argc, char **argv )
    printf( "Got \"%s\"\n", buf );
    printf( "status = 0x%02x\n", pr_close( instr ) );
    printf( "status = 0x%02x\n", pr_close( outstr ) );
-
+#endif
+   
    return 0;
 }

@@ -1,6 +1,6 @@
 /* pr.c -- Process creation and tracking support
  * Created: Sun Jan  7 13:34:08 1996 by r.faith@ieee.org
- * Revised: Wed Jan 31 11:01:29 1996 by r.faith@ieee.org
+ * Revised: Mon May  6 13:09:01 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.4 1996/02/02 04:30:05 faith Exp $
+ * $Id: pr.c,v 1.5 1996/05/27 16:22:16 faith Exp $
  *
  * \section{Process Management Routines}
  *
@@ -70,7 +70,7 @@ static void _pr_check( pr_Object object, const char *function )
 
 /* The idea for the max_fd call is from W. Richard Stevens; Advanced
    Programming in the UNIX Environment (Addison-Wesley Publishing Co.,
-   1992); page 43.  The implementation here is, however, different from
+   1992); page 43.  The implementation here, however, is different from
    that provided by Stevens for is open_max routine. */
 
 static int max_fd( void )
@@ -187,7 +187,7 @@ int pr_open( const char *command, int flags,
 	 dup2( fds[readfd], FILENO );                          \
 	 close( fds[readfd] );                                 \
       } else if (flags & USE) {                                \
-	 if (str) {                                            \
+	 if (str && *str) {                                    \
 	    dup2( fileno( *str ), FILENO );                    \
 	    fclose( *str );                                    \
 	 } else {                                              \
@@ -224,7 +224,7 @@ int pr_open( const char *command, int flags,
       _pr_objects[ fileno( *str ) ].pid = pid;              \
       PRINTF(MAA_PR,(name " = %d; ",fileno( *str)));        \
    } else if (flags & USE) {                                \
-      if (str) {                                            \
+      if (str && *str) {                                    \
 	 PRINTF(MAA_PR,(name " = %d*; ",fileno(*str)));     \
 	 _pr_objects[ fileno( *str ) ].pid =0;              \
 	 fclose( *str );                                    \
@@ -270,6 +270,58 @@ int pr_close( FILE *str )
    fclose( str );
    PRINTF(MAA_PR,("waiting on pid %d\n",pid));
    
+   while (waitpid( pid, &status, 0 ) < 0) {
+      if (errno != EINTR) {
+	 if (errno == ECHILD) return 0;	/* We've already waited */
+				/* This is really bad... */
+	 PRINTF(MAA_PR,("waitpid() < 0, errno = %d\n", errno ));
+	 perror( __FUNCTION__ );
+	 return -1;
+      }
+   }
+   
+   if (WIFEXITED( status ))
+      exitStatus |= WEXITSTATUS( status );
+      
+                                /* SIGPIPE is ok here, since tar may
+                                   shutdown early.  Anything else is a
+                                   problem.  */
+   if (WIFSIGNALED( status ) && WTERMSIG( status ) != SIGPIPE)
+      exitStatus |= 128 + WTERMSIG( status ); /* like bash :-) */
+
+   PRINTF(MAA_PR,("Child %d exited with status 0x%04x\n",pid,exitStatus));
+   
+   return exitStatus;
+}
+
+int pr_spawn( const char *command )
+{
+   arg_List list;
+   int      argc;
+   char     **argv;
+   int      pid;
+   int      status;
+   int      exitStatus = 0;
+   
+   _pr_init();
+
+   list = arg_argify( command );
+   arg_get_vector( list, &argc, &argv );
+   PRINTF(MAA_PR,("Execing %s with \"%s\"\n", argv[0], command ));
+   
+   if ((pid = fork()) < 0)
+      err_fatal_errno( __FUNCTION__, "Cannot fork\n" );
+
+   if (pid == 0) {		/* child */
+      execvp( argv[0], argv );
+      _exit(127);
+   }
+   
+				/* parent */
+   PRINTF(MAA_PR,("child pid = %d\n",pid));
+   arg_destroy( list );
+
+   PRINTF(MAA_PR,("waiting on pid %d\n",pid));
    while (waitpid( pid, &status, 0 ) < 0) {
       if (errno != EINTR) {
 	 if (errno == ECHILD) return 0;	/* We've already waited */
