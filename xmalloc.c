@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: xmalloc.c,v 1.8 2002/08/02 19:43:15 faith Exp $
+ * $Id: xmalloc.c,v 1.9 2004/10/05 10:32:09 cheusov Exp $
  */
 
 #include "maaP.h"
@@ -29,6 +29,7 @@ void *malloc();
 void *calloc();
 void *realloc();
 void free();
+char *strdup(const char *s);
 #endif
 
 #ifndef DMALLOC_FUNC_CHECK
