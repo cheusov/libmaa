@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sun Aug 27 22:56:55 1995 by r.faith@ieee.org
+ * Revised: Mon Aug 28 22:16:05 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.4 1995/08/28 15:33:19 faith Exp $
+ * $Id: khepera.h,v 1.5 1995/08/29 02:17:11 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -168,7 +168,7 @@ extern void                *set_get_position( set_Position position );
 extern int                 set_self_organization( set_Set set, int flag );
 
 #define SET_POSITION_INIT(P,S) ((P)=set_init_position(S))
-#define SET_POSITION_NEXT(P,S) ((P)=set_next_POSITION(S,P))
+#define SET_POSITION_NEXT(P,S) ((P)=set_next_position(S,P))
 #define SET_POSITION_OK(P)     (P)
 #define SET_POSITION_GET(P,E)  ((E)=set_get_position(P))
 
