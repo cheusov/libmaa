@@ -1,6 +1,6 @@
 /* source.c -- Source code management for Libmaa
  * Created: Mon Dec 26 19:42:03 1994 by faith@cs.unc.edu
- * Revised: Wed Mar 19 13:04:16 1997 by faith@cs.unc.edu
+ * Revised: Fri May  9 17:05:43 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.4 1997/03/19 21:10:24 faith Exp $
+ * $Id: source.c,v 1.5 1997/05/10 10:20:31 faith Exp $
  *
  * \section{Source Code Management}
  *
@@ -387,7 +387,8 @@ void src_parse_error( FILE *stream, src_Type source, const char *message )
    sourceType *s   = (sourceType *)source;
    FILE       *str = stream ? stream : stdout;
 
-   fprintf( str, "%s:%d: ", s->file, s->line );
+   if (s) fprintf( str, "%s:%d: ", s->file, s->line );
+   else   fprintf( str, "?:?: " );
    _src_print_yyerror( str, message );
    putc( '\n', str );
 
