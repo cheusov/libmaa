@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sat Nov 11 20:59:12 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 12 20:49:35 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.28 1995/11/13 06:24:14 yakowenk Exp $
+ * $Id: khepera.h,v 1.29 1995/11/15 02:30:43 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -483,7 +483,7 @@ extern void       sym_dump( FILE *stream, sym_Scope scope );
    unsigned short         head:1;               \
    unsigned short         farey:1;              \
    unsigned short         red:1;                \
-   short                  ln, ld, n, d, rn, rd; \
+   unsigned short         ln, ld, n, d, rn, rd; \
    struct TRE_STRUCT_NAME *right;               \
    struct TRE_STRUCT_NAME *left;                \
    struct TRE_STRUCT_NAME *down;                \
@@ -595,6 +595,8 @@ extern int        tre_tst_flag( tre_Node node, int flag );
 extern tre_Node   tre_set_string( tre_Node node, const char *string );
 extern tre_Node   tre_set_integer( tre_Node node, int i );
 extern tre_Node   tre_set_real( tre_Node node, double r );
+extern int        tre_farey_numerator( tre_Node node );
+extern int        tre_farey_denominator( tre_Node node );
 extern tre_Node   tre_copy( tre_Node node );
 extern int        tre_match( tre_Node node1, tre_Node node2 );
 extern void       tre_fast_init( tre_Node root );
@@ -802,21 +804,33 @@ typedef xfm_SetEntry *xfm_Set;
 
 typedef struct xfm_SetListEntry {
    xfm_Set set;
-   int matchHere;
-   int matchPrevious;
-   int otherwise;
+   int     matchHere;
+   int     matchPrevious;
+   int     otherwise;
 } xfm_SetListEntry;
 
 typedef xfm_SetListEntry *xfm_SetList;
 
 typedef struct xfm_RuleListEntry {
    xfm_Rule rule;
-   int      is_fast_postorder;
+   int      do_preorder_walk;
    int      matchHere;
    int      matchPrevious;
    int      otherwise;
+   int      _fast_postorder_id;
 } xfm_RuleListEntry;
 
 typedef xfm_RuleListEntry *xfm_RuleList;
+
+extern void       xfm_register( xfm_Rule function, const char *name );
+extern xfm_Rule   xfm_function( const char *name );
+extern const char *xfm_name( xfm_Rule function );
+extern int        xfm_apply( xfm_RuleList ruleList, tre_Node node );
+extern int        xfm_preorder_syntax_directed( xfm_SetList setList,
+						tre_Node node );
+extern int        xfm_postorder_syntax_directed( xfm_SetList setList,
+						 tre_Node node );
+extern int        xfm_log( int *count, const char *ruleName, tre_Node node );
+extern void       _xfm_shutdown( void );
 
 #endif

@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Thu Oct 26 22:35:31 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 12 22:44:33 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.5 1995/11/01 11:33:02 yakowenk Exp $
+ * $Id: hash.c,v 1.6 1995/11/15 02:30:41 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -329,16 +329,25 @@ void hsh_iterate( hsh_HashTable table,
 {
    tableType     t = (tableType)table;
    unsigned long i;
+   bucketType    pt;
+				/* FIXME: we should be able to say pt =
+                                   pt->next, but the iterator call seems to
+                                   corrupt pt.  Is this a compiler bug
+                                   (e.g., with trampolines)?  or is this
+                                   some horrible stack corruption bug?
+                                   Since gcc 2.7.1 will be out soon, we'll
+                                   wait and see. . . */
+   bucketType    next;
 
    _hsh_check( t, __FUNCTION__ );
    
    for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
-	 bucketType pt;
-	 
-	 for (pt = t->buckets[i]; pt; pt = pt->next)
-	       if (iterator( pt->key, pt->datum ))
-		     return;
+	 for (pt = t->buckets[i]; pt; pt = next) {
+	    next = pt->next;
+	    if (iterator( pt->key, pt->datum ))
+	       return;
+	 }
       }
    }
 }

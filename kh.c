@@ -1,6 +1,6 @@
 /* kh.c -- General Support for Khepera
  * Created: Fri Jan 20 14:56:18 1995 by faith@cs.unc.edu
- * Revised: Thu Oct 26 23:19:08 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 12 22:26:26 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.c,v 1.12 1995/11/13 06:17:14 yakowenk Exp $
+ * $Id: kh.c,v 1.13 1995/11/15 02:30:41 faith Exp $
  *
  * \section{General Support}
  *
@@ -73,6 +73,7 @@ void kh_shutdown( void )
    _lst_shutdown();
    _prs_shutdown();
    _sym_shutdown();
+   _xfm_shutdown();
 
    tim_stop( "total" );
    if (dbg_test(KH_TIME)) {
