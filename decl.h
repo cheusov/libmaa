@@ -1,6 +1,6 @@
 /* decl.h -- Declarations for non-ANSI hosts
  * Created: Sun Nov 19 14:04:27 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 19 14:08:52 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 19 15:50:50 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: decl.h,v 1.1 1995/11/19 19:28:35 faith Exp $
+ * $Id: decl.h,v 1.2 1995/11/19 22:51:58 faith Exp $
  * 
  */
 
@@ -48,8 +48,9 @@ extern long   strtol( const char *, char **, int );
 extern void   fclose( FILE * );
 extern void   perror( const char * );
 extern void   srandom( int );
-extern char   *strchr( const char *s, int c );
-extern char   *strrchr( const char *s, int c );
+extern char   *strchr( const char *, int );
+extern char   *strrchr( const char *, int );
+extern char   *strtok( const char *, const char * );
 extern int    fread( char *, int, int, FILE * );
 extern int    fwrite( char *, int, int, FILE * );
 extern int    _filbuf( FILE * );
