@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Mon Sep 23 16:23:49 1996 by faith@cs.unc.edu
+ * Revised: Sun Sep 29 10:27:44 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.10 1996/09/23 23:20:37 faith Exp $
+ * $Id: error.c,v 1.11 1996/09/30 03:49:25 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -38,7 +38,12 @@ const char *_err_programName;
 
 void err_set_program_name( const char *programName )
 {
-   _err_programName = programName;
+   const char *pt =strrchr( programName, '/' );
+
+   if (pt)
+      _err_programName = pt + 1;
+   else
+      _err_programName = programName;
 }
 
 /* \doc |err_program_name| returns the value of |programName| that was
