@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Wed Sep 25 11:08:09 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 11:21:29 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.15 1996/09/25 15:11:17 faith Exp $
+ * $Id: hash.c,v 1.16 1996/09/25 20:31:06 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -494,16 +494,21 @@ unsigned long hsh_string_hash( const void *key )
 
 unsigned long hsh_pointer_hash( const void *key )
 {
-   const char    *pt = (const char *)&key;
+   const char    *pt;
    unsigned long h   = 0;
    int           i;
 
 #ifdef WORDS_BIGENDIAN
-   for (i = SIZEOF_VOID_P - 1; i >= 0; i--) {
+   pt = ((const char *)&key) + SIZEOF_VOID_P - 1;
 #else
-   for (i = 0; i < SIZEOF_VOID_P; i++) {
+   pt = (const char *)&key;
 #endif
+   for (i = 0; i < SIZEOF_VOID_P; i++) {
+#ifdef WORDS_BIGENDIAN
+      h += *pt--;
+#else
       h += *pt++;
+#endif
 #if 0
       h *= 65599L;		/* prime near %$2^{16}$% */
 #else

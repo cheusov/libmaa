@@ -1,6 +1,6 @@
 /* decl.h -- Declarations for non-ANSI hosts
  * Created: Sun Nov 19 14:04:27 1995 by faith@cs.unc.edu
- * Revised: Wed Sep 25 09:13:33 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 12:31:13 1996 by faith@cs.unc.edu
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: decl.h,v 1.7 1996/09/25 14:00:55 faith Exp $
+ * $Id: decl.h,v 1.8 1996/09/25 20:31:05 faith Exp $
  * 
  */
 
@@ -34,6 +34,7 @@ extern int    getrusage( int who, struct rusage * );
 extern void   bcopy( const void *, void *, int );
 extern long   random( void );
 extern int    srandom( unsigned );
+extern char   *index( const char *, int c );
 
 #if !defined(__svr4__)
 				/* Old braindamage for SunOS only */
