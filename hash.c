@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Wed Jan 31 11:01:30 1996 by r.faith@ieee.org
+ * Revised: Sun Feb 18 17:03:35 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.12 1996/02/02 04:30:01 faith Exp $
+ * $Id: hash.c,v 1.13 1996/02/23 21:29:04 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -30,9 +30,6 @@
  */
 
 #include "maaP.h"
-
-				/* A few primes, each approximately 3 times
-                                   the previous prime.  */
 
 typedef struct bucket {
    const void    *key;
