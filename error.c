@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Mon Sep 30 14:39:08 1996 by faith@cs.unc.edu
+ * Revised: Mon Nov 25 14:25:22 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.12 1996/10/03 01:36:04 faith Exp $
+ * $Id: error.c,v 1.13 1996/11/26 03:45:39 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -142,18 +142,18 @@ void err_internal( const char *routine, const char *format, ... )
    fflush( stdout );
    if (_err_programName)
       fprintf( stderr,
-	       "%s (%s): Internal error\n", _err_programName, routine );
+	       "%s (%s): Internal error\n   ", _err_programName, routine );
    else
-      fprintf( stderr, "%s: Internal error\n", routine );
+      fprintf( stderr, "%s: Internal error\n   ", routine );
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
    va_end( ap );
 
    if (_err_programName)
-      fprintf( stderr, "Aborting %s: ", _err_programName );
+      fprintf( stderr, "Aborting %s...\n", _err_programName );
    else
-      fprintf( stderr, "Aborting: " );
+      fprintf( stderr, "Aborting...\n" );
    fflush( stderr );
    fflush( stdout );
    abort();
