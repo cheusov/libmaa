@@ -1,6 +1,6 @@
 /* maaP.h -- Internal header file for libmaa
  * Created: Sun Nov 19 13:19:44 1995 by faith@cs.unc.edu
- * Revised: Mon Feb 26 09:19:11 1996 by faith@cs.unc.edu
+ * Revised: Tue Mar 26 21:35:12 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.4 1996/02/26 15:39:11 faith Exp $
+ * $Id: maaP.h,v 1.5 1996/03/27 02:45:24 faith Exp $
  */
 
 #ifndef _MAAP_H_
@@ -66,15 +66,15 @@ char *alloca ();
 #endif
 
 #if !HAVE_STRDUP
-char *strdup( const char * );
+extern char *strdup( const char * );
 #endif
 
 #if !HAVE_STRTOL
-long strtol( const char *, char **, int );
+extern long strtol( const char *, char **, int );
 #endif
 
 #if !HAVE_STRTOUL
-unsigned long int strtoul( const char *, char **, int );
+extern unsigned long int strtoul( const char *, char **, int );
 #endif
 
 /* Get time functions */
@@ -104,6 +104,15 @@ unsigned long int strtoul( const char *, char **, int );
 extern int  getopt( int, char **, char * );
 extern int  optind;
 extern char *optarg;
+#endif
+
+/* We actually need a few non-ANSI C things... */
+#if defined(__linux__) && defined(__STRICT_ANSI__)
+extern char *strdup( const char * );
+extern int  fileno( FILE *stream);
+extern FILE *fdopen( int fildes, const char *mode);
+extern void bcopy(const void *src, void *dest, int n);
+extern long int random(void);
 #endif
 
 #if HAVE_SYS_RESOURCE_H

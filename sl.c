@@ -1,6 +1,6 @@
 /* sl.c -- Skip lists
  * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Tue Feb 27 13:28:23 1996 by faith@cs.unc.edu
+ * Revised: Sun Mar 24 16:45:32 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  *
@@ -18,7 +18,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: sl.c,v 1.6 1996/02/27 18:41:24 faith Exp $
+ * $Id: sl.c,v 1.7 1996/03/27 02:45:25 faith Exp $
  *
  * \section{Skip List Routines}
  *
@@ -41,7 +41,7 @@
 
 #include "maaP.h"
 
-#define SL_DEBUG 1		/* Debug like crazy */
+#define SL_DEBUG 0		/* Debug like crazy */
 
 typedef struct _sl_Entry {
 #if MAA_MAGIC
@@ -148,7 +148,9 @@ static _sl_Entry _sl_create_entry( int maxLevel, const void *datum )
    e->magic  = SL_ENTRY_MAGIC;
 #endif
    e->datum  = datum;
+#if SL_DEBUG
    e->levels = maxLevel + 1;
+#endif
 
    return e;
 }
@@ -442,13 +444,15 @@ void _sl_dump( sl_List list )
 {
    _sl_List  l = (_sl_List)list;
    _sl_Entry pt;
-   int       i;
    int       count = 0;
 
    _sl_check_list( list, __FUNCTION__ );
 
    printf( "Level = %d, count = %d\n", l->level, l->count );
    for (pt = l->head; pt; pt = pt->forward[0]) {
+#if SL_DEBUG
+      int       i;
+      
       printf( "  Entry %p (%d/%p/0x%p=%lu) has 0x%x levels:\n",
 	      pt, count++, pt->datum,
 	      pt->datum ? l->key( pt->datum ) : 0,
@@ -456,5 +460,11 @@ void _sl_dump( sl_List list )
 	      pt->levels );
       for (i = 0; i < pt->levels; i++)
 	 printf( "    %p\n", pt->forward[i] );
+#else
+      printf( "  Entry %p (%d/%p/0x%p=%lu)\n",
+	      pt, count++, pt->datum,
+	      pt->datum ? l->key( pt->datum ) : 0,
+	      (unsigned long)(pt->datum ? l->key( pt->datum ) : 0) );
+#endif
    }
 }
