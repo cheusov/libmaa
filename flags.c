@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: flags.c,v 1.5 2002/08/02 19:43:15 faith Exp $
+ * $Id: flags.c,v 1.6 2004/01/07 14:35:26 cheusov Exp $
  *
  * \section{Flag Support}
  *
@@ -119,18 +119,22 @@ void flg_set( const char *name )
    }
 
    if (!(flag = (flg_Type)hsh_retrieve( hash, name ))) {
-      if (!(flag = (flg_Type)hsh_retrieve( hash, name+1 ))
-	  && *name != '-'
-	  && *name != '+') {
-	 
+      flag = 0;
+
+      if (
+	 (*name != '-' && *name != '+') ||
+	 !(flag = (flg_Type) hsh_retrieve( hash, name+1 )))
+      {
 	 fprintf( stderr, "Valid flags are:\n" );
 	 flg_list( stderr );
 	 err_fatal( __FUNCTION__,
 		    "\"%s\" is not a valid flag\n",
 		    name );
       } else {
-	 if (*name == '+') setFlags[ flag >> 30 ] |= flag;
-	 else              setFlags[ flag >> 30 ] &= ~flag; /* - */
+	 if (flag){
+	    if (*name == '+') setFlags[ flag >> 30 ] |= flag;
+	    else              setFlags[ flag >> 30 ] &= ~flag; /* - */
+	 }
       }
    } else {
       setFlags[ flag >> 30 ] |= flag;
