@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sun Oct  8 17:04:28 1995 by faith@cs.unc.edu
+ * Revised: Sun Oct 22 01:41:51 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.15 1995/10/22 05:29:31 yakowenk Exp $
+ * $Id: khepera.h,v 1.16 1995/10/22 05:43:23 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -448,6 +448,11 @@ extern const char *sym_mangle_function_name(tre_Node);
 #define TRE_STRUCT_NAME Node
 #endif
 
+				/* Khepera maintainers: if you add things
+                                   to this table, you "must" check
+                                   tree.c:tre_replace to make sure it does
+                                   the right thing when replacing a tree. */
+
 #define _TRE_HEADER                             \
    enum tre_Id { tre_IdList,                    \
 		 tre_IdMax = TRE_TABLE_SIZE }   \
@@ -706,7 +711,6 @@ extern boolean       typ_mgu(typ_Expr, typ_Expr, lst_List);
 extern void          typ_apply_mgu(dct_Dict);
 extern boolean       typ_unify(typ_Expr, typ_Expr);
 extern boolean       typ_unify_ast_types(tre_Node, tre_Node);
-extern void          typ_read_typerule();
 extern void          typ_read_typerule(tre_Node);
 extern tre_Node      typ_ast_instance(tre_Node);
 extern void          typ_ast_dump(tre_Node);
