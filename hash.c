@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.21 2002/08/02 19:43:15 faith Exp $
+ * $Id: hash.c,v 1.22 2004/11/17 12:39:54 cheusov Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -411,7 +411,7 @@ hsh_Stats hsh_get_stats( hsh_HashTable table )
    tableType     t = (tableType)table;
    hsh_Stats     s = xmalloc( sizeof( struct hsh_Stats ) );
    unsigned long i;
-   int           count;
+   unsigned      count;
 
    _hsh_check( t, __FUNCTION__ );
    

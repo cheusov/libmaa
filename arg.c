@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.12 2004/05/14 18:04:50 cheusov Exp $
+ * $Id: arg.c,v 1.13 2004/11/17 12:39:46 cheusov Exp $
  *
  * \section{Argument List Routines}
  *
@@ -31,7 +31,7 @@
 
 typedef struct Arg {
 #if MAA_MAGIC
-   int        magic;
+   unsigned   magic;
 #endif
    int        argc;		/* Current count */
    int        argm;		/* Maximum count */
@@ -256,7 +256,7 @@ arg_List arg_argify( const char *string, int quoteStyle )
 
       curr_act = action [state] [ch_type];
 
-//      fprintf (stderr, "%i -- %i(%c) / %i --> %i\n", state, ch_type, ch, curr_act, transition [state] [ch_type]);
+/*      fprintf (stderr, "%i -- %i(%c) / %i --> %i\n", state, ch_type, ch, curr_act, transition [state] [ch_type]);*/
 
       state = transition [state] [ch_type];
 

@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.16 2003/12/30 16:28:20 cheusov Exp $
+ * $Id: string.c,v 1.17 2004/11/17 12:39:54 cheusov Exp $
  *
  * \section{String Pool Routines}
  *
@@ -115,7 +115,7 @@ int str_pool_iterate(
    void *key;
    void *datum;
 
-//   printf ("inside str_pool_iterate\n");
+/*   printf ("inside str_pool_iterate\n"); */
 
    HSH_ITERATE (hash, hash_pos, key, datum){
       if ((*iterator) ((const char *) key))
