@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.18 2003/03/19 16:43:28 cheusov Exp $
+ * $Id: maaP.h,v 1.19 2003/08/06 17:55:54 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
@@ -59,6 +59,10 @@
 #  define memcpy(d, s, n) bcopy ((s), (d), (n))
 #  define memmove(d, s, n) bcopy ((s), (d), (n))
 # endif
+#endif
+
+#if !HAVE_STRLCPY
+extern size_t strlcpy (char *s, const char * wc, size_t size);
 #endif
 
 #if !HAVE_STRDUP

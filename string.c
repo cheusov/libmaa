@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.12 2002/08/02 19:43:15 faith Exp $
+ * $Id: string.c,v 1.13 2003/08/06 17:55:54 cheusov Exp $
  *
  * \section{String Pool Routines}
  *
@@ -234,8 +234,8 @@ const char *str_findn( const char *s, int length )
    char *tmp = alloca( sizeof( char ) * (length + 1) );
    
    _str_check_global();
-   strncpy( tmp, s, length );
-   tmp[ length ] = '\0';
+   strlcpy( tmp, s, length + 1);
+
    return str_pool_find( global, tmp );
 }
 
