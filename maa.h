@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Fri Feb 28 09:46:47 1997 by faith@cs.unc.edu
+ * Revised: Mon Mar 10 11:08:28 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.24 1997/03/01 04:20:52 faith Exp $
+ * $Id: maa.h,v 1.25 1997/03/10 21:39:45 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -543,5 +543,16 @@ extern void   prs_register_concrete( const char *symbol,
 				     const char *concrete );
 extern const  char *prs_concrete( const char *symbol );
 extern void   _prs_shutdown( void );
+
+/* log.c */
+extern void log_syslog( const char *ident, int daemon );
+extern void log_file( const char *filename, const char *ident );
+extern void log_stream( FILE *stream, const char *ident );
+extern void log_close( void );
+extern void log_error_va( const char *routine,
+			  const char *format, va_list ap );
+extern void log_error( const char *routine, const char *format, ... );
+extern void log_info_va( const char *format, va_list ap );
+extern void log_info( const char *format, ... );
 
 #endif

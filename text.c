@@ -1,6 +1,6 @@
 /* text.c -- Text manipulation routines for Libmaa
  * Created: Wed Apr 24 14:51:51 1996 by r.faith@ieee.org
- * Revised: Wed Apr 24 15:30:49 1996 by r.faith@ieee.org
+ * Revised: Sun Mar  9 22:28:33 1997 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,17 +17,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: text.c,v 1.1 1996/04/24 19:34:02 faith Exp $
+ * $Id: text.c,v 1.2 1997/03/10 21:39:45 faith Exp $
  * 
  */
 
+#include <ctype.h>
 #include "maaP.h"
 
-/* The basic algorithm for the soundex routine is from Donald E. Knuth's
-   THE ART OF COMPUTER PROGRAMMING, Volume 3: Sorting and Searching
-   (Addison-Wesley Publishing Co., 1973, pages 391 and 392).  Knuth notes
-   that the method was originally described by Margaret K. Odell and Robert
-   C. Russell [US Patents 1261167 (1918) and 1435663 (1922)]. */
+/* \doc Given a string, return (in a |static| buffer), the Soundex value
+   for the string.
+
+   The basic algorithm for the soundex routine is from Donald
+   E. Knuth's THE ART OF COMPUTER PROGRAMMING, Volume 3: Sorting and
+   Searching (Addison-Wesley Publishing Co., 1973, pages 391 and 392).
+   Knuth notes that the method was originally described by Margaret
+   K. Odell and Robert C. Russell [US Patents 1261167 (1918) and 1435663
+   (1922)]. */
 
 const char *txt_soundex( const char *string )
 {

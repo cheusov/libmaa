@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Mon Nov 25 14:25:22 1996 by faith@cs.unc.edu
+ * Revised: Mon Mar 10 10:34:38 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.13 1996/11/26 03:45:39 faith Exp $
+ * $Id: error.c,v 1.14 1997/03/10 21:39:43 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -72,6 +72,7 @@ void err_fatal( const char *routine, const char *format, ... )
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
+   log_error_va( routine, format, ap );
    va_end( ap );
    
    fflush( stderr );
@@ -97,13 +98,16 @@ void err_fatal_errno( const char *routine, const char *format, ... )
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
+   log_error_va( routine, format, ap );
    va_end( ap );
 
 #if HAVE_STRERROR
    fprintf( stderr, "%s: %s\n", routine, strerror( errorno ) );
+   log_error( routine, "%s: %s\n", routine, strerror( errorno ) );
 #else
    errno = errorno;
    perror( routine );
+   log_error( routine, "%s: errno = %d\n", routine, errorno );
 #endif
    
    fflush( stderr );
@@ -128,6 +132,7 @@ void err_warning( const char *routine, const char *format, ... )
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
+   log_error_va( routine, format, ap );
    va_end( ap );
 }
 
@@ -148,6 +153,7 @@ void err_internal( const char *routine, const char *format, ... )
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
+   log_error( routine, format, ap );
    va_end( ap );
 
    if (_err_programName)
