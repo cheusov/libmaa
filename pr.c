@@ -1,6 +1,6 @@
 /* pr.c -- Process creation and tracking support
  * Created: Sun Jan  7 13:34:08 1996 by r.faith@ieee.org
- * Revised: Mon May  6 13:09:01 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 21:50:16 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.5 1996/05/27 16:22:16 faith Exp $
+ * $Id: pr.c,v 1.6 1996/09/26 02:23:15 faith Exp $
  *
  * \section{Process Management Routines}
  *
@@ -243,7 +243,7 @@ int pr_open( const char *command, int flags,
    PRINTF(MAA_PR,("child pid = %d\n",pid));
    arg_destroy( list );
    
-   return 0;
+   return pid;
 }
 
 #if 0
@@ -252,22 +252,11 @@ int pr_chain( pr_Object object, const char *command )
 }
 #endif
 
-int pr_close( FILE *str )
-{
-   int fd         = fileno( str );
+int pr_wait( int pid )
+{   
    int exitStatus = 0;
    int status;
-   int pid;
-
-   if (!_pr_objects)
-      err_internal( __FUNCTION__, "No previous call to pr_open()\n" );
-   if (!(pid = _pr_objects[ fd ].pid))
-      err_internal( __FUNCTION__,
-		    "File (%d) not created by pr_open()\n", fileno( str ) );
-
-   _pr_objects[ fd ].pid = 0;
-
-   fclose( str );
+   
    PRINTF(MAA_PR,("waiting on pid %d\n",pid));
    
    while (waitpid( pid, &status, 0 ) < 0) {
@@ -292,6 +281,23 @@ int pr_close( FILE *str )
    PRINTF(MAA_PR,("Child %d exited with status 0x%04x\n",pid,exitStatus));
    
    return exitStatus;
+}
+
+int pr_close( FILE *str )
+{
+   int fd         = fileno( str );
+   int pid;
+
+   if (!_pr_objects)
+      err_internal( __FUNCTION__, "No previous call to pr_open()\n" );
+   if (!(pid = _pr_objects[ fd ].pid))
+      err_internal( __FUNCTION__,
+		    "File (%d) not created by pr_open()\n", fileno( str ) );
+
+   _pr_objects[ fd ].pid = 0;
+
+   fclose( str );
+   return pr_wait( pid );
 }
 
 int pr_spawn( const char *command )

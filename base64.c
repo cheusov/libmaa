@@ -1,6 +1,6 @@
 /* base64.c -- Encode/decode integers in base64 format
  * Created: Mon Sep 23 16:55:12 1996 by faith@cs.unc.edu
- * Revised: Mon Sep 23 21:03:41 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 22:06:22 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: base64.c,v 1.1 1996/09/24 01:06:11 faith Exp $
+ * $Id: base64.c,v 1.2 1996/09/26 02:23:14 faith Exp $
  *
 
  * These routines use the 64-character subset of International Alphabet IA5
@@ -45,8 +45,6 @@
  */
 
 #include "maaP.h"
-
-#include <netinet/in.h>
 
 static unsigned char b64_list[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -79,26 +77,28 @@ static int b64_index[256] = {
 const char *b64_encode( unsigned long val )
 {
    static char   result[7];
-   unsigned long v = htonl( val ); /* Convert to network byte order first! */
+   int    i;
 
-   result[0] = b64_list[ (v & 0xc0000000) >> 30 ];
-   result[1] = b64_list[ (v & 0x3f000000) >> 24 ];
-   result[2] = b64_list[ (v & 0x00fc0000) >> 18 ];
-   result[3] = b64_list[ (v & 0x0003f000) >> 12 ];
-   result[4] = b64_list[ (v & 0x00000fc0) >>  6 ];
-   result[5] = b64_list[ (v & 0x0000003f)       ];
+   result[0] = b64_list[ (val & 0xc0000000) >> 30 ];
+   result[1] = b64_list[ (val & 0x3f000000) >> 24 ];
+   result[2] = b64_list[ (val & 0x00fc0000) >> 18 ];
+   result[3] = b64_list[ (val & 0x0003f000) >> 12 ];
+   result[4] = b64_list[ (val & 0x00000fc0) >>  6 ];
+   result[5] = b64_list[ (val & 0x0000003f)       ];
    result[6] = 0;
 
-   return result;
+   for (i = 0; i < 5; i++) if (result[i] != b64_list[0]) return result + i;
+   return result + 5;
 }
 
 unsigned long b64_decode( const char *val )
 {
    unsigned long v = 0;
    int           i;
-   int           offset = 30;
+   int           offset = 0;
+   int           len = strlen( val );
 
-   for (i = 0; i < 6; i++) {
+   for (i = len - 1; i >= 0; i--) {
       int tmp = b64_index[ (unsigned char)val[i] ];
 
       if (tmp == XX)
@@ -106,8 +106,8 @@ unsigned long b64_decode( const char *val )
 		       "Illegal character in base64 value: `%c'\n", val[i] );
       
       v |= tmp << offset;
-      offset -= 6;
+      offset += 6;
    }
 
-   return ntohl( v );
+   return v;
 }

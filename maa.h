@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Wed Sep 25 15:34:53 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 21:48:57 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.19 1996/09/25 20:07:51 faith Exp $
+ * $Id: maa.h,v 1.20 1996/09/26 02:23:15 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -447,6 +447,7 @@ extern arg_List   arg_argify( const char *string );
 extern int  pr_open( const char *command, int flags,
 		     FILE **instr, FILE **outstr, FILE **errstr );
 extern int  pr_close( FILE *str );
+extern int pr_wait( int pid );
 extern void _pr_shutdown( void );
 extern int  pr_spawn( const char *command );
 
