@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: prime.c,v 1.5 2002/05/03 14:12:23 faith Exp $
+ * $Id: prime.c,v 1.6 2002/08/02 19:43:15 faith Exp $
  *
  * \section{Prime Number Routines}
  *

@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debugtest.c,v 1.6 2002/05/03 14:12:23 faith Exp $
+ * $Id: debugtest.c,v 1.7 2002/08/02 19:43:15 faith Exp $
  */
 
 #include "maaP.h"

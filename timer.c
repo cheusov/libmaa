@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: timer.c,v 1.18 2002/05/03 14:12:23 faith Exp $
+ * $Id: timer.c,v 1.19 2002/08/02 19:43:15 faith Exp $
  *
  * \section{Timer Support}
  *

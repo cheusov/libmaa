@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.36 2002/05/03 14:12:23 faith Exp $
+ * $Id: maa.h,v 1.37 2002/08/02 19:43:15 faith Exp $
  */
 
 #ifndef _MAA_H_
