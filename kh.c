@@ -1,6 +1,6 @@
 /* kh.c -- General Support for Khepera
  * Created: Fri Jan 20 14:56:18 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 12 22:26:26 1995 by faith@cs.unc.edu
+ * Revised: Sat Nov 18 14:19:37 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.c,v 1.13 1995/11/15 02:30:41 faith Exp $
+ * $Id: kh.c,v 1.14 1995/11/18 21:57:51 faith Exp $
  *
  * \section{General Support}
  *
@@ -44,9 +44,10 @@ void kh_init( void )
    _dbg_register( KH_SCOPE,     "scope" );
    _dbg_register( KH_ENUM,      "enum" );
    _dbg_register( KH_TYPE,      "type" );
-   _dbg_register( KH_DUMP,      "dump" );
    _dbg_register( KH_INFER,     "infer" );
    _dbg_register( KH_TREES,     "trees" );
+   _dbg_register( KH_DUMP,      "dump" );
+   _dbg_register( KH_SLOW,      "slow" );
 
 #ifndef __CHECKER__
 #ifdef HAVE_ATEXIT

@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 12 20:49:35 1995 by faith@cs.unc.edu
+ * Revised: Sat Nov 18 14:20:47 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.30 1995/11/18 20:44:59 yakowenk Exp $
+ * $Id: khepera.h,v 1.31 1995/11/18 21:57:51 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -40,9 +40,6 @@
 #ifndef KH_MAGIC
 #define KH_MAGIC 1
 #endif
-
-/* make a seg fault by accessing a null pointer */
-#define SEGFAULT (*(int *)NULL)
 
 #if KH_MAGIC
 #define HSH_MAGIC               0x01020304
@@ -81,6 +78,7 @@
 #define KH_INFER     0xc0002000	/* Print type inferences */
 #define KH_TREES     0xc0004000	/* Print ASTs */
 #define KH_DUMP      0xc0008000	/* Print type details in tre_print */
+#define KH_SLOW      0xc0010000	/* Avoid fast_postorder walks */
 
 extern void kh_init( void );
 extern void kh_shutdown( void );
@@ -804,7 +802,6 @@ typedef struct xfm_SetEntry {
 } xfm_SetEntry;
 
 typedef xfm_SetEntry *xfm_Set;
-
 typedef struct xfm_SetListEntry {
    xfm_Set set;
    int     matchHere;
@@ -825,8 +822,10 @@ typedef struct xfm_RuleListEntry {
 
 typedef xfm_RuleListEntry *xfm_RuleList;
 
-extern void       xfm_register( xfm_Rule function, const char *name );
+extern void       xfm_register( xfm_Rule function, const char *name,
+				int fast );
 extern xfm_Rule   xfm_function( const char *name );
+extern int        xfm_is_fast( const char *name );
 extern const char *xfm_name( xfm_Rule function );
 extern int        xfm_apply( xfm_RuleList ruleList, tre_Node node );
 extern int        xfm_preorder_syntax_directed( xfm_SetList setList,
