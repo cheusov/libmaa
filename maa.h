@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Mon Feb 26 10:02:08 1996 by faith@cs.unc.edu
+ * Revised: Sat Mar 23 10:59:26 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.12 1996/03/11 17:49:49 yakowenk Exp $
+ * $Id: maa.h,v 1.13 1996/03/23 22:14:06 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -69,10 +69,12 @@ extern const char *maa_revision_string;
 
 /* maa.c */
 
-#define MAA_MEMORY   0xc1000000	/* Print memory usage statistics at exit */
-#define MAA_TIME     0xc2000000	/* Print timer information at exit       */
-#define MAA_PR       0xc4000000	/* Debug process routines                */
-#define MAA_SL       0xc8000000	/* Debug skip list routines              */
+#define MAA_MEMORY (3<<30|1<<29) /* Print memory usage statistics at exit */
+#define MAA_TIME   (3<<30|1<<28) /* Print timer information at exit       */
+#define MAA_PR     (3<<30|1<<27) /* Debug process routines                */
+#define MAA_SL     (3<<30|1<<26) /* Debug skip list routines              */
+#define MAA_RES1   (3<<30|1<<25) /* Reserved                              */
+#define MAA_RES2   (3<<30|1<<24) /* Reserved                              */
 
 extern void       maa_init( const char *programName );
 extern void       maa_shutdown( void );
@@ -389,6 +391,16 @@ extern __inline__ int dbg_test( dbg_Type flag );
 extern void           dbg_list( FILE *stream );
 
 #define PRINTF(flag,arg) if (dbg_test(flag)) printf arg
+
+/* flags.c */
+
+typedef unsigned long int flg_Type;
+
+extern void           flg_register( flg_Type flag, const char *name );
+extern void           flg_destroy( void );
+extern void           flg_set( const char *name );
+extern __inline__ int flg_test( flg_Type flag );
+extern void           flg_list( FILE *stream );
 
 /* timer.c */
 

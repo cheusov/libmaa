@@ -1,6 +1,6 @@
 /* debug.c -- Debugging support for Khepera
  * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Mon Feb 26 09:53:51 1996 by faith@cs.unc.edu
+ * Revised: Sat Mar 23 15:20:30 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.6 1996/02/26 15:23:11 faith Exp $
+ * $Id: debug.c,v 1.7 1996/03/23 22:14:04 faith Exp $
  *
  * \section{Debugging Support}
  *
@@ -55,8 +55,7 @@ static int _dbg_exists( dbg_Type flag )
 }
 
 /* |_dbg_name| returns a pointer to the name that was associated with the
-   |flag|.  Note the use of nested functions is not portable to non-GNU
-   compilers. */
+   |flag|. */
 
 static const char *_dbg_name( dbg_Type flag )
 {
@@ -132,16 +131,28 @@ void dbg_set( const char *name )
       setFlags[0] = setFlags[1] = setFlags[2] = setFlags[3] = 0;
       return;
    }
-
-   if (!(flag = (dbg_Type)hsh_retrieve( hash, name ))) {
-      fprintf( stderr, "Valid debugging flags are:\n" );
-      dbg_list( stderr );
-      err_fatal( __FUNCTION__,
-		 "\"%s\" is not a valid debugging flag\n",
-		 name );
+   if (!strcmp( name, "all" )) {
+      setFlags[0] = setFlags[1] = setFlags[2] = setFlags[3] = ~0;
+      return;
    }
-
-   setFlags[ flag >> 30 ] |= flag;
+   
+   if (!(flag = (dbg_Type)hsh_retrieve( hash, name ))) {
+      if (!(flag = (dbg_Type)hsh_retrieve( hash, name+1 ))
+	  && *name != '-'
+	  && *name != '+') {
+	 
+	 fprintf( stderr, "Valid debugging flags are:\n" );
+	 dbg_list( stderr );
+	 err_fatal( __FUNCTION__,
+		    "\"%s\" is not a valid debugging flag\n",
+		    name );
+      } else {
+	 if (*name == '+') setFlags[ flag >> 30 ] |= flag;
+	 else              setFlags[ flag >> 30 ] &= ~flag; /* - */
+      }
+   } else {
+      setFlags[ flag >> 30 ] |= flag;
+   }
 }
 
 /* \doc Thsi inlined function tests the |flag|, returning non-zero if the
@@ -166,7 +177,7 @@ void dbg_destroy( void )
 }
 
 
-static int _dbg_builtin( const void *key, const void *datum, void *arg )
+static int _dbg_user( const void *key, const void *datum, void *arg )
 {
    FILE     *stream = (FILE *)arg;
    dbg_Type flag    = (dbg_Type)datum;
@@ -176,7 +187,7 @@ static int _dbg_builtin( const void *key, const void *datum, void *arg )
    return 0;
 }
 
-static int _dbg_user( const void *key, const void *datum, void *arg )
+static int _dbg_builtin( const void *key, const void *datum, void *arg )
 {
    FILE     *stream = (FILE *)arg;
    dbg_Type flag    = (dbg_Type)datum;
@@ -187,8 +198,7 @@ static int _dbg_user( const void *key, const void *datum, void *arg )
 }
    
 /* |dbg_list| lists all of the valid user-level debugging flags to the
-   specified |stream|.  Note the use of nested functions is not portable to
-   non-GNU compilers. */
+   specified |stream|. */
 
 void dbg_list( FILE *stream )
 {

@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Mon Feb 19 09:02:39 1996 by faith@cs.unc.edu
+# Revised: Sat Mar 23 10:59:26 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.19 1996/02/23 21:29:03 faith Exp $
+# $Id: Makefile.in,v 1.20 1996/03/23 22:14:02 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -55,7 +55,7 @@ LDLIBS=		-lmaa @LIBS@ -lm
 HEADERS= config.h maa.h maaP.h decl.h obstack.h @XTRAHEADERS@
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
-	 debug.o maa.o prime.o bit.o timer.o version.o arg.o pr.o sl.o
+	 debug.o flags.o maa.o prime.o bit.o timer.o version.o arg.o pr.o sl.o
 TESTS=	 settest hashtest stringtest debugtest \
 	 primetest listtest bittest argtest sltest
 EXES=    memtest prtest

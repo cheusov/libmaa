@@ -1,6 +1,6 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Sat Feb 24 18:57:07 1996 by faith@cs.unc.edu
+ * Revised: Sat Mar 23 10:21:46 1996 by faith@cs.unc.edu
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.10 1996/02/25 00:08:56 faith Exp $
+ * $Id: maa.c,v 1.11 1996/03/23 22:14:05 faith Exp $
  *
  * \section{General Support}
  *
@@ -69,6 +69,7 @@ void maa_shutdown( void )
       tim_print_timers( stderr );
    }
    _tim_shutdown();
+   flg_destroy();
    dbg_destroy();
 }
 
