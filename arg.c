@@ -1,6 +1,6 @@
 /* arg.c -- Argument list support
  * Created: Sun Jan  7 13:39:29 1996 by r.faith@ieee.org
- * Revised: Wed Jan 31 11:06:02 1996 by r.faith@ieee.org
+ * Revised: Wed Sep 25 15:38:55 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.3 1996/02/02 04:29:59 faith Exp $
+ * $Id: arg.c,v 1.4 1996/09/25 20:07:50 faith Exp $
  *
  * \section{Argument List Routines}
  *
@@ -169,6 +169,14 @@ const char *arg_get( arg_List arg, int item )
 		    item,
 		    a->argc );
    return a->argv[ item ];
+}
+
+/* \doc Return the number of items in |arg|. */
+
+int arg_count( arg_List arg )
+{
+   _arg_check( arg, __FUNCTION__ );
+   return ((Arg)arg)->argc;
 }
 
 /* \doc Get an |argc| and |argv| from |arg|.  These are suitable for use in

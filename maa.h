@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Mon Sep 23 20:48:59 1996 by faith@cs.unc.edu
+ * Revised: Wed Sep 25 15:34:53 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.18 1996/09/24 01:06:12 faith Exp $
+ * $Id: maa.h,v 1.19 1996/09/25 20:07:51 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -430,6 +430,7 @@ extern arg_List   arg_addn( arg_List arg, const char *string, int length );
 extern void       arg_grow( arg_List arg, const char *string, int length );
 extern arg_List   arg_finish( arg_List arg );
 extern const char *arg_get( arg_List arg, int item );
+extern int        arg_count( arg_List arg );
 extern void       arg_get_vector( arg_List arg, int *argc, char ***argv );
 extern arg_List   arg_argify( const char *string );
 
