@@ -1,6 +1,6 @@
 /* parse.c -- Support for calling parsers from Libmaa
  * Created: Mon Apr 24 17:40:51 1995 by faith@cs.unc.edu
- * Revised: Fri Feb 28 10:20:28 1997 by faith@cs.unc.edu
+ * Revised: Sun Mar 16 09:38:05 1997 by faith@cs.unc.edu
  * Copyright 1995, 1997 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: parse.c,v 1.2 1997/03/01 04:20:53 faith Exp $
+ * $Id: parse.c,v 1.3 1997/03/18 01:37:41 faith Exp $
  *
  * \section{Parsing (and Lexing) Support}
  * 
@@ -154,6 +154,16 @@ void prs_file_nocpp( const char *filename )
    yydebug = _prs_debug_flag;
    yyparse();
    fclose( yyin );
+}
+
+/* \doc |prs_stream| parses an already opened stream called |name|. */
+
+void prs_stream( FILE *str, const char *name )
+{
+   yyin = str;
+   src_new_file( name );
+   yydebug = _prs_debug_flag;
+   yyparse();
 }
 
 /* \doc |prs_make_integer| converts a |string| of specified |length| to an
