@@ -1,6 +1,6 @@
 /* maaP.h -- Internal header file for libmaa
  * Created: Sun Nov 19 13:19:44 1995 by faith@cs.unc.edu
- * Revised: Sun Jan  4 19:46:20 1998 by faith@acm.org
+ * Revised: Sun Feb 22 06:07:41 1998 by faith@acm.org
  * Copyright 1994, 1995, 1997, 1998 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.13 1998/01/16 03:51:49 faith Exp $
+ * $Id: maaP.h,v 1.14 1998/02/22 13:41:19 faith Exp $
  */
 
 #ifndef _MAAP_H_
@@ -102,7 +102,7 @@ extern unsigned long int strtoul( const char *, char **, int );
 # include <getopt.h>
 #else
 #if !defined(__FreeBSD__) && !defined(__DGUX__) && !defined(__hpux__)
-#if !(defined(__sparc) && defined(__svr4__))
+#if !defined(__bsdi__) && !(defined(__sparc) && defined(__svr4__))
 extern int  getopt( int, char **, char * );
 extern int  optind;
 extern char *optarg;
