@@ -1,6 +1,6 @@
 /* log.c -- Logging routines, for a single, program-wide logging facility
  * Created: Mon Mar 10 09:37:21 1997 by faith@cs.unc.edu
- * Revised: Mon Mar 10 11:13:25 1997 by faith@cs.unc.edu
+ * Revised: Mon Mar 10 21:21:34 1997 by faith@cs.unc.edu
  * Copyright 1997 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.1 1997/03/10 21:39:44 faith Exp $
+ * $Id: log.c,v 1.2 1997/03/11 04:27:33 faith Exp $
  * 
  */
 
@@ -86,10 +86,8 @@ void log_file( const char *filename, const char *ident )
 
 void log_stream( FILE *stream, const char *ident )
 {
-   if (logOpen)
-      err_internal( __FUNCTION__,
-		    "Log file \"%s\" open when trying to open stream\n",
-		    logFilename );
+   if (logUserStream)
+      err_internal( __FUNCTION__, "User stream already open\n" );
 
    logUserStream = stream;
    logIdent      = str_find( ident );
