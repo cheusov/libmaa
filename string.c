@@ -1,6 +1,6 @@
 /* string.c -- String pool for Khepera
  * Created: Wed Dec 21 21:32:34 1994 by faith@cs.unc.edu
- * Revised: Tue Jul 25 14:37:00 1995 by r.faith@ieee.org
+ * Revised: Sat Oct  7 20:01:40 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.2 1995/08/24 14:59:28 faith Exp $
+ * $Id: string.c,v 1.3 1995/10/08 00:46:38 faith Exp $
  *
  * \section{String Pool Routines}
  *
@@ -32,6 +32,7 @@
  */
 
 #include "kh.h"
+#include <math.h>		/* FIXME! Don't use log10()! */
 
 static str_Pool global;
 
@@ -214,6 +215,20 @@ const char *str_finish( void )
 {
    _str_check_global();
    return str_pool_finish( global );
+}
+
+/* \doc |str_unique| returns a unique string with the given prefix.  This
+   is not the most pretty way to generate unique strings, and should be
+   improved.  The string is placed in the string pool and does not need to
+   be freed. */
+
+const char *str_unique( const char *prefix )
+{
+   static int i    = 1;
+   char       *buf = alloca( strlen( prefix ) + log10( i ) + 2 );
+
+   sprintf( buf, "%s%d", prefix, i++ );
+   return str_find( buf );
 }
 
 /* \doc |str_destroy| frees all of the memory associated with the global

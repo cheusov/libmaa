@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Fri Sep 29 22:49:26 1995 by r.faith@ieee.org
+ * Revised: Sat Oct  7 19:59:59 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.12 1995/10/02 00:32:48 faith Exp $
+ * $Id: khepera.h,v 1.13 1995/10/08 00:46:38 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -72,6 +72,7 @@
 #define KH_PPVERBOSE 0xc0000010	/* Prettyprinter library, verbose */
 #define KH_LINE      0xc0000020	/* Line number debugging */
 #define KH_MEMORY    0xc0000040	/* Print memory usage statistics at exit */
+#define KH_TIME      0xc0000080	/* Print timer information at exit */
 
 extern void kh_init( void );
 extern void kh_shutdown( void );
@@ -96,9 +97,10 @@ typedef int boolean;
 
 
 /* bit.c */
-extern __inline__ void bit_set( unsigned long flags, int bit );
-extern __inline__ void bit_clr( unsigned long flags, int bit );
-extern __inline__ int  bit_tst( unsigned long flags, int bit );
+extern __inline__ void bit_set( unsigned long *flags, int bit );
+extern __inline__ void bit_clr( unsigned long *flags, int bit );
+extern __inline__ int  bit_tst( unsigned long *flags, int bit );
+extern __inline__ int  bit_cnt( unsigned long *flags );
 
 /* prime.c */
 
@@ -331,6 +333,7 @@ extern const char *str_find( const char *s );
 extern const char *str_findn( const char *s, int length );
 extern void       str_grow( const char *s, int length );
 extern const char *str_finish( void );
+extern const char *str_unique( const char *prefix );
 extern void       str_destroy( void );
 extern str_Stats  str_get_stats( void );
 extern void       str_print_stats( FILE *stream );
@@ -714,6 +717,17 @@ extern typ_Expr      typ_dup_expr_node(typ_Expr te, boolean dup_constraints,
 extern tre_Node      typ_dup_ast(tre_Node call);
 
 
+/* timer.c */
+
+extern void tim_start( const char *name );
+extern void tim_stop( const char *name );
+extern void tim_reset( const char *name );
+extern double tim_get_real( const char *name );
+extern double tim_get_user( const char *name );
+extern double tim_get_system( const char *name );
+extern void tim_print_timer( FILE *str, const char *name );
+extern void tim_print_timers( FILE *str );
+extern void _tim_shutdown( void );
 
 #endif
 

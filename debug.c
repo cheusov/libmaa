@@ -1,6 +1,6 @@
 /* debug.c -- Debugging support for Khepera
  * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Thu Sep 28 18:58:12 1995 by faith@cs.unc.edu
+ * Revised: Sat Oct  7 15:53:55 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.3 1995/09/29 00:55:41 faith Exp $
+ * $Id: debug.c,v 1.4 1995/10/08 00:46:34 faith Exp $
  *
  * \section{Debugging Support}
  *
@@ -172,7 +172,7 @@ void dbg_destroy( void )
 
 void dbg_list( FILE *stream )
 {
-   static int iterator( const void *key, const void *datum )
+   static int builtin( const void *key, const void *datum )
       {
 	 dbg_Type flag = (dbg_Type)datum;
 	 
@@ -180,6 +180,15 @@ void dbg_list( FILE *stream )
 	    fprintf( stream, "  %s\n", (char *)key );
 	 return 0;
       }
+   static int user( const void *key, const void *datum )
+      {
+	 dbg_Type flag = (dbg_Type)datum;
+	 
+	 if ((flag & 0xc0000000) == 0xc0000000)
+	    fprintf( stream, "  %s (builtin)\n", (char *)key );
+	 return 0;
+      }
    
-   hsh_iterate( hash, iterator );
+   hsh_iterate( hash, user );
+   hsh_iterate( hash, builtin );
 }

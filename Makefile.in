@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for Khepera
 # Created: Sun Nov  6 13:56:03 1994 by faith@cs.unc.edu
-# Revised: Fri Sep 29 22:29:49 1995 by r.faith@ieee.org
+# Revised: Sat Oct  7 13:43:44 1995 by faith@cs.unc.edu
 # Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.5 1995/10/02 00:32:44 faith Exp $
+# $Id: Makefile.in,v 1.6 1995/10/08 00:46:31 faith Exp $
 #
 
 .SUFFIXES:
@@ -56,14 +56,14 @@ HEADERS= ../config.h kh.h khepera.h obstack.h misc.h
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
 	 debug.o source.o parse.o tree.o kh.o pp.o prime.o symbol.o \
-	 parse-concrete.o bit.o \
+	 parse-concrete.o bit.o timer.o \
 	 dct.o inf.o lnk.o typ.o
 EXES=	 pptest treetest settest hashtest stringtest debugtest memtest \
-	 primetest listtest inftest
+	 primetest listtest inftest bittest
 
 LIBS=    libkhepera.a
 
-all: $(LIBS) memtest primetest inftest
+all: $(LIBS) memtest primetest inftest bittest
 tests: all $(EXES)
 
 %.o: %.c

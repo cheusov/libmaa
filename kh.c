@@ -1,6 +1,6 @@
 /* kh.c -- General Support for Khepera
  * Created: Fri Jan 20 14:56:18 1995 by faith@cs.unc.edu
- * Revised: Sun Sep 10 11:35:38 1995 by r.faith@ieee.org
+ * Revised: Sat Oct  7 16:26:30 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.c,v 1.3 1995/09/11 02:20:11 faith Exp $
+ * $Id: kh.c,v 1.4 1995/10/08 00:46:36 faith Exp $
  *
  * \section{General Support}
  *
@@ -30,13 +30,15 @@
 
 void kh_init( void )
 {
-   _dbg_register( KH_FAREY,     "KHfarey" );
-   _dbg_register( KH_TRE,       "KHtre" );
-   _dbg_register( KH_SRC,       "KHsrc" );
-   _dbg_register( KH_PP,        "KHpp" );
-   _dbg_register( KH_PPVERBOSE, "KHppverbose" );
-   _dbg_register( KH_LINE,      "KHline" );
-   _dbg_register( KH_MEMORY,    "KHmemory" );
+   tim_start( "total" );
+   _dbg_register( KH_FAREY,     "farey" );
+   _dbg_register( KH_TRE,       "tre" );
+   _dbg_register( KH_SRC,       "src" );
+   _dbg_register( KH_PP,        "pp" );
+   _dbg_register( KH_PPVERBOSE, "ppverbose" );
+   _dbg_register( KH_LINE,      "line" );
+   _dbg_register( KH_MEMORY,    "memory" );
+   _dbg_register( KH_TIME,      "time" );
 
 #ifndef __CHECKER__
 #ifdef HAVE_ATEXIT
@@ -56,13 +58,18 @@ void kh_shutdown( void )
       src_print_stats( stderr );
       tre_print_stats( stderr );
    }
-   
-   dbg_destroy();
+
    src_destroy();
    str_destroy();
    _tre_shutdown();
    _lst_shutdown();
    _prs_shutdown();
+
+   tim_stop( "total" );
+   if (dbg_test(KH_TIME)) {
+      tim_print_timers( stderr );
+   }
+   _tim_shutdown();
 }
 
 void kh_insert_notice( FILE *str, const char *name, const char *input )

@@ -1,6 +1,6 @@
 /* kh.h -- Internal header file for Khepera
  * Created: Sun Nov  6 13:32:25 1994 by faith@cs.unc.edu
- * Revised: Fri Aug 25 01:16:44 1995 by faith@cs.unc.edu
+ * Revised: Sat Oct  7 14:17:45 1995 by faith@cs.unc.edu
  * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.h,v 1.4 1995/08/25 05:20:51 faith Exp $
+ * $Id: kh.h,v 1.5 1995/10/08 00:46:37 faith Exp $
  */
 
 #ifndef _KH_H_
@@ -98,6 +98,10 @@ extern int  optind;
 extern char *optarg;
 #endif
 
+#if HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
+
 /* Provide assert() */
 #include <assert.h>
 
@@ -109,7 +113,7 @@ declarations for standard library calls.  We provide them here for
 situations that we know about. */
 
 #if defined(__sparc__)
-extern void   bcopy( char *, char *, int );
+extern void   bcopy( const void *, void *, int );
 extern char   *memset( void *, int, int );
 extern char   *strdup( const char * );
 extern int    _flsbuf( unsigned char, FILE * );
@@ -132,6 +136,8 @@ extern int    fread( char *, int, int, FILE * );
 extern int    fwrite( char *, int, int, FILE * );
 extern int    _filbuf( FILE * );
 extern time_t time( time_t * );
+extern int    gettimeofday( struct timeval *, struct timezone * );
+extern int    getrusage( int who, struct rusage * );
 #endif				/* __sparc__ */
 
 #if defined(__ultrix__) && defined(__MIPSEL__)
