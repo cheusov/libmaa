@@ -1,7 +1,7 @@
 /* arg.c -- Argument list support
- * Created: Sun Jan  7 13:39:29 1996 by r.faith@ieee.org
- * Revised: Thu May  1 00:32:41 1997 by faith@cs.unc.edu
- * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
+ * Created: Sun Jan  7 13:39:29 1996 by faith@acm.org
+ * Revised: Fri Aug 15 07:55:05 1997 by faith@acm.org
+ * Copyright 1996, 1997 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.8 1997/05/01 04:35:18 faith Exp $
+ * $Id: arg.c,v 1.9 1997/08/15 12:10:53 faith Exp $
  *
  * \section{Argument List Routines}
  *
@@ -158,7 +158,7 @@ arg_List arg_finish( arg_List arg )
 
 /* \doc Return |item| from |arg|.  |arg| is 0-based. */
 
-const char *arg_get( arg_List arg, int item )
+const char *arg_get( arg_List arg, int item ) /* FIXME! inline? */
 {
    Arg a = (Arg)arg;
    
@@ -173,7 +173,7 @@ const char *arg_get( arg_List arg, int item )
 
 /* \doc Return the number of items in |arg|. */
 
-int arg_count( arg_List arg )
+int arg_count( arg_List arg )	/* FIXME! inline? */
 {
    _arg_check( arg, __FUNCTION__ );
    return ((Arg)arg)->argc;
