@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Mon Oct 23 23:36:34 1995 by faith@cs.unc.edu
+ * Revised: Tue Oct 24 10:39:16 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.20 1995/10/24 03:50:29 faith Exp $
+ * $Id: khepera.h,v 1.21 1995/10/24 15:31:06 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -435,6 +435,10 @@ extern sym_Scope sym_pop( sym_Scope scope );
 extern int       sym_scope_level( sym_Scope scope );
 extern int       sym_symbol_level( sym_Entry symbol );
 extern sym_Scope sym_scope( sym_Entry symbol );
+extern tre_Node  sym_definition( sym_Entry symbol );
+extern void      sym_definition_set( sym_Entry symbol, tre_Node tree );
+extern typ_Expr  sym_type_expr( sym_Entry symbol );
+extern void      sym_type_expr_set( sym_Entry symbol, typ_Expr expr );
 extern void      _sym_shutdown( void );
 extern void      _sym_scope_check( sym_Scope scope, const char *function );
 extern void      _sym_symbol_check( sym_Entry symbol, const char *function );
@@ -608,6 +612,8 @@ extern tre_SetTree tre_polymorphic_vars(tre_Node);
 extern void        tre_polymorphic_vars_set(tre_Node,tre_SetTree);
 extern typ_Expr    tre_expr_type(tre_Node);
 extern void        tre_expr_type_set(tre_Node,typ_Expr);
+extern tre_Node    tre_type_tree( tre_Node n );
+extern void        tre_type_tree_set( tre_Node n, tre_Node tree );
 extern sym_Scope   tre_symtab(tre_Node);
 extern void        tre_symtab_set(tre_Node,sym_Scope);
 extern sym_Entry   tre_symbol( tre_Node n );
