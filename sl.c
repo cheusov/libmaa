@@ -1,7 +1,7 @@
 /* sl.c -- Skip lists
  * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Fri Mar 14 19:00:07 1997 by faith@cs.unc.edu
- * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Sat Nov 29 12:04:02 1997 by faith@acm.org
+ * Copyright 1996, 1997 Rickard E. Faith (faith@acm.org)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: sl.c,v 1.9 1997/03/15 03:20:17 faith Exp $
+ * $Id: sl.c,v 1.10 1997/11/30 13:37:33 faith Exp $
  *
  * \section{Skip List Routines}
  *
@@ -233,6 +233,16 @@ void _sl_shutdown( void )
    _sl_Memory = NULL;
 }
 
+#if 0
+static int rnd( void )		/* generate bit stream */
+{
+   static int i = 0;
+
+   i = !i;
+   return i;
+}
+#endif
+
 static int _sl_random_level( void )
 {
    int level = 1;
@@ -241,7 +251,7 @@ static int _sl_random_level( void )
                                    also assumes that p == 0.5, which is
                                    probably reasonable, but maybe should be
                                    a user-defined parameter. */
-   while ((random() & 1) &&  level < _sl_MaxLevel) ++level;
+   while ((random() & 0x80) &&  level < _sl_MaxLevel) ++level;
    return level;
 }
 
