@@ -1,7 +1,7 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Tue May 20 14:32:58 1997 by faith@acm.org
- * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
+ * Revised: Wed Dec 22 05:49:18 1999 by faith@acm.org
+ * Copyright 1994, 1995, 1996, 1997, 1999 Rickard E. Faith (faith@acm.org)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.17 1997/05/20 21:30:24 faith Exp $
+ * $Id: hash.c,v 1.18 1999/12/22 11:49:56 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -33,7 +33,7 @@
 
 typedef struct bucket {
    const void    *key;
-   unsigned int  hash;
+   unsigned long hash;
    const void    *datum;
    struct bucket *next;
 } *bucketType;
@@ -104,7 +104,7 @@ static hsh_HashTable _hsh_create( unsigned long seed,
    when an insertion is performed and the table is more than half full.
 
    The |hash| function should take a pointer to a |key| and return an
-   "unsigned int".  If |hash| is "NULL", then the |key| is assumed to be a
+   "unsigned long".  If |hash| is "NULL", then the |key| is assumed to be a
    pointer to a null-terminated string, and the function shown in
    \grind{hsh_string_hash} will be used for |hash| (the algorithm for this
    function is from \cite[p.~435]{faith:Aho88}).
@@ -176,7 +176,7 @@ void hsh_destroy( hsh_HashTable table )
 }
 
 static void _hsh_insert( hsh_HashTable table,
-			 unsigned int hash,
+			 unsigned long hash,
 			 const void *key,
 			 const void *datum )
 {
@@ -536,7 +536,7 @@ int hsh_string_compare( const void *key1, const void *key2 )
       err_internal( __FUNCTION__,
 		    "String-valued keys may not be NULL: key1=%p, key2=%p\n",
 		    key1, key2 );
-   return strcmp( key1, key2 );
+   return strcmp( (const char *)key1, (const char *)key2 );
 }
 
 int hsh_pointer_compare( const void *key1, const void *key2 )
