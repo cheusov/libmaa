@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.16 2004/10/12 10:27:13 cheusov Exp $
+ * $Id: log.c,v 1.17 2004/11/07 12:12:29 cheusov Exp $
  * 
  */
 
@@ -286,27 +286,9 @@ void log_stream( const char *ident, FILE *stream )
 
 void log_close( void )
 {
-   if (logFd >= 0) close( logFd );
-
-   if (logUserStream != stdout &&
-       logUserStream != stderr &&
-       logUserStream != NULL)
-   {
-       fclose( logUserStream );
-   }
-
-   if (logSyslog)     closelog();
-   if (logFilename)   xfree(logFilename);
-   if (logFilenameTmp) xfree(logFilenameTmp);
-
-   logFilename    = 0;
-   logFilenameTmp = 0;
-   logFilenameLen = 0;
-
-   logOpen       = 0;
-   logFd         = -1;
-   logUserStream = NULL;
-   logSyslog     = 0;
+   log_file (NULL, NULL);
+   log_stream (NULL, NULL);
+   log_syslog (NULL);
 }
 
 static void _log_base_va(
