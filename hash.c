@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Sun Nov 19 13:30:25 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 19 20:19:42 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.7 1995/11/19 19:28:37 faith Exp $
+ * $Id: hash.c,v 1.8 1995/11/20 05:41:10 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -353,7 +353,7 @@ void hsh_iterate( hsh_HashTable table,
 }
 
 /* a function callable from hsh_iterate() to print key values */
-int _hsh_key_strings( const void *k, const void *d ) {
+static int _hsh_key_strings( const void *k, const void *d ) {
    const char *s;
    static int i = 0;
    
