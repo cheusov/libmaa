@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Tue Oct 31 10:41:58 1995 by faith@cs.unc.edu
+ * Revised: Mon Nov  6 13:30:34 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.24 1995/11/01 11:33:04 yakowenk Exp $
+ * $Id: khepera.h,v 1.25 1995/11/07 01:35:09 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -425,31 +425,34 @@ typedef void *sym_Scope;
  */
 #define SYM_DELIM_CHAR ':'
 
-extern void      sym_set_size( int size );
-extern sym_Entry sym_add( sym_Scope scope, const char *name );
-extern sym_Entry sym_find( sym_Scope scope, const char *name );
-extern sym_Entry sym_find_down( sym_Scope scope, const char *name );
-extern sym_Entry sym_find_local( sym_Scope scope, const char *name );
-extern sym_Scope sym_parent( sym_Scope scope );
-extern sym_Scope sym_top( sym_Scope scope );
-extern sym_Scope sym_push( sym_Scope scope );
-extern sym_Scope sym_pop( sym_Scope scope );
-extern int       sym_scope_level( sym_Scope scope );
-extern int       sym_symbol_level( sym_Entry symbol );
-extern sym_Scope sym_scope( sym_Entry symbol );
-extern tre_Node  sym_definition( sym_Entry symbol );
-extern void      sym_definition_set( sym_Entry symbol, tre_Node tree );
-extern typ_Expr  sym_type_expr( sym_Entry symbol );
-extern void      sym_type_expr_set( sym_Entry symbol, typ_Expr expr );
-extern void      _sym_shutdown( void );
-extern void      _sym_scope_check( sym_Scope scope, const char *function );
-extern void      _sym_symbol_check( sym_Entry symbol, const char *function );
+extern void       sym_set_size( int size );
+extern sym_Entry  sym_add( sym_Scope scope, const char *name );
+extern sym_Entry  sym_new( sym_Scope scope, const char *name );
+extern sym_Entry  sym_unique( sym_Scope scope, const char *prefix );
+extern sym_Entry  sym_find( sym_Scope scope, const char *name );
+extern sym_Entry  sym_find_down( sym_Scope scope, const char *name );
+extern sym_Entry  sym_find_local( sym_Scope scope, const char *name );
+extern sym_Scope  sym_parent( sym_Scope scope );
+extern sym_Scope  sym_top( sym_Scope scope );
+extern sym_Scope  sym_push( sym_Scope scope );
+extern sym_Scope  sym_pop( sym_Scope scope );
+extern int        sym_scope_level( sym_Scope scope );
+extern int        sym_symbol_level( sym_Entry symbol );
+extern const char *sym_symbol_name( sym_Entry symbol );
+extern sym_Scope  sym_scope( sym_Entry symbol );
+extern tre_Node   sym_definition( sym_Entry symbol );
+extern void       sym_definition_set( sym_Entry symbol, tre_Node tree );
+extern typ_Expr   sym_type_expr( sym_Entry symbol );
+extern void       sym_type_expr_set( sym_Entry symbol, typ_Expr expr );
+extern void       _sym_shutdown( void );
+extern void       _sym_scope_check( sym_Scope scope, const char *function );
+extern void       _sym_symbol_check( sym_Entry symbol, const char *function );
  
-extern boolean     sym_rule_find(tre_Node, tre_Node *);
-extern void        sym_rule_install(tre_Node, tre_Node);
+extern boolean    sym_rule_find(tre_Node, tre_Node *);
+extern void       sym_rule_install(tre_Node, tre_Node);
 extern const char *sym_mangle_name(tre_Node);
 extern const char *sym_mangle_function_name(tre_Node);
-extern void        sym_dump( FILE *stream, sym_Scope scope );
+extern void       sym_dump( FILE *stream, sym_Scope scope );
 
    
 /* tree.c */
