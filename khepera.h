@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sat Nov 18 14:20:47 1995 by faith@cs.unc.edu
+ * Revised: Sun Nov 19 02:30:14 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.31 1995/11/18 21:57:51 faith Exp $
+ * $Id: khepera.h,v 1.32 1995/11/19 07:39:43 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -795,18 +795,10 @@ extern void _tim_shutdown( void );
 
 typedef int (*xfm_Rule)( int *_kh_flag, tre_Node _kh_node );
 
-typedef struct xfm_SetEntry {
+typedef struct xfm_SetListEntry {
    xfm_Rule rule;
    int      match;		/* Go here on a match */
    int      otherwise;		/* Go here otherwise, -1 terminates */
-} xfm_SetEntry;
-
-typedef xfm_SetEntry *xfm_Set;
-typedef struct xfm_SetListEntry {
-   xfm_Set set;
-   int     matchHere;
-   int     matchPrevious;
-   int     otherwise;
 } xfm_SetListEntry;
 
 typedef xfm_SetListEntry *xfm_SetList;
@@ -828,11 +820,12 @@ extern xfm_Rule   xfm_function( const char *name );
 extern int        xfm_is_fast( const char *name );
 extern const char *xfm_name( xfm_Rule function );
 extern int        xfm_apply( xfm_RuleList ruleList, tre_Node node );
-extern int        xfm_preorder_syntax_directed( xfm_SetList setList,
-						tre_Node node );
-extern int        xfm_postorder_syntax_directed( xfm_SetList setList,
-						 tre_Node node );
+extern int        xfm_syntax_directed( xfm_SetList setList,
+				       tre_Node node,
+				       int direction );
 extern int        xfm_log( int *count, const char *ruleName, tre_Node node );
+extern void       xfm_open_log( const char *file );
+extern void       xfm_close_log( void );
 extern void       _xfm_shutdown( void );
 
 #endif
