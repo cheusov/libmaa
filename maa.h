@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Mon Feb 19 15:40:35 1996 by faith@cs.unc.edu
+ * Revised: Sat Feb 24 18:57:06 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.9 1996/02/23 21:29:08 faith Exp $
+ * $Id: maa.h,v 1.10 1996/02/25 00:08:58 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -56,8 +56,10 @@
 #define ARG_MAGIC_FREED         0xefdeebda
 #define PR_MAGIC                0x0bad7734
 #define PR_MAGIC_FREED          0xb0da7743
-#define SL_MAGIC                0xabcdef01
-#define SL_MAGIC_FREED          0xbadcfe10
+#define SL_LIST_MAGIC           0xabcdef01
+#define SL_LIST_MAGIC_FREED     0xbadcfe10
+#define SL_ENTRY_MAGIC          0xacadfeed
+#define SL_ENTRY_MAGIC_FREED    0xcadaefde
 #endif
 
 /* version.c */
@@ -70,6 +72,7 @@ extern const char *maa_revision_string;
 #define MAA_MEMORY   0xc1000000	/* Print memory usage statistics at exit */
 #define MAA_TIME     0xc2000000	/* Print timer information at exit       */
 #define MAA_PR       0xc4000000	/* Debug process routines                */
+#define MAA_SL       0xc8000000	/* Debug skip list routines              */
 
 extern void       maa_init( const char *programName );
 extern void       maa_shutdown( void );
@@ -404,7 +407,7 @@ extern void       _sl_shutdown( void );
 extern void       sl_insert( sl_List list, const void *datum );
 extern void       sl_delete( sl_List list, const void *datum );
 extern const void *sl_find( sl_List list, const void *key );
-extern void       sl_iterate( sl_List list, sl_Iterator );
+extern int         sl_iterate( sl_List list, sl_Iterator );
 extern void       _sl_dump( sl_List list );
 
 #endif

@@ -1,6 +1,6 @@
 /* sl.c -- Skip lists
  * Created: Sun Feb 18 11:51:06 1996 by faith@cs.unc.edu
- * Revised: Fri Feb 23 14:19:06 1996 by faith@cs.unc.edu
+ * Revised: Sat Feb 24 18:57:08 1996 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (faith@cs.unc.edu)
  * Copyright 1996 Lars Nyland (nyland@cs.unc.edu)
  *
@@ -18,7 +18,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: sl.c,v 1.1 1996/02/23 21:29:10 faith Exp $
+ * $Id: sl.c,v 1.2 1996/02/25 00:08:59 faith Exp $
  *
  * \section{Skip List Routines}
  *
@@ -42,6 +42,9 @@
 #include "maaP.h"
 
 typedef struct _sl_Entry {
+#if MAA_MAGIC
+   int              magic;
+#endif
    const void       *datum;
    int              levels;
    struct _sl_Entry *forward[1];	/* variable sized array */
@@ -59,23 +62,63 @@ typedef struct _sl_List {
 } *_sl_List;
 
 static mem_Object _sl_Memory;
+static _sl_Entry  _sl_Current;
 
 #define _sl_MaxLevel  16
 
 #define KEY(l,d) ((l)->key ? (l)->key(d) : (d))
 #define PRINT(l,d) ((l)->print ? (l)->print(d) : _sl_print(d))
 
-static void _sl_check( _sl_List l, const char *function )
+static void _sl_check_list( _sl_List l, const char *function )
 {
    if (!l) err_internal( function, "skip list is null\n" );
 #if MAA_MAGIC
-   if (l->magic != SL_MAGIC)
+   if (l->magic != SL_LIST_MAGIC)
       err_internal( function,
 		    "Bad magic: 0x%08x (should be 0x%08x)\n",
 		    l->magic,
-		    SL_MAGIC );
+		    SL_LIST_MAGIC );
 #endif
 }
+
+static int _sl_check_entry( _sl_Entry e, const char *function )
+{
+   if (!e) err_internal( function, "entry is null\n" );
+#if MAA_MAGIC
+   if (e->magic != SL_ENTRY_MAGIC) {
+      err_warning( function,
+		   "Bad magic: 0x%08x (should be 0x%08x)\n",
+		   e->magic,
+		   SL_ENTRY_MAGIC );
+      return 1;
+   }
+#endif
+   return 0;
+}
+
+#if 0
+#define _sl_check(x) /* */
+#else
+static void _sl_check( sl_List list )
+{
+   _sl_List  l = (_sl_List)list;
+   _sl_Entry pt;
+   
+   _sl_check_list( list, __FUNCTION__ );
+   for (pt = l->head->forward[0]; pt; pt = pt->forward[0] ) {
+      if (pt && pt->forward[0]
+	  && l->key( pt->datum ) >= l->key( pt->forward[0]->datum )) {
+	 _sl_dump( list );
+	 err_internal( __FUNCTION__,
+		       "Datum 0x%p=%lu >= 0x%p=%lu\n",
+		       l->key( pt->datum ),
+		       (unsigned long)l->key( pt->datum ),
+		       l->key( pt->forward[0]->datum ),
+		       (unsigned long)l->key( pt->forward[0]->datum ) );
+      }
+   }
+}
+#endif
 
 static _sl_Entry _sl_create_entry( int maxLevel, const void *datum )
 {
@@ -87,7 +130,10 @@ static _sl_Entry _sl_create_entry( int maxLevel, const void *datum )
 
    e = xmalloc( sizeof( struct _sl_Entry )
 		+ (maxLevel + 1) * sizeof( _sl_Entry ) );
-   e->datum = datum;
+#if MAA_MAGIC
+   e->magic  = SL_ENTRY_MAGIC;
+#endif
+   e->datum  = datum;
    e->levels = maxLevel + 1;
 
    return e;
@@ -120,7 +166,7 @@ sl_List sl_create( int (*compare)( const void *key1, const void *key2 ),
 
    l          = mem_get_object( _sl_Memory );
 #if MAA_MAGIC
-   l->magic   = SL_MAGIC;
+   l->magic   = SL_LIST_MAGIC;
 #endif
    l->level   = 0;
    l->head    = _sl_create_entry( _sl_MaxLevel, NULL );
@@ -139,11 +185,17 @@ void sl_destroy( sl_List list )
    _sl_Entry e;
    _sl_Entry next;
 
-   _sl_check( list, __FUNCTION__ );
+   _sl_check_list( list, __FUNCTION__ );
    for (e = l->head; e; e = next) {
       next = e->forward[0];
+#if MAA_MAGIC
+      e->magic = SL_ENTRY_MAGIC_FREED;
+#endif
       xfree( e );
    }
+#if MAA_MAGIC
+   l->magic = SL_LIST_MAGIC_FREED;
+#endif
    mem_free_object( _sl_Memory, l );
 }
 
@@ -179,6 +231,7 @@ static _sl_Entry _sl_locate( _sl_List l, const void *key, _sl_Entry update[] )
    int       i;
    _sl_Entry pt;
    
+   _sl_check( l );
    for (i = l->level, pt = l->head; i >= 0; i--) {
       while (pt->forward[i]
 	     && l->compare( KEY(l,pt->forward[i]->datum), key ) < 0)
@@ -200,7 +253,7 @@ void sl_insert( sl_List list, const void *datum )
    int              level = _sl_random_level();
    _sl_Entry        entry;
 
-   _sl_check( list, __FUNCTION__ );
+   _sl_check_list( list, __FUNCTION__ );
    
    key = KEY(l,datum);
 
@@ -221,6 +274,7 @@ void sl_insert( sl_List list, const void *datum )
       entry->forward[i]     = update[i]->forward[i];
       update[i]->forward[i] = entry;
    }
+   _sl_check( list );
 }
 
 void sl_delete( sl_List list, const void *datum )
@@ -231,15 +285,24 @@ void sl_delete( sl_List list, const void *datum )
    const void       *key;
    int              i;
 
-   _sl_check( list, __FUNCTION__ );
+   _sl_check_list( list, __FUNCTION__ );
    
    key = KEY(l,datum);
 
    pt = _sl_locate( l, key, update );
 
-   if (!pt || l->compare( KEY(l,pt->datum), key ))
+   if (!pt || l->compare( KEY(l,pt->datum), key )) {
+      _sl_dump( list );
       err_internal( __FUNCTION__,
 		    "Datum \"%s\" is not in list\n", PRINT(l,datum) );
+   }
+
+   if (_sl_Current && _sl_Current == pt) {
+      _sl_Current = pt->forward[0];	/* for sl_iterate */
+      PRINTF(MAA_SL,("delete: %lu => %lu\n",
+		     (unsigned long)l->key(pt->datum),
+		     _sl_Current?(unsigned long)l->key(_sl_Current->datum):0));
+   }
 
    for (i = 0; i <= l->level; i++) {
       if (update[i]->forward[i] == pt)
@@ -248,6 +311,7 @@ void sl_delete( sl_List list, const void *datum )
    xfree( pt );
    while (l->level && !l->head->forward[ l->level ])
       --l->level;
+   _sl_check( list );
 }
 
 const void *sl_find( sl_List list, const void *key )
@@ -256,7 +320,7 @@ const void *sl_find( sl_List list, const void *key )
    _sl_Entry        update[_sl_MaxLevel + 1];
    _sl_Entry        pt;
 
-   _sl_check( list, __FUNCTION__ );
+   _sl_check_list( list, __FUNCTION__ );
 
    pt = _sl_locate( l, key, update );
 
@@ -264,14 +328,51 @@ const void *sl_find( sl_List list, const void *key )
    return NULL;
 }
 
-void sl_iterate( sl_List list, int (*f)( const void *datum ) )
+int sl_iterate( sl_List list, int (*f)( const void *datum ) )
 {
    _sl_List  l = (_sl_List)list;
    _sl_Entry pt;
+   _sl_Entry next;
+   int       retcode;
+   _sl_Entry oldCurrent = _sl_Current;
 
-   _sl_check( list, __FUNCTION__ );
+   if (!list) return 0;
+   _sl_check_list( list, __FUNCTION__ );
+
+   if (dbg_test(MAA_SL)) {
+      printf( __FUNCTION__ ": " );
+      for (pt = l->head->forward[0]; pt; pt = next) {
+	 next = pt->forward[0];
+	 printf( "%lu ", (unsigned long)l->key( pt->datum ) );
+      }
+      printf( "\n" );
+   }
+
+   for (pt = l->head->forward[0], _sl_Current = l->head; pt; pt = next) {
+      _sl_check_entry( pt, __FUNCTION__ );
+      if ((retcode = f(pt->datum))) {
+	 _sl_Current = oldCurrent;
+	 return retcode;
+      }
+      if (_sl_Current) {
+	 if (_sl_Current->forward[0] == pt) {
+				/* pt not deleted */
+	    next = _sl_Current->forward[0];
+	    _sl_Current = next;
+	    if (next) next = next->forward[0];
+	 } else {
+				/* pt deleted, _sl_Current might have moved */
+	    next = _sl_Current->forward[0];
+	 }
+      } else
+	 next = NULL;
+      PRINTF(MAA_SL,("next = %lu\n",next?l->key(next->datum):0));
+   }
+
+   _sl_check( list );
+   _sl_Current = oldCurrent;
    
-   for (pt = l->head->forward[0]; pt; pt = pt->forward[0]) f(pt->datum);
+   return 0;
 }
 
 void _sl_dump( sl_List list )
@@ -281,7 +382,7 @@ void _sl_dump( sl_List list )
    int       i;
    int       count = 0;
 
-   _sl_check( list, __FUNCTION__ );
+   _sl_check_list( list, __FUNCTION__ );
 
    printf( "Level = %d\n", l->level );
    for (pt = l->head; pt; pt = pt->forward[0]) {
