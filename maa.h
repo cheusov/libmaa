@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.37 2002/08/02 19:43:15 faith Exp $
+ * $Id: maa.h,v 1.38 2002/08/05 11:16:53 cheusov Exp $
  */
 
 #ifndef _MAA_H_
@@ -402,8 +402,8 @@ extern void           dbg_unset_flag( dbg_Type flag );
 extern __inline__ int dbg_test( dbg_Type flag );
 extern void           dbg_list( FILE *stream );
 
-#define PRINTF(flag,arg)  if (dbg_test(flag)) printf arg
-#define FPRINTF(flag,arg) if (dbg_test(flag)) fprintf arg
+#define PRINTF(flag,arg)  if (dbg_test(flag)) { printf arg; }
+#define FPRINTF(flag,arg) if (dbg_test(flag)) { fprintf arg; }
 
 /* flags.c */
 
