@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.5 1995/08/29 18:16:23 faith Exp $
+ * $Id: set.c,v 1.6 1995/10/23 05:16:05 yakowenk Exp $
  *
  * \section{Set Routines}
  *
@@ -288,7 +288,7 @@ int set_delete( set_Set set, const void *elem )
 	    if (!t->compare( pt->elem, elem )) {
 	       --t->entries;
 	       
-	       if (!prev) t->buckets[h] = NULL;
+	       if (!prev) t->buckets[h] = pt->next;
 	       else       prev->next = pt->next;
 	       
 	       xfree( pt );
