@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: text.c,v 1.5 2002/08/02 19:43:15 faith Exp $
+ * $Id: text.c,v 1.6 2002/11/18 19:15:08 cheusov Exp $
  * 
  */
 
@@ -49,7 +49,7 @@ const char *txt_soundex( const char *string )
 
    for (i = 0; *string && i < 4; ++string) {
       if (isalpha( *(const unsigned char *)string )) {
-         upper_case = toupper( *string );
+         upper_case = toupper( (unsigned char) *string );
          transform  = map[ upper_case - 'A' ];
          if (!i) {
             *pt++ = upper_case;
