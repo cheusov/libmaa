@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Thu Oct 26 21:47:31 1995 by faith@cs.unc.edu
+ * Revised: Thu Nov  9 20:15:15 1995 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: timer.c,v 1.5 1995/10/27 04:20:11 faith Exp $
+ * $Id: timer.c,v 1.6 1995/11/10 01:16:20 faith Exp $
  * 
  */
 
@@ -67,8 +67,7 @@ void tim_stop( const char *name )
    struct rusage   rusage;
 
 #define DIFFTIME(now,then)\
-   ((now).tv_sec * 1000000 + (now).tv_usec) \
-      - ((then).tv_sec * 1000000 + (then).tv_usec)
+   (((now).tv_sec - (then).tv_sec) * 1000000 + (now).tv_usec - (then).tv_usec)
 
    _tim_check();
    gettimeofday( &real, NULL );
