@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.35 1997/05/21 05:17:48 faith Exp $
+# $Id: Makefile.in,v 1.36 1997/05/21 05:24:16 faith Exp $
 #
 
 ifneq (,)
@@ -150,11 +150,9 @@ version.c:
 
 .PHONY: ChangeLog
 ChangeLog:
-	@(echo "***** Making new ChangeLog..."; \
+	(echo "***** Making new ChangeLog..."; \
 	rm -f ChangeLog; \
-	AWK=gawk rcs2log -i 2 \
-                `find . -type f -print | egrep -v '(CVS/|version.c)'` \
-                > ChangeLog)
+	AWK=gawk rcs2log -i 2 > ChangeLog)
 
 dist: ChangeLog
 	@( echo "Consider making version.stamp to bump version number"; \
