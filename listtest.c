@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: listtest.c,v 1.4 1996/09/23 23:20:40 faith Exp $
+ * $Id: listtest.c,v 1.5 1999/12/23 08:43:39 faith Exp $
  */
 
 #include "maaP.h"
@@ -33,7 +33,7 @@ int main( int argc, char **argv )
    lst_List     list = lst_create();
    lst_Position p;
    char         *e;
-   int          i;
+   long         i;
 
    maa_init( argv[0] );
 

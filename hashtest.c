@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hashtest.c,v 1.5 1996/09/25 14:20:51 faith Exp $
+ * $Id: hashtest.c,v 1.6 1999/12/23 08:43:39 faith Exp $
  */
 
 #include "maaP.h"
@@ -143,7 +143,7 @@ int main( int argc, char **argv )
 
    init_rand();
    for (i = 0; i < count; i++) {
-      int  key    = get_rand( 1, 16777216 );
+      long key    = get_rand( 1, 16777216 );
       char *datum = xmalloc( 20 );
 
       sprintf( datum, "datum%d", i );
@@ -152,7 +152,7 @@ int main( int argc, char **argv )
 
    init_rand();
    for (i = 0; i < count; i++) {
-      int         key = get_rand( 1, 16777216 );
+      long        key = get_rand( 1, 16777216 );
       char        datum[100];
       const char *pt;
 
@@ -160,7 +160,7 @@ int main( int argc, char **argv )
       pt = hsh_retrieve( t, (void *)key );
 
       if (!pt || strcmp( pt, datum ))
-	    printf( "Expected \"%s\", got \"%s\" for key %d\n",
+	    printf( "Expected \"%s\", got \"%s\" for key %ld\n",
 		    datum, pt, key );
    }
    

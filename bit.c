@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: bit.c,v 1.5 1996/09/23 23:20:34 faith Exp $
+ * $Id: bit.c,v 1.6 1999/12/23 08:43:39 faith Exp $
  *
  * \section{Bit manipulation routines}
  *
@@ -32,14 +32,14 @@
 
 __inline__ void bit_set( unsigned long *flags, int bit )
 {
-   *flags |= (1 << bit);
+   *flags |= (1UL << bit);
 }
 
 /* \doc Clear |bit| in |flags|. */
 
 __inline__ void bit_clr( unsigned long *flags, int bit )
 {
-   *flags &= ~(1 << bit);
+   *flags &= ~(1UL << bit);
 }
 
 /* \doc Test |bit| in |flags|, returning non-zero if the bit is set and
@@ -47,7 +47,7 @@ __inline__ void bit_clr( unsigned long *flags, int bit )
 
 __inline__ int bit_tst( unsigned long *flags, int bit )
 {
-   return (*flags & (1 << bit));
+   return (*flags & (1UL << bit));
 }
 
 /* \doc Return a count of the number of bits set in |flags|. */
@@ -63,8 +63,17 @@ __inline__ int bit_cnt( unsigned long *flags )
    x = ((x >> 8) + x);
    return (x + (x >> 16)) & 0xff;
 #else
+#if SIZEOF_LONG == 8
+   x = (x >> 1  & 0x5555555555555555) + (x & 0x5555555555555555);
+   x = ((x >> 2) & 0x3333333333333333) + (x & 0x3333333333333333);
+   x = ((x >> 4) + x) & 0x0f0f0f0f0f0f0f0f;
+   x = ((x >> 8) + x) & 0x00ff00ff00ff00ff;
+   x = ((x >> 16) + x) & 0x0000ffff0000ffff;
+   return (x + (x >> 32)) & 0xff;
+#else
    err_internal( __FUNCTION__,
-		 "Assumes 32-bit longs, not %d-bit longs\n",
+		 "Implemented for 32-bit and 64-bit longs, not %d-bit longs\n",
 		 SIZEOF_LONG * 8 );
+#endif
 #endif
 }

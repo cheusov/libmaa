@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.8 1996/09/25 14:46:20 faith Exp $
+ * $Id: settest.c,v 1.9 1999/12/23 08:43:39 faith Exp $
  */
 
 #include "maaP.h"
@@ -126,19 +126,19 @@ int main( int argc, char **argv )
 
    init_rand();
    for (i = 0; i < count; i++) {
-      int  key    = get_rand( 1, 16777216 );
+      long key    = get_rand( 1, 16777216 );
 
       set_insert( t, (void *)key );
-      printf( "int%d = %d\n", i, key );
+      printf( "int%d = %ld\n", i, key );
    }
 
    init_rand();
    for (i = 0; i < count; i++) {
-      int         key = get_rand( 1, 16777216 );
+      long        key = get_rand( 1, 16777216 );
 
-      printf( "intlookup%d = %d\n", i, key );
+      printf( "intlookup%d = %ld\n", i, key );
       if (!set_member( t, (void *)key ))
-	    printf( "%d is not a member of the set", key );
+	    printf( "%ld is not a member of the set", key );
    }
    
    set_print_stats( t, stdout );

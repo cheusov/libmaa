@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.18 1999/12/22 11:49:56 faith Exp $
+ * $Id: hash.c,v 1.19 1999/12/23 08:43:39 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -494,7 +494,7 @@ unsigned long hsh_string_hash( const void *key )
    }
 
    prev_pt = pt;
-   return prev_h = h;
+   return prev_h = h  & 0xffffffff;
 }
 
 unsigned long hsh_pointer_hash( const void *key )
@@ -527,7 +527,7 @@ unsigned long hsh_pointer_hash( const void *key )
    }
 
    prev_pt = pt;
-   return prev_h = h;
+   return prev_h = h & 0xffffffff;
 }
 
 int hsh_string_compare( const void *key1, const void *key2 )
