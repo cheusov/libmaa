@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Fri Feb 28 19:28:55 1997 by faith@cs.unc.edu
+ * Revised: Tue Mar 11 16:03:09 1997 by faith@cs.unc.edu
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: timer.c,v 1.13 1997/03/01 04:20:55 faith Exp $
+ * $Id: timer.c,v 1.14 1997/03/12 01:11:33 faith Exp $
  *
  * \section{Timer Support}
  *
@@ -100,7 +100,8 @@ void tim_stop( const char *name )
    entry->system = DIFFTIME( rusage.ru_stime, entry->system_mark );
 }
 
-/* \doc Reset the named timer to zero. */
+/* \doc Reset the named timer to zero elapsed time.  Use |tim_start| to reset
+   the start time.  */
 
 void tim_reset( const char *name )
 {

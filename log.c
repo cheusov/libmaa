@@ -1,6 +1,6 @@
 /* log.c -- Logging routines, for a single, program-wide logging facility
  * Created: Mon Mar 10 09:37:21 1997 by faith@cs.unc.edu
- * Revised: Mon Mar 10 21:21:34 1997 by faith@cs.unc.edu
+ * Revised: Tue Mar 11 15:58:25 1997 by faith@cs.unc.edu
  * Copyright 1997 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -18,12 +18,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.2 1997/03/11 04:27:33 faith Exp $
+ * $Id: log.c,v 1.3 1997/03/12 01:11:30 faith Exp $
  * 
  */
 
 #include "maaP.h"
 #include <syslog.h>
+#include <fcntl.h>
 
 #if HAVE_SYS_PARAM_H
 # include <sys/param.h>
@@ -33,7 +34,7 @@
 #define MAXHOSTNAMELEN 64
 #endif
 
-static FILE       *logStream;
+static int        logFd = -1;
 static FILE       *logUserStream;
 static int        logSyslog;
 
@@ -66,14 +67,14 @@ void log_syslog( const char *ident, int daemon )
    ++logSyslog;
 }
 
-void log_file( const char *filename, const char *ident )
+void log_file( const char *ident, const char *filename )
 {
-   if (logStream)
+   if (logFd >= 0)
       err_internal( __FUNCTION__,
 		    "Log file \"%s\" open when trying to open \"%s\"\n",
 		    logFilename, filename );
 
-   if (!(logStream = fopen( filename, "a" )))
+   if ((logFd = open( filename, O_WRONLY|O_CREAT|O_APPEND, 0644 )) < 0)
       err_fatal_errno( __FUNCTION__,
 		       "Cannot open \"%s\" for append\n", filename );
 
@@ -84,7 +85,7 @@ void log_file( const char *filename, const char *ident )
    ++logOpen;
 }
 
-void log_stream( FILE *stream, const char *ident )
+void log_stream( const char *ident, FILE *stream )
 {
    if (logUserStream)
       err_internal( __FUNCTION__, "User stream already open\n" );
@@ -98,12 +99,12 @@ void log_stream( FILE *stream, const char *ident )
 
 void log_close( void )
 {
-   if (logStream)     fclose( logStream );
+   if (logFd >= 0)    close( logFd );
    if (logUserStream) fclose( logUserStream );
    if (logSyslog)     closelog();
 
    logOpen       = 0;
-   logStream     = NULL;
+   logFd         = -1;
    logUserStream = NULL;
    logSyslog     = 0;
 }
@@ -111,34 +112,32 @@ void log_close( void )
 void log_error_va( const char *routine, const char *format, va_list ap )
 {
    time_t t;
+   char   buf[4096];
+   char   *pt;
    
    if (!logOpen) return;
    
    time(&t);
    
-   if (logStream) {
-      fprintf( logStream,
+   if (logFd >= 0 || logUserStream) {
+      sprintf( buf,
 	       "%24.24s %s %s[%d]: ",
 	       ctime(&t),
 	       logHostname,
 	       logIdent,
 	       getpid() );
-      if (routine) fprintf( logStream, "(%s) ", routine );
-      vfprintf( logStream, format, ap );
-   }
-
-   if (logUserStream) {
-      fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
-                                               open stream with "a" */
-      fprintf( logUserStream,
-	       "%24.24s %s %s[%d]: ",
-	       ctime(&t),
-	       logHostname,
-	       logIdent,
-	       getpid() );
-      if (routine) fprintf( logUserStream, "(%s) ", routine );
-      vfprintf( logUserStream, format, ap );
-      fflush( logUserStream );
+      pt = buf + strlen( buf );
+      if (routine) sprintf( pt, "(%s) ", routine );
+      pt = buf + strlen( buf );
+      vsprintf( pt, format, ap );
+      
+      if (logFd >= 0) write( logFd, buf, strlen(buf) );
+      if (logUserStream) {
+         fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
+                                                  open stream with "a" */
+         fprintf( logUserStream, "%s", buf );
+         fflush( logUserStream );
+      }
    }
    
    if (logSyslog) {
@@ -158,32 +157,30 @@ void log_error( const char *routine, const char *format, ... )
 void log_info_va( const char *format, va_list ap )
 {
    time_t t;
+   char   buf[4096];
+   char   *pt;
    
    if (!logOpen) return;
    
    time(&t);
    
-   if (logStream) {
-      fprintf( logStream,
+   if (logFd >= 0 || logUserStream) {
+      sprintf( buf,
 	       "%24.24s %s %s[%d]: ",
 	       ctime(&t),
 	       logHostname,
 	       logIdent,
 	       getpid() );
-      vfprintf( logStream, format, ap );
-   }
-
-   if (logUserStream) {
-      fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
-                                               open stream with "a" */
-      fprintf( logUserStream,
-	       "%24.24s %s %s[%d]: ",
-	       ctime(&t),
-	       logHostname,
-	       logIdent,
-	       getpid() );
-      vfprintf( logUserStream, format, ap );
-      fflush( logUserStream );
+      pt = buf + strlen( buf );
+      vsprintf( pt, format, ap );
+      
+      if (logFd >= 0) write( logFd, buf, strlen(buf) );
+      if (logUserStream) {
+         fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
+                                                  open stream with "a" */
+         fprintf( logUserStream, "%s", buf );
+         fflush( logUserStream );
+      }
    }
    
    if (logSyslog) {

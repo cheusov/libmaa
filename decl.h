@@ -1,6 +1,6 @@
 /* decl.h -- Declarations for non-ANSI hosts
  * Created: Sun Nov 19 14:04:27 1995 by faith@cs.unc.edu
- * Revised: Sat Mar  8 17:16:10 1997 by faith@cs.unc.edu
+ * Revised: Tue Mar 11 11:08:26 1997 by faith@cs.unc.edu
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: decl.h,v 1.9 1997/03/08 22:30:18 faith Exp $
+ * $Id: decl.h,v 1.10 1997/03/12 01:11:29 faith Exp $
  * 
  */
 
@@ -67,6 +67,12 @@ extern time_t time( time_t * );
 extern void   fclose( FILE * );
 extern void   perror( const char * );
 extern int    select( int, fd_set *, fd_set *, fd_set *, struct timeval * );
+extern int    gethostname( char *, int );
+extern void   openlog( const char *ident, int, int );
+extern int    vsyslog( int, const char *, va_list );
+extern void   closelog( void );
+extern int    fseek( FILE *, long, int );
+extern int    toupper( int );
 #endif
 #endif				/* __sparc__ */
 
