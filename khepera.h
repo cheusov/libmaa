@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Thu Sep 28 22:10:10 1995 by yakowenk@cs.unc.edu
+ * Revised: Fri Sep 29 22:49:26 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.11 1995/09/29 02:55:51 yakowenk Exp $
+ * $Id: khepera.h,v 1.12 1995/10/02 00:32:48 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -619,7 +619,7 @@ typedef void                          (*dct_Destr)(dct_Element);
 #define DCT_ARITY 3
 
 #define _X3(X) X,X,X
-extern dct_Dict   dct_create();
+extern dct_Dict   dct_create( void );
 extern boolean    dct_find(dct_Dict, _X3(dct_ElementPtr));
 extern void       dct_add(dct_Dict, _X3(dct_Element) );
 extern int        dct_length(dct_Dict);
@@ -660,7 +660,7 @@ extern boolean    inf_infer_definition(tre_Node,tre_Node);
 typedef void                     *lnk_Link;
 typedef void                     *lnk_LinkPtr;
 
-#define NEW(N,T)          (T *)malloc((N)*sizeof(T))
+#define NEW(N,T)          (T *)xmalloc((N)*sizeof(T))
 #define LNK_NEWP(PTR)     PTR=(lnk_Link)lnk_new_(sizeof(*PTR))
 #define lnk_xfer(P)       lnk_xfer_(&P)
 #define lnk_delete(P,D)   lnk_delete_(&(P),D) 
@@ -684,19 +684,20 @@ enum typ_Tag {
 };
 
 
-extern typ_Expr      typ_new_vari();
+extern typ_Expr      typ_new_vari(void);
 extern typ_Expr      typ_new_link(typ_Expr);
-extern typ_Expr      typ_new_oper(char *,lst_List);
+extern typ_Expr      typ_new_oper(const char *,lst_List);
 extern typ_Expr      typ_new_cons(typ_Expr,typ_Expr);
 extern typ_Expr      typ_new_cset(set_Set);
 extern typ_Expr      typ_new_intc(int);
 extern typ_Expr      typ_new_plus(typ_Expr,typ_Expr);
-extern typ_Expr      typ_new_base_type(char *, int);
+extern typ_Expr      typ_new_base_type(const char *, int);
 extern typ_Expr      typ_instance(typ_Expr, tre_SetTree, dct_Dict);
 extern boolean       typ_mgu(typ_Expr, typ_Expr, lst_List);
 extern void          typ_apply_mgu(dct_Dict);
 extern boolean       typ_unify(typ_Expr, typ_Expr);
-extern void          typ_read_typerule();
+extern boolean       typ_unify_ast_types( tre_Node n1, tre_Node n2 );
+extern void          typ_read_typerule( tre_Node where );
 extern tre_Node      typ_ast_instance(tre_Node);
 extern void          typ_unlink(void *);
 extern void          typ_destroy(typ_Expr);
@@ -708,6 +709,9 @@ extern void          typ_constraints_set(typ_Expr, lst_List);
 extern src_Type      typ_trace_info_get(typ_Expr);
 extern void          typ_trace_info_set(typ_Expr, src_Type);
 extern typ_Expr      typ_dup_expr_tree(typ_Expr);
+extern typ_Expr      typ_dup_expr_node(typ_Expr te, boolean dup_constraints,
+				       boolean dup_u);
+extern tre_Node      typ_dup_ast(tre_Node call);
 
 
 

@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Mon Sep  4 13:06:57 1995 by r.faith@ieee.org
+ * Revised: Fri Sep 29 21:30:55 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.3 1995/09/29 02:55:49 yakowenk Exp $
+ * $Id: error.c,v 1.4 1995/10/02 00:32:45 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -49,9 +49,6 @@ void err_fatal( const char *routine, const char *format, ... )
    va_end( ap );
    fflush( stderr );
    fflush( stdout );
-#ifdef SEGFAULT
-   SEGFAULT;
-#endif
    exit( 1 );
 }
 
@@ -86,8 +83,5 @@ void err_internal( const char *routine, const char *format, ... )
    fprintf( stderr, "Aborting proteus: " );
    fflush( stderr );
    fflush( stdout );
-#ifdef SEGFAULT
-   SEGFAULT;
-#endif
    abort();
 }
