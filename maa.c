@@ -1,6 +1,6 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Sat Mar 23 10:21:46 1996 by faith@cs.unc.edu
+ * Revised: Mon Nov 11 15:33:08 1996 by faith@cs.unc.edu
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.11 1996/03/23 22:14:05 faith Exp $
+ * $Id: maa.c,v 1.12 1996/11/11 23:44:16 faith Exp $
  *
  * \section{General Support}
  *
@@ -90,7 +90,7 @@ const char *maa_version( void )
    char        *colon;
    char        *dot;
    
-   sprintf( buffer, "libmaa, version %d.%d.", MAA_MAJOR, MAA_MINOR );
+   sprintf( buffer, "Libmaa %d.%d.", MAA_MAJOR, MAA_MINOR );
    if ((colon = strchr( maa_revision_string, ':') )) {
 				/* Assume an RCS Revision string */
       if ((dot = strchr( colon, '.' )))
