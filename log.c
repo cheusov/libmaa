@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.14 2004/05/16 13:55:53 cheusov Exp $
+ * $Id: log.c,v 1.15 2004/05/16 14:17:28 cheusov Exp $
  * 
  */
 
@@ -302,12 +302,10 @@ static void _log_base_va(
       }
    }
 
-#if !defined(__DGUX__) && !defined(__hpux__) && !defined(__CYGWIN__)
-#if !defined(__osf__)
+#if HAVE_VSYSLOG
    if (logSyslog) {
       vsyslog( log_facility, format, ap );
    }
-#endif
 #endif
 }
 
