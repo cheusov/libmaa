@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Mon Jan 22 21:46:21 1996 by faith@cs.unc.edu
+# Revised: Mon Jan 22 22:06:33 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.14 1996/01/23 02:51:05 faith Exp $
+# $Id: Makefile.in,v 1.15 1996/01/23 03:07:28 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -134,7 +134,7 @@ distclean: clean
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
 	-rm -f config.h config.cache config.status stamp-h.in stamp-h
-	-rm -f Makefile $(LIBS)
+	-rm -f configure Makefile $(LIBS)
 
 tags:
 	etags: *.c
