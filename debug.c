@@ -1,6 +1,6 @@
 /* debug.c -- Debugging support for Khepera
  * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Sat Mar 23 15:20:30 1996 by faith@cs.unc.edu
+ * Revised: Sun Jun 23 12:53:21 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.7 1996/03/23 22:14:04 faith Exp $
+ * $Id: debug.c,v 1.8 1996/06/24 20:22:16 faith Exp $
  *
  * \section{Debugging Support}
  *
@@ -153,6 +153,22 @@ void dbg_set( const char *name )
    } else {
       setFlags[ flag >> 30 ] |= flag;
    }
+}
+
+/* \doc Used to set the flag using the predefined macro instead of the
+   string name. */
+
+void dbg_set_flag( dbg_Type flag )
+{
+   setFlags[ flag >> 30 ] |= flag;
+}
+
+/* \doc Used to unset the flag using the predefined macro instead of the
+   string name. */
+
+void dbg_unset_flag( dbg_Type flag )
+{
+   setFlags[ flag >> 30 ] &= ~flag;
 }
 
 /* \doc Thsi inlined function tests the |flag|, returning non-zero if the

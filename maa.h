@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Mon Jun 17 08:34:20 1996 by faith@cs.unc.edu
+ * Revised: Sun Jun 23 12:53:20 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.16 1996/06/17 20:10:05 faith Exp $
+ * $Id: maa.h,v 1.17 1996/06/24 20:22:17 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -364,12 +364,14 @@ typedef struct str_Stats {
 
 extern str_Pool   str_pool_create( void );
 extern void       str_pool_destroy( str_Pool pool );
+extern int        str_pool_exists( str_Pool pool, const char *s );
 extern const char *str_pool_find( str_Pool pool, const char *s );
 extern void       str_pool_grow( str_Pool pool, const char *s, int length );
 extern const char *str_pool_finish( str_Pool pool );
 extern str_Stats  str_pool_get_stats( str_Pool pool );
 extern void       str_pool_print_stats( str_Pool pool, FILE *stream );
 
+extern int        str_exists( const char *s );
 extern const char *str_find( const char *s );
 extern const char *str_findn( const char *s, int length );
 extern void       str_grow( const char *s, int length );
@@ -387,6 +389,8 @@ extern void           dbg_register( dbg_Type flag, const char *name );
 extern void           _dbg_register( dbg_Type flag, const char *name );
 extern void           dbg_destroy( void );
 extern void           dbg_set( const char *name );
+extern void           dbg_set_flag( dbg_Type flag );
+extern void           dbg_unset_flag( dbg_Type flag );
 extern __inline__ int dbg_test( dbg_Type flag );
 extern void           dbg_list( FILE *stream );
 

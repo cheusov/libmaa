@@ -1,6 +1,6 @@
 /* string.c -- String pool for Khepera
  * Created: Wed Dec 21 21:32:34 1994 by faith@cs.unc.edu
- * Revised: Sun Jan 14 13:50:04 1996 by r.faith@ieee.org
+ * Revised: Sat Jun 22 17:09:37 1996 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.7 1996/01/15 03:48:08 faith Exp $
+ * $Id: string.c,v 1.8 1996/06/24 20:22:18 faith Exp $
  *
  * \section{String Pool Routines}
  *
@@ -32,7 +32,6 @@
  */
 
 #include "maaP.h"
-#include <math.h>		/* FIXME! Don't use log10()! */
 
 static str_Pool global;
 
@@ -66,6 +65,18 @@ void str_pool_destroy( str_Pool pool )
    mem_destroy_strings( p->string );
    hsh_destroy( p->hash );
    xfree( p );			/* terminal */
+}
+
+/* \doc |str_pool_exists| returns non-zero if the string, |s|, is already
+   in the string pool, |pool|. */
+
+int str_pool_exists( str_Pool pool, const char *s )
+{
+   const char *datum;
+   poolInfo   p = (poolInfo)pool;
+   
+   if ((datum = hsh_retrieve( p->hash, s ))) return 1;
+   return 0;
 }
 
 /* \doc |str_pool_find| looks up the string, |s|, in the memory associated
@@ -169,6 +180,14 @@ static void _str_check_global( void )
    if (!global) global = str_pool_create();
 }
 
+/* \doc |str_exists| acts like |str_pool_exists|, except the global string
+   pool is used. */
+
+int str_exists( const char *s )
+{
+   return str_pool_exists( global, s );
+}
+
 /* \doc |str_find| acts like |str_pool_find|, except the global string pool
    is used.  If the global string pool has not been initialized, it will be
    initialized automatically.  Further, on systems that support |atexit| or
@@ -224,10 +243,12 @@ const char *str_finish( void )
 
 const char *str_unique( const char *prefix )
 {
-   static int i    = 1;
-   char       *buf = alloca( strlen( prefix ) + log10( i ) + 2 );
+   static int i       = 1;
+   char       *buf    = alloca( strlen( prefix ) + 100 );
 
-   sprintf( buf, "%s%d", prefix, i++ );
+   do {
+      sprintf( buf, "%s%d", prefix, i++ );
+   } while (str_exists( buf ));
    return str_find( buf );
 }
 
