@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: text.c,v 1.7 2002/11/19 09:40:23 cheusov Exp $
+ * $Id: text.c,v 1.8 2003/08/08 12:22:56 cheusov Exp $
  * 
  */
 
@@ -34,13 +34,14 @@
    K. Odell and Robert C. Russell [US Patents 1261167 (1918) and 1435663
    (1922)]. */
 
-const char *txt_soundex( const char *string )
+void txt_soundex2(
+   const char *string,
+   char * result /* five chars */ )
 {
-   static char result[5];
    char        *pt = result;
    int         upper_case;
-   /*                   abcdefghijklmnopqrstuvwxyz */
-   static char map[] = "01230120022455012623010202";
+   /*                         abcdefghijklmnopqrstuvwxyz */
+   static const char map[] = "01230120022455012623010202";
    char        previous = 0;
    char        transform;
    int         i;
@@ -63,6 +64,11 @@ const char *txt_soundex( const char *string )
          previous = transform;
       }
    }
-   
-   return result;
+}
+
+const char * txt_soundex( const char *string )
+{
+   static char buf [5];
+   txt_soundex2 (string, buf);
+   return buf;
 }

@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.39 2003/07/07 12:01:00 cheusov Exp $
+ * $Id: maa.h,v 1.40 2003/08/08 12:22:56 cheusov Exp $
  */
 
 #ifndef _MAA_H_
@@ -491,7 +491,10 @@ extern void       _sl_dump( sl_List list );
 
 /* text.c */
 
-extern const char *txt_soundex( const char *string );
+extern const char * txt_soundex( const char *string );
+extern void txt_soundex2(
+   const char *string,
+   char *result /* five chars */ );
 
 /* base64.c */
 
