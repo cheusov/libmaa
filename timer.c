@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Sat Oct  7 15:54:26 1995 by faith@cs.unc.edu
+ * Revised: Sun Oct 22 10:46:26 1995 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: timer.c,v 1.1 1995/10/08 00:46:39 faith Exp $
+ * $Id: timer.c,v 1.2 1995/10/22 18:13:33 faith Exp $
  * 
  */
 
@@ -34,7 +34,7 @@ typedef struct tim_Entry {
    struct timeval system_mark;
 } *tim_Entry;
 
-void _tim_check( void )
+static void _tim_check( void )
 {
    if (!_tim_Hash) _tim_Hash = hsh_create( NULL, NULL );
 }

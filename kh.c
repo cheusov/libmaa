@@ -1,6 +1,6 @@
 /* kh.c -- General Support for Khepera
  * Created: Fri Jan 20 14:56:18 1995 by faith@cs.unc.edu
- * Revised: Sun Oct  8 17:04:27 1995 by faith@cs.unc.edu
+ * Revised: Sun Oct 22 13:59:22 1995 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: kh.c,v 1.5 1995/10/11 15:29:53 faith Exp $
+ * $Id: kh.c,v 1.6 1995/10/22 18:13:30 faith Exp $
  *
  * \section{General Support}
  *
@@ -41,6 +41,7 @@ void kh_init( void )
    _dbg_register( KH_TIME,      "time" );
    _dbg_register( KH_RULES,     "rules" );
    _dbg_register( KH_REPLACE,   "replace" );
+   _dbg_register( KH_SCOPE,     "scope" );
 
 #ifndef __CHECKER__
 #ifdef HAVE_ATEXIT

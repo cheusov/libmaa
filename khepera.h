@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sun Oct 22 01:41:51 1995 by r.faith@ieee.org
+ * Revised: Sun Oct 22 13:59:22 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.16 1995/10/22 05:43:23 faith Exp $
+ * $Id: khepera.h,v 1.17 1995/10/22 18:13:31 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -75,6 +75,7 @@
 #define KH_TIME      0xc0000080	/* Print timer information at exit */
 #define KH_RULES     0xc0000100	/* Rule application */
 #define KH_REPLACE   0xc0000200	/* tre_replace */
+#define KH_SCOPE     0xc0000400	/* Print scopes in tre_print */
 
 extern void kh_init( void );
 extern void kh_shutdown( void );
@@ -429,7 +430,12 @@ extern sym_Scope sym_parent( sym_Scope scope );
 extern sym_Scope sym_top( sym_Scope scope );
 extern sym_Scope sym_push( sym_Scope scope );
 extern sym_Scope sym_pop( sym_Scope scope );
+extern int       sym_scope_level( sym_Scope scope );
+extern int       sym_symbol_level( sym_Entry symbol );
+extern sym_Scope sym_scope( sym_Entry symbol );
 extern void      _sym_shutdown( void );
+extern void      _sym_scope_check( sym_Scope scope, const char *function );
+extern void      _sym_symbol_check( sym_Entry symbol, const char *function );
  
 extern boolean     sym_rule_find(tre_Node, tre_Node *);
 extern void        sym_rule_install(tre_Node, tre_Node);
@@ -473,8 +479,10 @@ extern const char *sym_mangle_function_name(tre_Node);
    double                 real;                 \
    unsigned long          bits;                 \
    sym_Scope              scope;                \
+   sym_Entry              symbol;               \
    typ_Expr               exprType;             \
    tre_SetTree            polymorphicVars
+   
 
 #if KH_MAGIC
 #define TRE_HEADER int magic; _TRE_HEADER
@@ -552,7 +560,8 @@ extern void       tre_insert_before( tre_Node sibling, tre_Node child );
 extern void       tre_insert_after( tre_Node sibling, tre_Node child );
 extern void       tre_destroy( tre_Node node );
 extern tre_Node   tre_disconnect( tre_Node node );
-extern void       _tre_delete( tre_Node node );
+extern void       _tre_destroy( tre_Node node );
+extern void       tre_delete_children( tre_Node node );
 extern void       tre_delete( tre_Node node );
 extern tre_Node   tre_replace( tre_Node old, tre_Node new );
 extern tre_Node   tre_mk( int id, src_Type src, ... );
@@ -594,6 +603,8 @@ extern typ_Expr    tre_expr_type(tre_Node);
 extern void        tre_expr_type_set(tre_Node,typ_Expr);
 extern sym_Scope   tre_symtab(tre_Node);
 extern void        tre_symtab_set(tre_Node,sym_Scope);
+extern sym_Entry   tre_symbol( tre_Node n );
+extern void        tre_set_symbol( tre_Node n, sym_Entry s );
 extern void        tre_register_name_mangler(int,tre_Mangler);
 extern tre_Mangler tre_name_mangler(tre_Node);
 
