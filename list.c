@@ -1,7 +1,7 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Wed Aug  9 17:30:39 1995 by r.faith@ieee.org
+ * Revised: Thu Aug 24 22:25:42 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.1 1995/08/24 14:59:15 faith Exp $
+ * $Id: list.c,v 1.2 1995/08/25 04:38:29 faith Exp $
  *
  * \section{List Routines}
  *
@@ -239,7 +239,6 @@ void lst_truncate( lst_List list, unsigned int length )
       next = d->next;		
 
 				/* Truncate list */
-      l->count = length;
       d->next = NULL;
       l->tail = d;
    }
@@ -249,6 +248,42 @@ void lst_truncate( lst_List list, unsigned int length )
       dataType tmp = next->next;
       mem_free_object( mem, next );
       next = tmp;
+      --l->count;
+   }
+
+   assert( l->count == length );
+}
+
+/* \doc |lst_truncate_position| truncates a list beyond |position| (i.e.,
+   |position| is always left in the list.  If |postition| is "NULL", then
+   the list is emptied.  This convention is useful when using
+   lst_last_postition to get a marker allowing an older state of a list to
+   be restored. */
+
+void lst_truncate_position( lst_List list, lst_Position position )
+{
+   listType     l = (listType)list;
+   dataType     d;
+   dataType     next;
+
+   if (!position) {
+      next = l->head;
+      l->head = l->tail = NULL;
+   } else {
+      d = position;		/* New end of list */
+      next = d->next;		/* Start of remainder of list */
+      
+				/* Truncate */
+      d->next = NULL;
+      l->tail = d;
+   }
+
+				/* Free truncated portion of list */
+   while (next) {
+      dataType tmp = next->next;
+      mem_free_object( mem, next );
+      next = tmp;
+      --l->count;
    }
 }
 
@@ -276,6 +311,19 @@ lst_Position lst_init_position( lst_List list )
    return l->head;
 }
 
+/* \doc |lst_last_position| returns a position marker for the tail of the
+   list.  This marker can be used with |lst_truncate_position| to restore a
+   previous state of the list. */
+
+lst_Position lst_last_position( lst_List list )
+{
+   listType l = (listType)list;
+
+   return l->tail;
+}
+
+
+
 /* \doc |lst_next_position| returns a position marker for the element after
    the element marked by |position|, or "NULL" if |position| is the last
    element in the list. */
@@ -288,6 +336,23 @@ lst_Position lst_next_position( lst_Position position )
    return d->next;
 }
 
+/* \doc |lst_nth_position| returns a position marker for the $n$th element
+   in the list, or "NULL" if the $n$th element does not exist. */
+
+lst_Position lst_nth_position( lst_List list, unsigned int n )
+{
+   listType     l = (listType)list;
+   dataType     d;
+   unsigned int i;
+   
+   if (n < 1 || n > l->count) return NULL;
+   for (i = 1, d = l->head; i < n && d; i++, d = d->next);
+   if (i != n)
+      err_internal( __FUNCTION__, "Can't find element %d of %d\n",
+		    n, l->count );
+   return d;
+}
+
 /* \doc |lst_get_position| returns the datum associated with the |position|
    marker. */
 
@@ -298,3 +363,14 @@ void *lst_get_position( lst_Position position )
    if (!d) return NULL;
    return (void *)d->datum;	/* Discard const */
 }
+
+/* \doc |lst_set_position| sets the |datum| associated with the |position|
+   marker. */
+
+void lst_set_position( lst_Position position, const void *datum )
+{
+   dataType d = (dataType)position;
+
+   if (d) d->datum = datum;
+}
+

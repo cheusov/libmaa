@@ -1,6 +1,6 @@
 /* settest.c -- Test program for Khepera set routines
  * Created: Wed Nov  9 15:04:25 1994 by faith@cs.unc.edu
- * Revised: Wed Dec 21 12:43:32 1994 by faith@cs.unc.edu
+ * Revised: Thu Aug 24 23:06:00 1995 by r.faith@ieee.org
  * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.1 1995/04/21 15:31:47 faith Exp $
+ * $Id: settest.c,v 1.2 1995/08/25 04:38:32 faith Exp $
  */
 
 #include "kh.h"
@@ -165,6 +165,9 @@ int main( int argc, char **argv )
    
    printf( "\nSet 2:\n" );
    set_iterate( t2, iterator );
+
+   printf( "Set 1 == Set 2 ? ===> %d\n", set_equal( t1, t2 ) );
+   printf( "Set 1 == Set 1 ? ===> %d\n", set_equal( t1, t1 ) );
 
    printf( "\nUnion:\n");
    t = set_union( t1, t2 );

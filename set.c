@@ -1,6 +1,6 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Tue Aug  8 17:53:30 1995 by r.faith@ieee.org
+ * Revised: Thu Aug 24 23:41:55 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.2 1995/08/24 14:59:26 faith Exp $
+ * $Id: set.c,v 1.3 1995/08/25 04:38:31 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -56,8 +56,8 @@ typedef struct set {
    
 
 static set_Set _set_create( unsigned long seed,
-			    unsigned long (*hash)( const void * ),
-			    int (*compare)( const void *, const void * ) )
+			    set_HashFunction hash,
+			    set_CompareFunction compare )
 {
    setType       t;
    unsigned long i;
@@ -101,11 +101,23 @@ static set_Set _set_create( unsigned long seed,
    pointer as the element.  These functions are often useful for
    maintaining sets of objects. */
 
-set_Set set_create( unsigned long (*hash)( const void * ),
-		    int (*compare)( const void *,
-				    const void * ) )
+set_Set set_create( set_HashFunction hash, set_CompareFunction compare )
 {
    return _set_create( 0, hash, compare );
+}
+
+set_HashFunction set_get_hash( set_Set set )
+{
+   setType t = (setType)set;
+
+   return t->hash;
+}
+
+set_CompareFunction set_get_compare( set_Set set )
+{
+   setType t = (setType)set;
+
+   return t->compare;
 }
 
 static void _set_destroy_buckets( set_Set set )
@@ -407,6 +419,39 @@ set_Set set_diff( set_Set set1, set_Set set2 )
    }
 
    return set;
+}
+
+/* \doc |set_equal| returns non-zero if |set1| and |set2| contain the same
+   number of elements, and all of the elements in |set1| are also in
+   |set2|.  The |hash| and |compare| functions must be identical for the
+   two sets. */
+
+int set_equal( set_Set set1, set_Set set2 )
+{
+   setType       t1 = (setType)set1;
+   setType       t2 = (setType)set2;
+   unsigned long i;
+
+   if (t1->hash != t2->hash)
+	 err_fatal( __FUNCTION__,
+		    "Sets do not have identical hash functions\n" );
+
+   if ( t1->compare != t2->compare )
+	 err_fatal( __FUNCTION__,
+		    "Sets do not have identical comparison functions\n" );
+
+   if (t1->entries != t2->entries) return 0; /* not equal */
+
+   for (i = 0; i < t1->prime; i++) {
+      if (t1->buckets[i]) {
+	 bucketType pt;
+	 
+	 for (pt = t1->buckets[i]; pt; pt = pt->next)
+	       if (!set_member( t2, pt->elem )) return 0; /* not equal */
+      }
+   }
+
+   return 1;			/* equal */
 }
 
 int set_count( set_Set set )

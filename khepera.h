@@ -1,7 +1,7 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Wed Aug  9 16:32:47 1995 by r.faith@ieee.org
- * Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Thu Aug 24 23:41:22 1995 by r.faith@ieee.org
+ * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.2 1995/08/24 14:59:14 faith Exp $
+ * $Id: khepera.h,v 1.3 1995/08/25 04:38:28 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -134,20 +134,26 @@ typedef struct set_Stats{
    unsigned long misses;	 /* Number of unsuccessful retrievals */
 } *set_Stats;
 
-extern set_Set   set_create( unsigned long (*hash)( const void * ),
-			     int (*compare)( const void *, const void * ) );
-extern void      set_destroy( set_Set set );
-extern int       set_insert( set_Set set, const void *elem );
-extern int       set_delete( set_Set set, const void *elem );
-extern int       set_member( set_Set set, const void *elem );
-extern void      set_iterate( set_Set set,
-			      int (*iterator)( const void *key ) );
-extern set_Set   set_union( set_Set set1, set_Set set2 );
-extern set_Set   set_inter( set_Set set1, set_Set set2 );
-extern set_Set   set_diff( set_Set set1, set_Set set2 );
-extern set_Stats set_get_stats( set_Set set );
-extern void      set_print_stats( set_Set set, FILE *stream );
-extern int       set_count( set_Set set );
+typedef unsigned long (*set_HashFunction)( const void * );
+typedef int           (*set_CompareFunction)( const void *, const void * );
+
+extern set_Set             set_create( set_HashFunction hash,
+				       set_CompareFunction compare );
+extern set_HashFunction    set_get_hash( set_Set set );
+extern set_CompareFunction set_get_compare( set_Set set );
+extern void                set_destroy( set_Set set );
+extern int                 set_insert( set_Set set, const void *elem );
+extern int                 set_delete( set_Set set, const void *elem );
+extern int                 set_member( set_Set set, const void *elem );
+extern void                set_iterate( set_Set set,
+					int (*iterator)( const void *key ) );
+extern set_Set             set_union( set_Set set1, set_Set set2 );
+extern set_Set             set_inter( set_Set set1, set_Set set2 );
+extern set_Set             set_diff( set_Set set1, set_Set set2 );
+extern int                 set_equal( set_Set set1, set_Set set2 );
+extern set_Stats           set_get_stats( set_Set set );
+extern void                set_print_stats( set_Set set, FILE *stream );
+extern int                 set_count( set_Set set );
 
 /* stack.c */
 
@@ -178,9 +184,15 @@ extern unsigned int lst_length( lst_List list );
 extern void         lst_iterate( lst_List list,
 				 int (*iterator)( const void *datum ) );
 extern void         lst_truncate( lst_List list, unsigned int length );
+extern void         lst_truncate_position( lst_List list,
+					   lst_Position position );
 extern lst_Position lst_init_position( lst_List list );
+extern lst_Position lst_last_position( lst_List list );
 extern lst_Position lst_next_position( lst_Position position );
+extern lst_Position lst_nth_position( lst_List list, unsigned int n );
 extern void         *lst_get_position( lst_Position position );
+extern void         lst_set_position( lst_Position position,
+				      const void *datum );
 extern void         _lst_shutdown( void );
 
 #define LST_POSITION_INIT(P,L) ((P)=lst_init_position(L))
@@ -189,11 +201,17 @@ extern void         _lst_shutdown( void );
 #define LST_POSITION_GET(P,E)  ((E)=lst_get_position(P))
 
 /* iterate over all entries E in list L */
-#define LST_ITERATE(L,P,E)                                         \
-	for ( LST_POSITION_INIT((P),(L));                          \
-              LST_POSITION_OK(P) && (LST_POSITION_GET((P),(E)),1); \
-              LST_POSITION_NEXT(P)                                 \
-        )
+#define LST_ITERATE(L,P,E)                                                  \
+   for ( LST_POSITION_INIT((P),(L));                                        \
+         LST_POSITION_OK(P) && (LST_POSITION_GET((P),(E)),1);               \
+         LST_POSITION_NEXT(P))
+
+/* iterate over all entries in lists L1 and L2 */
+#define LST_ITERATE2(L1,L2,P1,P2,E1,E2)                                      \
+   for ( LST_POSITION_INIT((P1),(L1)), LST_POSITION_INIT((P2),(L2));         \
+	 LST_POSITION_OK(P1) && LST_POSITION_OK(P2)                          \
+	    && (LST_POSITION_GET((P1),(E1)),LST_POSITION_GET((P2),(E2)),1);  \
+	 LST_POSITION_NEXT(P1), LST_POSITION_NEXT(P2))
 
 /* error.c */
 
@@ -320,9 +338,10 @@ extern void     prs_file( const char *filename );
 
 /* symbol.c */
 
-#define _SYM_HEADER   \
-   const char *name; \
-   sym_Scope  scope
+#define _SYM_HEADER      \
+   const char *name;     \
+   sym_Scope  scope;     \
+   tre_Node   definition
 
 #if KH_MAGIC
 #define SYM_HEADER int magic; _SYM_HEADER
@@ -373,7 +392,8 @@ extern void      _sym_shutdown( void );
    src_Type               src;                  \
    const char             *string;              \
    int                    integer;              \
-   double                 real
+   double                 real;                 \
+   sym_Scope              scope
 
 #if KH_MAGIC
 #define TRE_HEADER int magic; _TRE_HEADER
