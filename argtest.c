@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: argtest.c,v 1.8 2002/08/02 19:43:15 faith Exp $
+ * $Id: argtest.c,v 1.9 2004/05/14 18:04:50 cheusov Exp $
  */
 
 #include "maaP.h"
@@ -28,58 +28,71 @@ int main( int argc, char **argv )
    int        c;
    char       **v;
    int        i;
-
+   FILE *f;
+   char buffer [2000];
+   char *first_bq, *last_bq;
    maa_init( argv[0] );
 
-   a = arg_argify( "\\\\This  is a \"test of quotes\" and  ano'ther test'  ",0);
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
+   --argc; ++argv;
 
-   a = arg_argify( "\"quotes\"", 0 );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
+   if (argc)
+      f = fopen (argv [0], "r");
+   else
+      f = fopen ("argtest.in", "r");
 
-   a = arg_argify( "\"quotesa\" foo \"\" \"quotes'b\" '' 'foo'\"'\"'bar'", 0 );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
+   if (!f)
+      exit (10);
 
-   a = arg_argify( "noquotes", 0 );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
+   while (fgets (buffer, sizeof(buffer), f)){
+      first_bq = strchr (buffer, '`');
+      last_bq  = strrchr (buffer, '`');
+      if (!first_bq || !last_bq)
+	 return 11;
 
-   a = arg_argify( "  aaa1 foo  ", 0 );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
-   
-   a = arg_argify( "  aaa2 foo", 0 );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
-   
-   a = arg_argify( "  aaa3 foo   \n", 0 );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
-   
-   a = arg_argify( "  ", 0 );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
+      *first_bq++ = '\0';
+      *last_bq    = '\0';
 
-   a = arg_argify( "", 0 );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
-   
-   a = arg_argify( "\\\\", ARG_NO_ESCAPE );
-   arg_get_vector( a, &c, &v );
-   for (i = 0; i < c; i++) printf( "Arg %d = \"%s\"\n", i, v[i] );
-   arg_destroy( a );
+      printf ("---------------------\nInput = \"%s\"\n\n", first_bq);
+      /* 0 */
+      a = arg_argify (first_bq, 0);
+      arg_get_vector (a, &c, &v);
+      for (i = 0; i < c; i++){
+	 printf ("Arg %d = \"%s\"\n", i, v[i]);
+      }
+      arg_destroy( a );
+
+      printf ("\n");
+
+      /* no escape */
+      a = arg_argify (first_bq, ARG_NO_ESCAPE);
+      arg_get_vector (a, &c, &v);
+      for (i = 0; i < c; i++){
+	 printf ("Arg %d = \"%s\"\n", i, v[i]);
+      }
+      arg_destroy( a );
+
+      printf ("\n");
+
+      /* no quote */
+      a = arg_argify (first_bq, ARG_NO_QUOTE);
+      arg_get_vector (a, &c, &v);
+      for (i = 0; i < c; i++){
+	 printf ("Arg %d = \"%s\"\n", i, v[i]);
+      }
+      arg_destroy( a );
+
+      printf ("\n");
+
+      /* no quote and no escape */
+      a = arg_argify (first_bq, ARG_NO_QUOTE | ARG_NO_ESCAPE);
+      arg_get_vector (a, &c, &v);
+      for (i = 0; i < c; i++){
+	 printf ("Arg %d = \"%s\"\n", i, v[i]);
+      }
+      arg_destroy( a );
+
+      printf ("\n");
+   }
 
    return 0;
 }

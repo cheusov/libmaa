@@ -1,0 +1,21 @@
+`\\This  is a "test of quotes" and  ano'ther test'  `
+`"quotes"`
+`"quotesa" foo "" "quotes'b" '' 'foo'"'"'bar'`
+`noquotes`
+`  aaa1 foo  `
+`  aaa2 foo`
+`aaa3 foo   `
+`  `
+``
+`\\`
+`1''2''3''4`
+`' 1'' 2'
+`" 1"" 2"
+`   "   123"' 234'   `
+`1''""''""''""''""2`
+`''1""2''`
+`''1 ""2 '' ""`
+`'\''1`
+`1\ 2\ 3\ 4 \ 5`
+`\ \ \ \ `
+`\ \'\"\ `

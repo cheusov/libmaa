@@ -1,0 +1,117 @@
+#!/usr/bin/awk -f
+
+#
+# converts arggram.txt to arggram.c
+# usage: arggram.sh < arggram.txt > arggram.c
+#
+
+BEGIN {
+   current_state = 0
+   current_action = 0
+   current_chartype = 0
+}
+
+{
+   sub(/#.*$/, "")
+}
+
+NF == 0 {
+   next
+}
+
+{
+   sub(/EXIT/,  "-1", $4)
+   sub(/ERROR/, "-2", $4)
+
+   if ($1 in states){
+      $1 = states [$1]
+   }else if ($1 >= 0){
+      states [$1] = current_state++
+      $1 = states [$1]
+   }
+
+   if ($2 in chartypes){
+      $2 = chartypes [$2]
+   }else{
+      chartypes [$2] = current_chartype++
+      $2 = chartypes [$2]
+   }
+
+   if ($3 in actions){
+      $3 = actions [$3]
+   }else{
+      actions [$3] = current_action++
+      $3 = actions [$3]
+   }
+
+   if ($4 in states){
+      $4 = states [$4]
+   }else if ($4 >= 0){
+      states [$4] = current_state++
+      $4 = states [$4]
+   }
+
+   act   [$1, $2] = $3
+   trans [$1, $2] = $4
+}
+
+END {
+   printf "#define STATE_EXIT  (int) (-1)\n"
+   printf "#define STATE_ERROR (int) (-2)\n"
+   printf "\n"
+}
+
+END {
+   for (i in chartypes){
+      print "#define CHARTYPE_" i " " chartypes [i]
+   }
+
+   printf "\n#define CHARTYPES_COUNT %i\n\n", current_chartype
+}
+
+END {
+   for (i in actions){
+      print "#define ACTION_" i " " actions [i]
+   }
+
+   printf "\n#define ACTIONS_COUNT %i\n\n", current_action
+}
+
+END {
+   print "static const int action [" current_state "] [" current_chartype "] = {"
+   for (i=0; i < current_state; ++i){
+      if (i)
+	 printf ",\n"
+
+      printf "   "
+
+      for (j=0; j < current_chartype; ++j){
+	 if (j)
+	    printf ", "
+	 else
+	    printf "{ "
+	 printf "%i", act [i, j]
+      }
+      printf " }"
+   }
+   print "};\n"
+}
+
+END {
+   print "static const int transition [" current_state "] [" current_chartype "] = {"
+   for (i=0; i < current_state; ++i){
+      if (i)
+	 printf ",\n"
+
+      printf "   "
+      for (j=0; j < current_chartype; ++j){
+	 if (j)
+	    printf ", "
+	 else
+	    printf "{ "
+	 printf "%i", trans [i, j]
+      }
+      printf " }"
+   }
+   print "};\n"
+}

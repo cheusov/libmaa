@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.11 2002/08/02 19:43:15 faith Exp $
+ * $Id: arg.c,v 1.12 2004/05/14 18:04:50 cheusov Exp $
  *
  * \section{Argument List Routines}
  *
@@ -193,87 +193,112 @@ void arg_get_vector( arg_List arg, int *argc, char ***argv )
 
 /* \doc Break up |string| into arguments, placing them as items in |arg|.
    Items within single or double quotes may contain spaces.  The quotes are
-   stripped as in shell argument processing.  In this version, backslash is
-   "not" a special quoting character. */
+   stripped as in shell argument processing.
+   Backslash followed by <char> outside quoted or
+   double-quote subtokens is treated just as <char> */
+
+#include "arggram.c"
+
+#if ACTIONS_COUNT != 3
+#error Modify arg_argify function or change arggram.txt
+#endif
+
+#if CHARTYPES_COUNT != 6
+#error Modify char2char_type function or change arggram.txt
+#endif
+
+static int char2char_type (int quoteStyle, char ch)
+{
+   switch (ch){
+   case '"':
+      if (ARG_NO_QUOTE & quoteStyle)
+	 return CHARTYPE_OTHER;
+      else
+	 return CHARTYPE_DQ;
+   case '\'':
+      if (ARG_NO_QUOTE & quoteStyle)
+	 return CHARTYPE_OTHER;
+      else
+	 return CHARTYPE_SQ;
+   case '\\':
+      if (ARG_NO_ESCAPE & quoteStyle)
+	 return CHARTYPE_OTHER;
+      else
+	 return CHARTYPE_BS;
+   case ' ':
+   case '\t':
+   case '\r':
+   case '\v':
+   case '\n':
+      return CHARTYPE_SPACE;
+   case '\0':
+      return CHARTYPE_NULL;
+   default:
+      return CHARTYPE_OTHER;
+   }
+}
+
 
 arg_List arg_argify( const char *string, int quoteStyle )
 {
    Arg        a = arg_create();
-   const char *last;
+   const char *last = NULL;
    const char *pt = string;
-   int        len;
-   int        quote = 0;
+   char ch;
+   int ch_type;
 
-   if (!string)
-      err_internal( __FUNCTION__, "Cannot argify NULL pointer\n" );
+   int state = 0;
+   int curr_act = -1;
 
-   while (*pt && (*pt == ' '
-		  || *pt == '\t'
-		  || *pt == '\n'
-		  || *pt == '\r'
-		  || *pt == '\v'
-		  || *pt == '\f'))
-      ++pt;
+   do {
+      ch = *pt;
+      ch_type = char2char_type (quoteStyle, ch);
 
-   for (last = pt, len = 0; *pt; ++pt, ++len) {
-      switch (*pt) {
-      case ' ':
-      case '\t':
-      case '\n':
-      case '\r':
-      case '\v':
-      case '\f':
-	 if (!quote) {
-	    while (pt[1] == ' '
-		   || pt[1] == '\t'
-		   || pt[1] == '\n'
-		   || pt[1] == '\r'
-		   || pt[1] == '\v'
-		   || pt[1] == '\f')
-	       ++pt;
-	    arg_grow( a, last, len );
-	    arg_finish( a );
-	    last = pt + 1;
-	    len = -1;
-	 }
+      curr_act = action [state] [ch_type];
+
+//      fprintf (stderr, "%i -- %i(%c) / %i --> %i\n", state, ch_type, ch, curr_act, transition [state] [ch_type]);
+
+      state = transition [state] [ch_type];
+
+      switch (curr_act){
+      case ACTION_INCLUDE:
+	 if (!last)
+	    last = pt;
+
 	 break;
-      case '"':
-      case '\'':
-	 if (!(quoteStyle & ARG_NO_QUOTE)) {
-	    if (quote == *pt) {
-	       arg_grow( a, last, len );
-	       quote = 0;
-/* 	       last  = 0; */
-	       len   = -1;
-	    } else if (!quote) {
-	       arg_grow( a, last, len );
-	       quote = *pt;
-	       last  = pt + 1;
-	       len   = -1;
-	    }
+      case ACTION_SKIP:
+	 if (last){
+	    arg_grow (a, last, pt - last);
 	 }
+	 last = pt + 1;
+
 	 break;
-      case '\\':
-	 if (!(quoteStyle & ARG_NO_ESCAPE)) {
-	    if (pt[1]) {
-	       arg_grow( a, last, len );
-	       arg_grow( a, ++pt, 1 );
-	       last = pt + 1;
-	       len  = -1;
-	    }
+      case ACTION_FINISH:
+//	 assert (last);
+	 if (last){
+	    arg_grow (a, last, pt - last);
+	    arg_finish (a);
+	    last = NULL;
 	 }
+
 	 break;
+      default:
+	 abort ();
       }
-   }
-   if (*last
-       && *last != ' '
-       && *last != '\t'
-       && *last != '\n'
-       && *last != '\r'
-       && *last != '\v'
-       && *last != '\f') {
-      arg_grow( a, last, len );
-      arg_finish( a );
+
+      ++pt;
+   }while (ch && state >= 0);
+
+   switch (state){
+   case -1:
+      // Fine! Normal exit
+      break;
+   case -2:
+      // Parsing error
+      break;
+   default:
+      // Oooops!
+      err_internal( __FUNCTION__, "arg.c:arg_argify is buggy!!!:\n");
    }
 
    return a;

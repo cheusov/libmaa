@@ -1,21 +1,327 @@
+---------------------
+Input = "\\This  is a "test of quotes" and  ano'ther test'  "
+
 Arg 0 = "\This"
 Arg 1 = "is"
 Arg 2 = "a"
 Arg 3 = "test of quotes"
 Arg 4 = "and"
 Arg 5 = "another test"
+
+Arg 0 = "\\This"
+Arg 1 = "is"
+Arg 2 = "a"
+Arg 3 = "test of quotes"
+Arg 4 = "and"
+Arg 5 = "another test"
+
+Arg 0 = "\This"
+Arg 1 = "is"
+Arg 2 = "a"
+Arg 3 = ""test"
+Arg 4 = "of"
+Arg 5 = "quotes""
+Arg 6 = "and"
+Arg 7 = "ano'ther"
+Arg 8 = "test'"
+
+Arg 0 = "\\This"
+Arg 1 = "is"
+Arg 2 = "a"
+Arg 3 = ""test"
+Arg 4 = "of"
+Arg 5 = "quotes""
+Arg 6 = "and"
+Arg 7 = "ano'ther"
+Arg 8 = "test'"
+
+---------------------
+Input = ""quotes""
+
 Arg 0 = "quotes"
+
+Arg 0 = "quotes"
+
+Arg 0 = ""quotes""
+
+Arg 0 = ""quotes""
+
+---------------------
+Input = ""quotesa" foo "" "quotes'b" '' 'foo'"'"'bar'"
+
 Arg 0 = "quotesa"
 Arg 1 = "foo"
 Arg 2 = ""
 Arg 3 = "quotes'b"
 Arg 4 = ""
 Arg 5 = "foo'bar"
+
+Arg 0 = "quotesa"
+Arg 1 = "foo"
+Arg 2 = ""
+Arg 3 = "quotes'b"
+Arg 4 = ""
+Arg 5 = "foo'bar"
+
+Arg 0 = ""quotesa""
+Arg 1 = "foo"
+Arg 2 = """"
+Arg 3 = ""quotes'b""
+Arg 4 = "''"
+Arg 5 = "'foo'"'"'bar'"
+
+Arg 0 = ""quotesa""
+Arg 1 = "foo"
+Arg 2 = """"
+Arg 3 = ""quotes'b""
+Arg 4 = "''"
+Arg 5 = "'foo'"'"'bar'"
+
+---------------------
+Input = "noquotes"
+
 Arg 0 = "noquotes"
+
+Arg 0 = "noquotes"
+
+Arg 0 = "noquotes"
+
+Arg 0 = "noquotes"
+
+---------------------
+Input = "  aaa1 foo  "
+
 Arg 0 = "aaa1"
 Arg 1 = "foo"
+
+Arg 0 = "aaa1"
+Arg 1 = "foo"
+
+Arg 0 = "aaa1"
+Arg 1 = "foo"
+
+Arg 0 = "aaa1"
+Arg 1 = "foo"
+
+---------------------
+Input = "  aaa2 foo"
+
 Arg 0 = "aaa2"
 Arg 1 = "foo"
+
+Arg 0 = "aaa2"
+Arg 1 = "foo"
+
+Arg 0 = "aaa2"
+Arg 1 = "foo"
+
+Arg 0 = "aaa2"
+Arg 1 = "foo"
+
+---------------------
+Input = "aaa3 foo   "
+
 Arg 0 = "aaa3"
 Arg 1 = "foo"
+
+Arg 0 = "aaa3"
+Arg 1 = "foo"
+
+Arg 0 = "aaa3"
+Arg 1 = "foo"
+
+Arg 0 = "aaa3"
+Arg 1 = "foo"
+
+---------------------
+Input = "  "
+
+
+
+
+
+---------------------
+Input = ""
+
+
+
+
+
+---------------------
+Input = "\\"
+
+Arg 0 = "\"
+
 Arg 0 = "\\"
+
+Arg 0 = "\"
+
+Arg 0 = "\\"
+
+---------------------
+Input = "1''2''3''4"
+
+Arg 0 = "1234"
+
+Arg 0 = "1234"
+
+Arg 0 = "1''2''3''4"
+
+Arg 0 = "1''2''3''4"
+
+---------------------
+Input = "' 1'' 2'
+"
+
+Arg 0 = " 1 2"
+
+Arg 0 = " 1 2"
+
+Arg 0 = "'"
+Arg 1 = "1''"
+Arg 2 = "2'"
+
+Arg 0 = "'"
+Arg 1 = "1''"
+Arg 2 = "2'"
+
+---------------------
+Input = "" 1"" 2"
+"
+
+Arg 0 = " 1 2"
+
+Arg 0 = " 1 2"
+
+Arg 0 = """
+Arg 1 = "1"""
+Arg 2 = "2""
+
+Arg 0 = """
+Arg 1 = "1"""
+Arg 2 = "2""
+
+---------------------
+Input = "   "   123"' 234'   "
+
+Arg 0 = "   123 234"
+
+Arg 0 = "   123 234"
+
+Arg 0 = """
+Arg 1 = "123"'"
+Arg 2 = "234'"
+
+Arg 0 = """
+Arg 1 = "123"'"
+Arg 2 = "234'"
+
+---------------------
+Input = "1''""''""''""''""2"
+
+Arg 0 = "12"
+
+Arg 0 = "12"
+
+Arg 0 = "1''""''""''""''""2"
+
+Arg 0 = "1''""''""''""''""2"
+
+---------------------
+Input = "''1""2''"
+
+Arg 0 = "12"
+
+Arg 0 = "12"
+
+Arg 0 = "''1""2''"
+
+Arg 0 = "''1""2''"
+
+---------------------
+Input = "''1 ""2 '' """
+
+Arg 0 = "1"
+Arg 1 = "2"
+Arg 2 = ""
+Arg 3 = ""
+
+Arg 0 = "1"
+Arg 1 = "2"
+Arg 2 = ""
+Arg 3 = ""
+
+Arg 0 = "''1"
+Arg 1 = """2"
+Arg 2 = "''"
+Arg 3 = """"
+
+Arg 0 = "''1"
+Arg 1 = """2"
+Arg 2 = "''"
+Arg 3 = """"
+
+---------------------
+Input = "'\''1"
+
+Arg 0 = "\1"
+
+Arg 0 = "\1"
+
+Arg 0 = "'''1"
+
+Arg 0 = "'\''1"
+
+---------------------
+Input = "1\ 2\ 3\ 4 \ 5"
+
+Arg 0 = "1 2 3 4"
+Arg 1 = " 5"
+
+Arg 0 = "1\"
+Arg 1 = "2\"
+Arg 2 = "3\"
+Arg 3 = "4"
+Arg 4 = "\"
+Arg 5 = "5"
+
+Arg 0 = "1 2 3 4"
+Arg 1 = " 5"
+
+Arg 0 = "1\"
+Arg 1 = "2\"
+Arg 2 = "3\"
+Arg 3 = "4"
+Arg 4 = "\"
+Arg 5 = "5"
+
+---------------------
+Input = "\ \ \ \ "
+
+Arg 0 = "    "
+
+Arg 0 = "\"
+Arg 1 = "\"
+Arg 2 = "\"
+Arg 3 = "\"
+
+Arg 0 = "    "
+
+Arg 0 = "\"
+Arg 1 = "\"
+Arg 2 = "\"
+Arg 3 = "\"
+
+---------------------
+Input = "\ \'\"\ "
+
+Arg 0 = " '" "
+
+Arg 0 = "\"
+Arg 1 = "\\"\ "
+
+Arg 0 = " '" "
+
+Arg 0 = "\"
+Arg 1 = "\'\"\"
+

@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.43 2003/10/26 13:03:25 cheusov Exp $
+# $Id: Makefile.in,v 1.44 2004/05/14 18:04:50 cheusov Exp $
 #
 
 ifneq (,)
@@ -108,6 +108,10 @@ tests-update: $(TESTS)
 		./$$i | fgrep -v ' at ' > $$i.out; \
 	done
 
+arg.o: arggram.c
+arggram.c: arggram.txt
+	./arggram2c < $< > $@
+
 %.o: %.c
 	$(CC) -c $(XTRACFLAGS) $(CFLAGS) $<
 
@@ -186,7 +190,7 @@ clean:
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
 	-rm -f *.o *.s *~ core a.out config.log $(TESTS) $(EXES)
-	-rm -f $(LIBS) libmaa.so.*
+	-rm -f $(LIBS) libmaa.so.* arggram.c
 	-rm -f *.log *.aux *.toc *.dvi *.ps *.out.new
 	-rm -f *.cfg *.dtk .inslog tca.map .pure
 	-rm -f version.stamp version.tmp mkrnd
