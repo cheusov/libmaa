@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sun Oct 22 23:29:08 1995 by r.faith@ieee.org
+ * Revised: Mon Oct 23 23:36:34 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.19 1995/10/23 21:46:49 yakowenk Exp $
+ * $Id: khepera.h,v 1.20 1995/10/24 03:50:29 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -76,6 +76,7 @@
 #define KH_RULES     0xc0000100	/* Rule application */
 #define KH_REPLACE   0xc0000200	/* tre_replace */
 #define KH_SCOPE     0xc0000400	/* Print scopes in tre_print */
+#define KH_ENUM      0xc0000800	/* Use enumerated names in tre_print */
 
 extern void kh_init( void );
 extern void kh_shutdown( void );
@@ -402,10 +403,11 @@ extern void   _prs_shutdown( void );
 
 /* symbol.c */
 
-#define _SYM_HEADER      \
-   const char *name;     \
-   sym_Scope  scope;     \
-   tre_Node   definition
+#define _SYM_HEADER       \
+   const char *name;      \
+   sym_Scope  scope;      \
+   tre_Node   definition; \
+   typ_Expr   typeExpr
 
 #if KH_MAGIC
 #define SYM_HEADER int magic; _SYM_HEADER
@@ -481,7 +483,8 @@ extern const char *sym_mangle_function_name(tre_Node);
    sym_Scope              scope;                \
    sym_Entry              symbol;               \
    typ_Expr               exprType;             \
-   tre_SetTree            polymorphicVars
+   tre_SetTree            polymorphicVars;      \
+   tre_Node               typeTree
    
 
 #if KH_MAGIC
@@ -511,10 +514,11 @@ extern void tre_set_guard( int guard );
 extern void tre_set_id_flag( int id, int flag );
 extern void tre_clr_id_flag( int id, int flag );
 extern int  tre_tst_id_flag( int id, int flag );
-extern void tre_register( int id, const char *name,
+extern void tre_register( int id, const char *name, const char *enumName,
 			  void (*create_callback)( tre_Node node ),
 			  void (*destroy_callback)( tre_Node node ) );
-extern void tre_register_name( int id, const char *name );
+extern void tre_register_name( int id, const char *enumName, const char *name);
+extern int  tre_lookup( const char *enumName );
 extern void tre_register_callbacks( int id,
 				    void (*create_callback)( tre_Node node ),
 				    void (*destroy_callback)( tre_Node node ));
@@ -526,7 +530,9 @@ extern void tre_register_format( int id, int count, const char *label,
 				 const char *format, ... );
 
 extern const char *tre_name( int id );
+extern const char *tre_enum_name( int id );
 extern const char *tre_node_name( tre_Node node );
+extern const char *tre_node_enum_name( tre_Node node );
 extern pp_Format  tre_format( int id, int count, const char *label );
 extern tre_Node   tre_parent( tre_Node child );
 extern tre_Node   tre_child( tre_Node parent );
