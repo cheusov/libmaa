@@ -1,7 +1,7 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Tue Mar 11 16:03:09 1997 by faith@cs.unc.edu
- * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Sat Jun 21 15:01:13 1997 by faith@acm.org
+ * Copyright 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: timer.c,v 1.14 1997/03/12 01:11:33 faith Exp $
+ * $Id: timer.c,v 1.15 1997/06/23 11:04:36 faith Exp $
  *
  * \section{Timer Support}
  *
@@ -33,11 +33,13 @@ static hsh_HashTable _tim_Hash;
 
 typedef struct tim_Entry {
    unsigned long  real;		/* wall time in usec */
-   unsigned long  user;		/* user time in usec */
-   unsigned long  system;	/* system time in usec */
+   unsigned long  self_user;	/* user time in usec */
+   unsigned long  self_system;	/* system time in usec */
+   unsigned long  children_user; /* user time in usec */
+   unsigned long  children_system; /* system time in usec */
    struct timeval real_mark;
-   struct timeval user_mark;
-   struct timeval system_mark;
+   struct rusage  self_mark;
+   struct rusage  children_mark;
 } *tim_Entry;
 
 static void _tim_check( void )
@@ -50,12 +52,13 @@ static void _tim_check( void )
 void tim_start( const char *name )
 {
    tim_Entry entry;
-   struct rusage   rusage;
 
    _tim_check();
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ))) {
       entry = xmalloc( sizeof( struct tim_Entry  ) );
-      entry->real = entry->user = entry->system = 0;
+      entry->real = 0;
+      entry->self_user = entry->self_system = 0;
+      entry->children_user = entry->children_system = 0;
       hsh_insert( _tim_Hash, name, entry );
    }
 
@@ -65,12 +68,9 @@ void tim_start( const char *name )
    time( &entry->real_mark.tv_sec );
    entry->real_mark.tv_usec = 0;
 #endif
-   getrusage( RUSAGE_SELF, &rusage );
    
-   memcpy( (void *)&entry->user_mark, (void *)&rusage.ru_utime,
-	   sizeof( struct timeval ) );
-   memcpy( (void *)&entry->system_mark, (void *)&rusage.ru_stime,
-	   sizeof( struct timeval ) );
+   getrusage( RUSAGE_SELF, &entry->self_mark );
+   getrusage( RUSAGE_CHILDREN, &entry->children_mark );
 }
 
 /* \doc Stop the named timer. */
@@ -91,13 +91,20 @@ void tim_stop( const char *name )
    time( &real.tv_sec );
    real.tv_usec = 0;
 #endif
-   getrusage( RUSAGE_SELF, &rusage );
+   
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
       err_internal ( __FUNCTION__, "No timer: %s\n", name );
    
    entry->real   = DIFFTIME( real, entry->real_mark );
-   entry->user   = DIFFTIME( rusage.ru_utime, entry->user_mark );
-   entry->system = DIFFTIME( rusage.ru_stime, entry->system_mark );
+   getrusage( RUSAGE_SELF, &rusage );
+   entry->self_user   = DIFFTIME( rusage.ru_utime, entry->self_mark.ru_utime );
+   entry->self_system = DIFFTIME( rusage.ru_stime, entry->self_mark.ru_stime );
+   
+   getrusage( RUSAGE_CHILDREN, &rusage );
+   entry->children_user
+      = DIFFTIME( rusage.ru_utime, entry->children_mark.ru_utime );
+   entry->children_system
+      = DIFFTIME( rusage.ru_stime, entry->children_mark.ru_stime );
 }
 
 /* \doc Reset the named timer to zero elapsed time.  Use |tim_start| to reset
@@ -111,7 +118,9 @@ void tim_reset( const char *name )
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
       err_internal ( __FUNCTION__, "No timer: %s\n", name );
 
-   entry->real = entry->user = entry->system = 0;
+   entry->real = 0;
+   entry->self_user = entry->self_system = 0;
+   entry->children_user = entry->children_system = 0;
 }
 
 /* \doc Get the wall time in seconds from the named timer.  The return
@@ -139,7 +148,44 @@ double tim_get_user( const char *name )
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
       err_internal ( __FUNCTION__, "No timer: %s\n", name );
 
-   return entry->user / 1000000.0;
+#if 0
+   printf( "self: maxrss %ld ixrss %ld idrss %ld isrss %ld minflt %ld"
+	   " majflt %ld nswap %ld inblock %ld outblock %ld msgsnd %ld"
+	   " msgrcv %ld nsignals %ld nvcwm %ld nivcsm %ld\n",
+	   entry->self_mark.ru_maxrss,
+	   entry->self_mark.ru_ixrss,
+	   entry->self_mark.ru_idrss,
+	   entry->self_mark.ru_isrss,
+	   entry->self_mark.ru_minflt,
+	   entry->self_mark.ru_majflt,
+	   entry->self_mark.ru_nswap,
+	   entry->self_mark.ru_inblock,
+	   entry->self_mark.ru_oublock,
+	   entry->self_mark.ru_msgsnd,
+	   entry->self_mark.ru_msgrcv,
+	   entry->self_mark.ru_nsignals,
+	   entry->self_mark.ru_nvcsw,
+	   entry->self_mark.ru_nivcsw );
+   printf( "chld: maxrss %ld ixrss %ld idrss %ld isrss %ld minflt %ld"
+	   " majflt %ld nswap %ld inblock %ld outblock %ld msgsnd %ld"
+	   " msgrcv %ld nsignals %ld nvcwm %ld nivcsm %ld\n",
+	   entry->children_mark.ru_maxrss,
+	   entry->children_mark.ru_ixrss,
+	   entry->children_mark.ru_idrss,
+	   entry->children_mark.ru_isrss,
+	   entry->children_mark.ru_minflt,
+	   entry->children_mark.ru_majflt,
+	   entry->children_mark.ru_nswap,
+	   entry->children_mark.ru_inblock,
+	   entry->children_mark.ru_oublock,
+	   entry->children_mark.ru_msgsnd,
+	   entry->children_mark.ru_msgrcv,
+	   entry->children_mark.ru_nsignals,
+	   entry->children_mark.ru_nvcsw,
+	   entry->children_mark.ru_nivcsw );
+#endif
+   
+   return (entry->self_user + entry->children_user) / 1000000.0;
 }
 
 /* \doc Get the number of seconds of system CPU time. */
@@ -152,7 +198,7 @@ double tim_get_system( const char *name )
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
       err_internal ( __FUNCTION__, "No timer: %s\n", name );
 
-   return entry->system / 1000000.0;
+   return (entry->self_system + entry->children_system) / 1000000.0;
 }
 
 /* \doc Print the named timer values to |str|.  The format is similar to
