@@ -17,11 +17,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.21 2003/10/08 18:54:06 cheusov Exp $
+ * $Id: maaP.h,v 1.22 2003/10/26 13:03:24 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
 #define _MAAP_H_
+
+#include <stddef.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -78,6 +80,10 @@ extern long strtol( const char *, char **, int );
 extern unsigned long int strtoul( const char *, char **, int );
 #endif
 
+#if !SIZEOF_VOID_P
+# define SIZEOF_VOID_P sizeof (void *)
+#endif
+
 /* Get time functions */
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
@@ -103,9 +109,11 @@ extern unsigned long int strtoul( const char *, char **, int );
 # include <getopt.h>
 #else
 #if !HAVE_GETOPT
-extern int  getopt( int, char **, char * );
+extern int  getopt( int, char * const *, const char * );
 extern int  optind;
 extern char *optarg;
+#else
+# include <unistd.h>
 #endif
 #endif
 

@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.42 2003/07/07 12:01:00 cheusov Exp $
+# $Id: Makefile.in,v 1.43 2003/10/26 13:03:25 cheusov Exp $
 #
 
 ifneq (,)
@@ -52,17 +52,17 @@ INSTALL=        @INSTALL@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
 
-CFLAGS=		@CFLAGS@
+CFLAGS=		@CFLAGS@ $(VFLAGS) @CPPFLAGS@ @DEFS@ @WCFLAGS@ -I.
 LDFLAGS=        @LDFLAGS@
 VFLAGS=         -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
-XTRACFLAGS=     @WCFLAGS@ @XTRACFLAGS@ @DEFS@ $(VFLAGS) @CPPFLAGS@ -I.
+XTRACFLAGS=     @XTRACFLAGS@
 XTRALDFLAGS=    @WLDFLAGS@ @XTRALDFLAGS@ -L.
 RPATHFLAGS=     @RPATHFLAGS@
 LDLIBS=		-lmaa @LIBS@ -lm
 LDSHARED=       @LDSHARED@
 
 HEADERS= config.h maa.h maaP.h decl.h obstack.h @XTRAHEADERS@
-LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
+LIBOBJS= @LIBOBJS@ obstack.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
 	 debug.o flags.o maa.o prime.o bit.o timer.o version.o \
 	 arg.o pr.o sl.o base64.o base26.o source.o parse-concrete.o \
