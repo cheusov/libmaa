@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Sun Oct 22 15:38:59 1995 by r.faith@ieee.org
+ * Revised: Thu Oct 26 21:47:31 1995 by faith@cs.unc.edu
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: timer.c,v 1.4 1995/10/23 03:45:41 faith Exp $
+ * $Id: timer.c,v 1.5 1995/10/27 04:20:11 faith Exp $
  * 
  */
 
@@ -150,6 +150,7 @@ void _tim_shutdown( void )
    static int freer( const void *key, const void *datum )
       {
 	 xfree( (void *)datum ); /* Discard const */
+	 return 0;
       }
    
    if (_tim_Hash) {

@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Sun Aug 27 22:56:58 1995 by r.faith@ieee.org
+ * Revised: Thu Oct 26 22:35:31 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.3 1995/08/28 15:33:18 faith Exp $
+ * $Id: hash.c,v 1.4 1995/10/27 04:20:02 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -66,6 +66,8 @@ static void _hsh_check( tableType t, const char *function )
 		    t->magic,
 		    HSH_MAGIC );
 #endif
+   if (!t->buckets)
+      err_internal( function, "no buckets\n" );
 }
 
 static hsh_HashTable _hsh_create( unsigned long seed,
@@ -151,8 +153,6 @@ static void _hsh_destroy_table( hsh_HashTable table )
 {
    tableType t = (tableType)table;
    
-   _hsh_check( t, __FUNCTION__ );
-   
 #if KH_MAGIC
    t->magic = HSH_MAGIC_FREED;
 #endif
@@ -169,6 +169,7 @@ static void _hsh_destroy_table( hsh_HashTable table )
 
 void hsh_destroy( hsh_HashTable table )
 {
+   _hsh_check( table, __FUNCTION__ );
    _hsh_destroy_buckets( table );
    _hsh_destroy_table( table );
 }
@@ -269,7 +270,7 @@ int hsh_delete( hsh_HashTable table, const void *key )
 	    if (!t->compare( pt->key, key )) {
 	       --t->entries;
 	       
-	       if (!prev) t->buckets[h] = NULL;
+	       if (!prev) t->buckets[h] = pt->next;
 	       else       prev->next = pt->next;
 	       
 	       xfree( pt );
@@ -430,8 +431,8 @@ unsigned long hsh_string_hash( const void *key )
 
 unsigned long hsh_pointer_hash( const void *key )
 {
-   const char    *pt = (char *)&key;
-   unsigned long h  = 0;
+   const char    *pt = (const char *)&key;
+   unsigned long h   = 0;
    int           i;
 
    for (i = 0; i < SIZEOF_VOID_P; i++) {
