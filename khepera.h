@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sun Oct 22 13:59:22 1995 by r.faith@ieee.org
+ * Revised: Sun Oct 22 23:29:08 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.17 1995/10/22 18:13:31 faith Exp $
+ * $Id: khepera.h,v 1.18 1995/10/23 03:45:39 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -753,5 +753,35 @@ extern void tim_print_timer( FILE *str, const char *name );
 extern void tim_print_timers( FILE *str );
 extern void _tim_shutdown( void );
 
-#endif
+/* xfm.c */
 
+typedef int (*xfm_Rule)( int *_kh_flag, tre_Node _kh_node );
+
+typedef struct xfm_SetEntry {
+   xfm_Rule rule;
+   int      match;		/* Go here on a match */
+   int      otherwise;		/* Go here otherwise, -1 terminates */
+} xfm_SetEntry;
+
+typedef xfm_SetEntry *xfm_Set;
+
+typedef struct xfm_SetListEntry {
+   xfm_Set set;
+   int matchHere;
+   int matchPrevious;
+   int otherwise;
+} xfm_SetListEntry;
+
+typedef xfm_SetListEntry *xfm_SetList;
+
+typedef struct xfm_RuleListEntry {
+   xfm_Rule rule;
+   int      is_fast_postorder;
+   int      matchHere;
+   int      matchPrevious;
+   int      otherwise;
+} xfm_RuleListEntry;
+
+typedef xfm_RuleListEntry *xfm_RuleList;
+
+#endif
