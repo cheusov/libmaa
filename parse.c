@@ -1,6 +1,6 @@
 /* parse.c -- Support for calling parsers from Libmaa
  * Created: Mon Apr 24 17:40:51 1995 by faith@cs.unc.edu
- * Revised: Fri Feb 28 09:21:43 1997 by faith@cs.unc.edu
+ * Revised: Fri Feb 28 10:20:28 1997 by faith@cs.unc.edu
  * Copyright 1995, 1997 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: parse.c,v 1.1 1997/02/28 14:29:59 faith Exp $
+ * $Id: parse.c,v 1.2 1997/03/01 04:20:53 faith Exp $
  *
  * \section{Parsing (and Lexing) Support}
  * 
@@ -121,16 +121,39 @@ void prs_file( const char *filename )
 		    + 100 );
 
    sprintf( buffer, "%s -I. %s %s 2>/dev/null", cpp,
-	    _prs_cpp_options ?: "", filename );
+	    _prs_cpp_options ? _prs_cpp_options : "", filename );
 
    PRINTF(MAA_PARSE,(__FUNCTION__ ": %s\n",buffer));
    if (!(yyin = popen( buffer, "r" )))
-      err_fatal( __FUNCTION__, "Cannot open %s for read\n", filename );
+      err_fatal_errno( __FUNCTION__,
+		       "Cannot open \"%s\" for read\n", filename );
 
    src_new_file( filename );
    yydebug = _prs_debug_flag;
    yyparse();
    pclose( yyin );
+}
+
+/* \doc |prs_file_nocpp| calls opens |filename| for input, sets |yyerror|
+   to the value specified by |prs_set_debug|, and calls |yyparse|.
+
+   A similar function should deal with multiple parsers in the same
+   program, but this has not been implemented.  Also, either this function
+   or another function should start an interactive parse session. */
+
+void prs_file_nocpp( const char *filename )
+{
+   if (!filename)
+      err_fatal( __FUNCTION__, "No filename specified\n" );
+
+   if (!(yyin = fopen( filename, "r" )))
+      err_fatal_errno( __FUNCTION__,
+		       "Cannot open \"%s\" for read\n", filename );
+
+   src_new_file( filename );
+   yydebug = _prs_debug_flag;
+   yyparse();
+   fclose( yyin );
 }
 
 /* \doc |prs_make_integer| converts a |string| of specified |length| to an

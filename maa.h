@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Fri Feb 28 09:23:12 1997 by faith@cs.unc.edu
+ * Revised: Fri Feb 28 09:46:47 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.23 1997/02/28 14:29:58 faith Exp $
+ * $Id: maa.h,v 1.24 1997/03/01 04:20:52 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -533,6 +533,7 @@ extern void       src_print_stats( FILE *stream );
 extern void   prs_set_debug( int debug_flag );
 extern void   prs_set_cpp_options( const char *cpp_options );
 extern void   prs_file( const char *filename );
+extern void   prs_file_nocpp( const char *filename );
 extern int    prs_make_integer( const char *string, int length );
 extern double prs_make_double( const char *string, int length );
 

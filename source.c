@@ -1,6 +1,6 @@
 /* source.c -- Source code management for Libmaa
  * Created: Mon Dec 26 19:42:03 1994 by faith@cs.unc.edu
- * Revised: Fri Feb 28 09:21:44 1997 by faith@cs.unc.edu
+ * Revised: Fri Feb 28 10:28:41 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.1 1997/02/28 14:30:00 faith Exp $
+ * $Id: source.c,v 1.2 1997/03/01 04:20:54 faith Exp $
  *
  * \section{Source Code Management}
  *
@@ -292,7 +292,7 @@ src_Stats src_get_stats( void )
 
 void src_print_stats( FILE *stream )
 {
-   FILE      *str = stream ?: stdout;
+   FILE      *str = stream ? stream : stdout;
    src_Stats s    = src_get_stats();
 
    fprintf( str, "Statistics for source manager:\n" );
@@ -320,7 +320,7 @@ static void _src_print_yyerror( FILE *str, const char *message )
 
    for (pt = message; *pt; pt++) {
       if (*pt == '`') {		/* clean up character constants */
-	 if (pt[1] == '\'' && pt[2] && pt[3] == '\'' && pt[4] == '\'') {
+	 if (pt[1] == '`' && pt[2] && pt[3] == '\'' && pt[4] == '\'') {
 	    fprintf( str, "`%c'", pt[2] );
 	    pt += 4;
 	 } else if (pt[1] == 'T' && pt[2] == '_') { /* replace symbols */
@@ -330,7 +330,8 @@ static void _src_print_yyerror( FILE *str, const char *message )
 	       fprintf( str, "`%s'", concrete );
 	    else
 	       fprintf( str, "`%s'", buf );
-	 }
+	 } else
+	    putc( *pt, str );
       } else
 	 putc( *pt, str );
    }
@@ -343,7 +344,7 @@ static void _src_print_yyerror( FILE *str, const char *message )
 void src_print_line( FILE *stream, src_Type source )
 {
    sourceType *s   = (sourceType *)source;
-   FILE       *str = stream ?: stdout;
+   FILE       *str = stream ? stream : stdout;
 
    if (s)
       fprintf( str, "%s:%d: %s", s->file, s->line, Lines[ s->index ] );
@@ -384,7 +385,7 @@ static void _src_print_error( FILE *str, sourceType *s, int fudge )
 void src_parse_error( FILE *stream, src_Type source, const char *message )
 {
    sourceType *s   = (sourceType *)source;
-   FILE       *str = stream ?: stdout;
+   FILE       *str = stream ? stream : stdout;
 
    fprintf( str, "%s:%d: ", s->file, s->line );
    _src_print_yyerror( str, message );
