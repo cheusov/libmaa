@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: stringtest.c,v 1.4 1996/01/02 04:09:46 faith Exp $
+ * $Id: stringtest.c,v 1.5 1996/02/26 15:39:13 faith Exp $
  */
 
 #include "maaP.h"
@@ -51,12 +51,16 @@ int main( int argc, char **argv )
    }
 
    for (i = 0; i < count; i++) {
+      const char *this;
+
       sprintf( buf, "key%d", i );
-      if (orig[i] != str_find( buf ))
-	    printf( "Pointers are different for \"%s\": %p and %p\n",
+      this = str_find( buf );
+      if (orig[i] != this)
+	    printf( "Pointers are different for \"%s\" (\"%s\"): %p and %p\n",
 		     buf,
+		     this,
 		     orig[i],
-		     str_find( buf ) );
+		     this );
    }
 
    xfree( orig );

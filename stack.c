@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: stack.c,v 1.3 1995/11/19 19:28:49 faith Exp $
+ * $Id: stack.c,v 1.4 1996/02/26 15:39:12 faith Exp $
  *
  * \section{Stack Routines}
  *
@@ -83,7 +83,7 @@ void stk_destroy( stk_Stack stack )
 void stk_push( stk_Stack stack, void *datum )
 {
    stackType s = (stackType)stack;
-   dataType  d = obstack_alloc( s->obstack, sizeof( struct data ) );
+   dataType  d = (dataType)obstack_alloc( s->obstack, sizeof( struct data ) );
 
    d->datum = datum;
    d->prev  = s->data;

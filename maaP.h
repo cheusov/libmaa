@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.3 1996/02/26 15:23:15 faith Exp $
+ * $Id: maaP.h,v 1.4 1996/02/26 15:39:11 faith Exp $
  */
 
 #ifndef _MAAP_H_
@@ -28,7 +28,7 @@
 #endif
 
 #ifndef __GNUC__
-#define __FUNCTION__ __FILE__ ":" __LINE__
+#define __FUNCTION__ __FILE__
 #endif
 
 /* AIX requires this to be the first thing in the file.  */
