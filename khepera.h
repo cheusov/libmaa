@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Fri Oct 27 00:16:15 1995 by faith@cs.unc.edu
+ * Revised: Tue Oct 31 10:41:58 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.22 1995/10/27 04:20:08 faith Exp $
+ * $Id: khepera.h,v 1.23 1995/10/31 18:47:51 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -448,7 +448,9 @@ extern boolean     sym_rule_find(tre_Node, tre_Node *);
 extern void        sym_rule_install(tre_Node, tre_Node);
 extern const char *sym_mangle_name(tre_Node);
 extern const char *sym_mangle_function_name(tre_Node);
+extern void        sym_dump( FILE *stream, sym_Scope scope );
 
+   
 /* tree.c */
 
 #define TRE_TABLE_SIZE 1000	/* Hard limit for efficient access.  Ick. */
