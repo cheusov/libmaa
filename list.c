@@ -1,7 +1,7 @@
 /* list.c -- List routines for Khepera
  * Created: Wed Nov  9 19:40:00 1994 by faith@cs.unc.edu as stack.c
  * Updated: Tue Jul 25 13:04:50 1995 by faith@cs.unc.edu as list.c
- * Revised: Thu Aug 24 22:25:42 1995 by r.faith@ieee.org
+ * Revised: Sun Aug 27 22:43:12 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.2 1995/08/25 04:38:29 faith Exp $
+ * $Id: list.c,v 1.3 1995/08/28 15:33:20 faith Exp $
  *
  * \section{List Routines}
  *
@@ -39,6 +39,9 @@ typedef struct data {
 } *dataType;
 
 typedef struct list {
+#if KH_MAGIC
+   int          magic;
+#endif
    struct data  *head;
    struct data  *tail;
    unsigned int count;
@@ -46,12 +49,27 @@ typedef struct list {
 
 mem_Object mem;
 
+static void _lst_check( listType l, const char *function )
+{
+   if (!l) err_internal( function, "set is null\n" );
+#if KH_MAGIC
+   if (l->magic != LST_MAGIC)
+      err_internal( function,
+		    "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+		    l->magic,
+		    LST_MAGIC );
+#endif
+}
+
 /* \doc |lst_create| initializes a list object. */
 
 lst_List lst_create( void )
 {
    listType l = xmalloc( sizeof( struct list ) );
 
+#if KH_MAGIC
+   l->magic = LST_MAGIC;
+#endif
    l->head  = NULL;
    l->tail  = NULL;
    l->count = 0;
@@ -76,12 +94,17 @@ void lst_destroy( lst_List list )
    listType l = (listType)list;
    dataType d;
 
+   _lst_check( l, __FUNCTION__ );
+   
    for (d = l->head; d;) {
       dataType next = d->next;
       mem_free_object( mem, d );
       d = next;
    }
 
+#if KH_MAGIC
+   l->magic = LST_MAGIC_FREED;
+#endif
    xfree( list );
 }
 
@@ -92,6 +115,8 @@ void lst_append( lst_List list, const void *datum )
    listType l = (listType)list;
    dataType d = mem_get_object( mem );
 
+   _lst_check( l, __FUNCTION__ );
+   
    d->datum = datum;
    d->next  = NULL;
    if (l->tail) {
@@ -110,6 +135,8 @@ void lst_push( lst_List list, const void *datum )
    listType l = (listType)list;
    dataType d = mem_get_object( mem );
 
+   _lst_check( l, __FUNCTION__ );
+   
    d->datum = datum;
    d->next  = l->head;
    l->head  = d;
@@ -125,6 +152,8 @@ void *lst_pop( lst_List list )
    listType l     = (listType)list;
    void     *datum = NULL;
 
+   _lst_check( l, __FUNCTION__ );
+   
    if (l->head) {
       dataType old = l->head;
 
@@ -146,6 +175,8 @@ void *lst_top( lst_List list )
 {
    listType l = (listType)list;
 
+   _lst_check( l, __FUNCTION__ );
+   
    if (l->head)
 	 return (void *)l->head->datum;	/* Discard const */
    
@@ -160,6 +191,8 @@ void *lst_nth_get( lst_List list, unsigned int n )
    listType     l = (listType)list;
    dataType     d;
    unsigned int i;
+   
+   _lst_check( l, __FUNCTION__ );
    
    if (n < 1 || n > l->count) return NULL;
    for (i = 1, d = l->head; i < n && d; i++, d = d->next);
@@ -179,6 +212,8 @@ void lst_nth_set( lst_List list, unsigned int n, const void *datum )
    listType     l = (listType)list;
    dataType     d;
    unsigned int i;
+   
+   _lst_check( l, __FUNCTION__ );
    
    if (n < 1 || n > l->count)
       err_fatal( __FUNCTION__, "Attempt to change element %d of %d elements\n",
@@ -201,6 +236,8 @@ int lst_member( lst_List list, const void *datum )
    listType l = (listType)list;
    dataType d;
 
+   _lst_check( l, __FUNCTION__ );
+   
    for (d = l->head; d; d = d->next)
       if (d->datum == datum) return 1;
 
@@ -213,6 +250,7 @@ unsigned int lst_length( lst_List list )
 {
    listType l = (listType)list;
    
+   _lst_check( l, __FUNCTION__ );
    return l->count;
 }
 
@@ -226,6 +264,8 @@ void lst_truncate( lst_List list, unsigned int length )
    dataType     next;
    unsigned int i;
 
+   _lst_check( l, __FUNCTION__ );
+   
    if (l->count <= length) return;
 
    if (!length) {
@@ -266,6 +306,8 @@ void lst_truncate_position( lst_List list, lst_Position position )
    dataType     d;
    dataType     next;
 
+   _lst_check( l, __FUNCTION__ );
+   
    if (!position) {
       next = l->head;
       l->head = l->tail = NULL;
@@ -297,17 +339,20 @@ void lst_iterate( lst_List list, int (*iterator)( const void *datum ) )
    listType l = (listType)list;
    dataType d;
 
+   _lst_check( l, __FUNCTION__ );
+   
    for (d = l->head; d; d = d->next) if (iterator( d->datum )) return;
 }
 
 /* \doc |lst_init_position| returns a position marker for the head of the
    list.  This marker can be used with |lst_next_position| and
-   |lst_next_position|. */
+   |lst_get_position|. */
 
 lst_Position lst_init_position( lst_List list )
 {
    listType l = (listType)list;
 
+   _lst_check( l, __FUNCTION__ );
    return l->head;
 }
 
@@ -319,10 +364,9 @@ lst_Position lst_last_position( lst_List list )
 {
    listType l = (listType)list;
 
+   _lst_check( l, __FUNCTION__ );
    return l->tail;
 }
-
-
 
 /* \doc |lst_next_position| returns a position marker for the element after
    the element marked by |position|, or "NULL" if |position| is the last
@@ -345,6 +389,8 @@ lst_Position lst_nth_position( lst_List list, unsigned int n )
    dataType     d;
    unsigned int i;
    
+   _lst_check( l, __FUNCTION__ );
+   
    if (n < 1 || n > l->count) return NULL;
    for (i = 1, d = l->head; i < n && d; i++, d = d->next);
    if (i != n)
@@ -354,7 +400,7 @@ lst_Position lst_nth_position( lst_List list, unsigned int n )
 }
 
 /* \doc |lst_get_position| returns the datum associated with the |position|
-   marker. */
+   marker, or "NULL" if there is no such element. */
 
 void *lst_get_position( lst_Position position )
 {

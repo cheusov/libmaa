@@ -1,6 +1,6 @@
 /* memory.c -- Memory management for Khepera
  * Created: Thu Dec 22 09:58:38 1994 by faith@cs.unc.edu
- * Revised: Wed Aug  9 16:13:03 1995 by r.faith@ieee.org
+ * Revised: Sun Aug 27 21:36:11 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: memory.c,v 1.2 1995/08/24 14:59:18 faith Exp $
+ * $Id: memory.c,v 1.3 1995/08/28 15:33:21 faith Exp $
  *
  * \section{Memory Management Routines}
  *
@@ -63,7 +63,10 @@ typedef struct objectInfo {
 
 
 #if !KH_MAGIC
-#define _mem_magic_strings(i,function) /*  */
+#define _mem_magic_strings(i,function)                                        \
+   do {                                                                       \
+      if (!i) err_internal( function, "mem_String is null\n" );               \
+   } while (0);
 #else
 static void _mem_magic_strings( stringInfo i, const char *function )
 {

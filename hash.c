@@ -1,6 +1,6 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@cs.unc.edu
- * Revised: Tue Jul 25 14:40:12 1995 by r.faith@ieee.org
+ * Revised: Sun Aug 27 22:56:58 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.2 1995/08/24 14:59:11 faith Exp $
+ * $Id: hash.c,v 1.3 1995/08/28 15:33:18 faith Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -42,6 +42,9 @@ typedef struct bucket {
 } *bucketType;
 
 typedef struct table {
+#if KH_MAGIC
+   int           magic;
+#endif
    unsigned long prime;
    unsigned long entries;
    bucketType    *buckets;
@@ -53,6 +56,17 @@ typedef struct table {
    int           (*compare)( const void *, const void * );
 } *tableType;
    
+static void _hsh_check( tableType t, const char *function )
+{
+   if (!t) err_internal( function, "table is null\n" );
+#if KH_MAGIC
+   if (t->magic != HSH_MAGIC)
+      err_internal( function,
+		    "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+		    t->magic,
+		    HSH_MAGIC );
+#endif
+}
 
 static hsh_HashTable _hsh_create( unsigned long seed,
 				  unsigned long (*hash)( const void * ),
@@ -64,6 +78,9 @@ static hsh_HashTable _hsh_create( unsigned long seed,
    unsigned long prime = prm_next_prime( seed );
    
    t             = xmalloc( sizeof( struct table ) );
+#if KH_MAGIC
+   t->magic      = HSH_MAGIC;
+#endif
    t->prime      = prime;
    t->entries    = 0;
    t->buckets    = xmalloc( prime * sizeof( struct bucket ) );
@@ -114,6 +131,7 @@ static void _hsh_destroy_buckets( hsh_HashTable table )
    unsigned long i;
    tableType     t    = (tableType)table;
 
+   _hsh_check( t, __FUNCTION__ );
    for (i = 0; i < t->prime; i++) {
       bucketType b = t->buckets[i];
 
@@ -131,7 +149,14 @@ static void _hsh_destroy_buckets( hsh_HashTable table )
 
 static void _hsh_destroy_table( hsh_HashTable table )
 {
-   xfree( table );		/* terminal */
+   tableType t = (tableType)table;
+   
+   _hsh_check( t, __FUNCTION__ );
+   
+#if KH_MAGIC
+   t->magic = HSH_MAGIC_FREED;
+#endif
+   xfree( t );			/* terminal */
 }
 
 /* \doc |hsh_destroy| frees all of the memory associated with the hash
@@ -156,6 +181,8 @@ static void _hsh_insert( hsh_HashTable table,
    tableType     t = (tableType)table;
    unsigned long h = hash % t->prime;
    bucketType    b;
+
+   _hsh_check( t, __FUNCTION__ );
    
    b        = xmalloc( sizeof( struct bucket ) );
    b->key   = key;
@@ -186,6 +213,8 @@ int hsh_insert( hsh_HashTable table,
    unsigned long hashValue = t->hash( key );
    unsigned long h;
 
+   _hsh_check( t, __FUNCTION__ );
+   
 				/* Keep table less than half full */
    if (t->entries * 2 > t->prime) {
       tableType     new = _hsh_create( t->prime * 3, t->hash, t->compare );
@@ -230,6 +259,8 @@ int hsh_delete( hsh_HashTable table, const void *key )
    tableType     t = (tableType)table;
    unsigned long h = t->hash( key ) % t->prime;
 
+   _hsh_check( t, __FUNCTION__ );
+   
    if (t->buckets[h]) {
       bucketType pt;
       bucketType prev;
@@ -259,6 +290,8 @@ const void *hsh_retrieve( hsh_HashTable table,
    tableType     t = (tableType)table;
    unsigned long h = t->hash( key ) % t->prime;
 
+   _hsh_check( t, __FUNCTION__ );
+   
    ++t->retrievals;
    if (t->buckets[h]) {
       bucketType pt;
@@ -296,6 +329,8 @@ void hsh_iterate( hsh_HashTable table,
    tableType     t = (tableType)table;
    unsigned long i;
 
+   _hsh_check( t, __FUNCTION__ );
+   
    for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
 	 bucketType pt;
@@ -317,6 +352,8 @@ hsh_Stats hsh_get_stats( hsh_HashTable table )
    unsigned long i;
    int           count;
 
+   _hsh_check( t, __FUNCTION__ );
+   
    s->size           = t->prime;
    s->resizings      = t->resizings;
    s->entries        = 0;
@@ -356,6 +393,8 @@ void hsh_print_stats( hsh_HashTable table, FILE *stream )
    FILE      *str = stream ? stream : stdout;
    hsh_Stats s    = hsh_get_stats( table );
 
+   _hsh_check( table, __FUNCTION__ );
+   
    fprintf( str, "Statistics for hash table at %p:\n", table );
    fprintf( str, "   %lu resizings to %lu total\n", s->resizings, s->size );
    fprintf( str, "   %lu entries (%lu buckets used, %lu without overflow)\n",

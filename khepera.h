@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Thu Aug 24 23:41:22 1995 by r.faith@ieee.org
+ * Revised: Sun Aug 27 22:56:55 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.3 1995/08/25 04:38:28 faith Exp $
+ * $Id: khepera.h,v 1.4 1995/08/28 15:33:19 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -41,6 +41,12 @@
 #endif
 
 #if KH_MAGIC
+#define HSH_MAGIC               0x01020304
+#define HSH_MAGIC_FREED         0x10203040
+#define SET_MAGIC               0x02030405
+#define SET_MAGIC_FREED         0x20304050
+#define LST_MAGIC               0x03040506
+#define LST_MAGIC_FREED         0x30405060
 #define MEM_STRINGS_MAGIC       0x23232323
 #define MEM_STRINGS_MAGIC_FREED 0x32323232
 #define MEM_OBJECTS_MAGIC       0x42424242
@@ -120,6 +126,7 @@ extern int           hsh_pointer_compare( const void *key1, const void *key2 );
 /* set.c */
 
 typedef void *set_Set;
+typedef void *set_Position;
 
 typedef struct set_Stats{
    unsigned long size;		 /* Size of table */
@@ -154,6 +161,27 @@ extern int                 set_equal( set_Set set1, set_Set set2 );
 extern set_Stats           set_get_stats( set_Set set );
 extern void                set_print_stats( set_Set set, FILE *stream );
 extern int                 set_count( set_Set set );
+extern set_Position        set_init_position( set_Set set );
+extern set_Position        set_next_position( set_Set set,
+					      set_Position position );
+extern void                *set_get_position( set_Position position );
+extern int                 set_self_organization( set_Set set, int flag );
+
+#define SET_POSITION_INIT(P,S) ((P)=set_init_position(S))
+#define SET_POSITION_NEXT(P,S) ((P)=set_next_POSITION(S,P))
+#define SET_POSITION_OK(P)     (P)
+#define SET_POSITION_GET(P,E)  ((E)=set_get_position(P))
+
+/* iterate over all entries E in set S */
+#define SET_ITERATE(S,P,E)                                                   \
+   for (SET_POSITION_INIT((P),(S));                                          \
+	SET_POSITION_OK(P) && (SET_POSITION_GET((P),(E)),1);                 \
+	SET_POSITION_NEXT((S),(P)))
+
+/* if the SET_ITERATE loop is exited before all element in the set are
+   seen, then SET_ITERATE_END should be called.  Calling this function
+   after complete loops does no harm.*/
+#define SET_ITERATE_END(S) set_self_organization(S,1)
 
 /* stack.c */
 
@@ -202,16 +230,16 @@ extern void         _lst_shutdown( void );
 
 /* iterate over all entries E in list L */
 #define LST_ITERATE(L,P,E)                                                  \
-   for ( LST_POSITION_INIT((P),(L));                                        \
-         LST_POSITION_OK(P) && (LST_POSITION_GET((P),(E)),1);               \
-         LST_POSITION_NEXT(P))
+   for (LST_POSITION_INIT((P),(L));                                         \
+        LST_POSITION_OK(P) && (LST_POSITION_GET((P),(E)),1);                \
+        LST_POSITION_NEXT(P))
 
 /* iterate over all entries in lists L1 and L2 */
 #define LST_ITERATE2(L1,L2,P1,P2,E1,E2)                                      \
-   for ( LST_POSITION_INIT((P1),(L1)), LST_POSITION_INIT((P2),(L2));         \
-	 LST_POSITION_OK(P1) && LST_POSITION_OK(P2)                          \
-	    && (LST_POSITION_GET((P1),(E1)),LST_POSITION_GET((P2),(E2)),1);  \
-	 LST_POSITION_NEXT(P1), LST_POSITION_NEXT(P2))
+   for (LST_POSITION_INIT((P1),(L1)), LST_POSITION_INIT((P2),(L2));          \
+	LST_POSITION_OK(P1) && LST_POSITION_OK(P2)                           \
+	   && (LST_POSITION_GET((P1),(E1)),LST_POSITION_GET((P2),(E2)),1);   \
+	LST_POSITION_NEXT(P1), LST_POSITION_NEXT(P2))
 
 /* error.c */
 

@@ -1,6 +1,6 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Thu Aug 24 23:41:55 1995 by r.faith@ieee.org
+ * Revised: Sun Aug 27 22:56:56 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.3 1995/08/25 04:38:31 faith Exp $
+ * $Id: set.c,v 1.4 1995/08/28 15:33:22 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -43,6 +43,9 @@ typedef struct bucket {
 } *bucketType;
 
 typedef struct set {
+#if KH_MAGIC
+   int           magic;
+#endif
    unsigned long prime;
    unsigned long entries;
    bucketType    *buckets;
@@ -52,8 +55,20 @@ typedef struct set {
    unsigned long misses;
    unsigned long (*hash)( const void * );
    int           (*compare)( const void *, const void * );
+   int           selfOrganize;
 } *setType;
-   
+
+static void _set_check( setType t, const char *function )
+{
+   if (!t) err_internal( function, "set is null\n" );
+#if KH_MAGIC
+   if (t->magic != SET_MAGIC)
+      err_internal( function,
+		    "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+		    t->magic,
+		    SET_MAGIC );
+#endif
+}
 
 static set_Set _set_create( unsigned long seed,
 			    set_HashFunction hash,
@@ -63,16 +78,20 @@ static set_Set _set_create( unsigned long seed,
    unsigned long i;
    unsigned long prime = prm_next_prime( seed );
    
-   t             = xmalloc( sizeof( struct set ) );
-   t->prime      = prime;
-   t->entries    = 0;
-   t->buckets    = xmalloc( t->prime * sizeof( struct bucket ) );
-   t->resizings  = 0;
-   t->retrievals = 0;
-   t->hits       = 0;
-   t->misses     = 0;
-   t->hash       = hash ? hash : hsh_string_hash;
-   t->compare    = compare ? compare : hsh_string_compare;
+   t               = xmalloc( sizeof( struct set ) );
+#if KH_MAGIC
+   t->magic        = SET_MAGIC;
+#endif
+   t->prime        = prime;
+   t->entries      = 0;
+   t->buckets      = xmalloc( t->prime * sizeof( struct bucket ) );
+   t->resizings    = 0;
+   t->retrievals   = 0;
+   t->hits         = 0;
+   t->misses       = 0;
+   t->hash         = hash ? hash : hsh_string_hash;
+   t->compare      = compare ? compare : hsh_string_compare;
+   t->selfOrganize = 1;
 
    for (i = 0; i < t->prime; i++) t->buckets[i] = NULL;
 
@@ -110,6 +129,7 @@ set_HashFunction set_get_hash( set_Set set )
 {
    setType t = (setType)set;
 
+   _set_check( t, __FUNCTION__ );
    return t->hash;
 }
 
@@ -117,6 +137,7 @@ set_CompareFunction set_get_compare( set_Set set )
 {
    setType t = (setType)set;
 
+   _set_check( t, __FUNCTION__ );
    return t->compare;
 }
 
@@ -125,6 +146,7 @@ static void _set_destroy_buckets( set_Set set )
    unsigned long i;
    setType       t = (setType)set;
 
+   _set_check( t, __FUNCTION__ );
    for (i = 0; i < t->prime; i++) {
       bucketType b = t->buckets[i];
 
@@ -142,7 +164,14 @@ static void _set_destroy_buckets( set_Set set )
 
 static void _set_destroy_table( set_Set set )
 {
-   xfree( set );		/* terminal */
+   setType t = (setType)set;
+   
+   _set_check( t, __FUNCTION__ );
+   
+#if KH_MAGIC
+   t->magic = SET_MAGIC_FREED;
+#endif
+   xfree( t );			/* terminal */
 }
 
 /* \doc |set_destroy| frees all of the memory associated with the set
@@ -165,6 +194,8 @@ static void _set_insert( set_Set set, unsigned int hash, const void *elem )
    unsigned long h = hash % t->prime;
    bucketType    b;
 
+   _set_check( t, __FUNCTION__ );
+   
    b        = xmalloc( sizeof( struct bucket ) );
    b->hash  = hash;
    b->elem  = elem;
@@ -190,6 +221,8 @@ int set_insert( set_Set set, const void *elem )
    unsigned long hashValue = t->hash( elem );
    unsigned long h;
 
+   _set_check( t, __FUNCTION__ );
+   
 				/* Keep table less than half full */
    if (t->entries * 2 > t->prime) {
       setType       new = _set_create( t->prime * 3, t->hash, t->compare );
@@ -233,6 +266,8 @@ int set_delete( set_Set set, const void *elem )
    setType       t = (setType)set;
    unsigned long h = t->hash( elem ) % t->prime;
 
+   _set_check( t, __FUNCTION__ );
+   
    if (t->buckets[h]) {
       bucketType pt;
       bucketType prev;
@@ -260,6 +295,8 @@ int set_member( set_Set set, const void *elem )
    setType       t = (setType)set;
    unsigned long h = t->hash( elem ) % t->prime;
 
+   _set_check( t, __FUNCTION__ );
+   
    ++t->retrievals;
    if (t->buckets[h]) {
       bucketType pt;
@@ -269,7 +306,7 @@ int set_member( set_Set set, const void *elem )
 	    if (!t->compare( pt->elem, elem )) {
 	       if (!prev) {
 		  ++t->hits;
-	       } else {
+	       } else if (t->selfOrganize) {
 				/* Self organize */
 		  prev->next    = pt->next;
 		  pt->next      = t->buckets[h];
@@ -295,16 +332,88 @@ void set_iterate( set_Set set,
 {
    setType       t = (setType)set;
    unsigned long i;
+   int           savedSelfOrganize;
 
+   _set_check( t, __FUNCTION__ );
+   
+   savedSelfOrganize = t->selfOrganize;
+   t->selfOrganize   = 0;	/* avoid iterator error if set_member called */
+   
    for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
 	 bucketType pt;
 	 
 	 for (pt = t->buckets[i]; pt; pt = pt->next)
-	       if (iterator( pt->elem ))
-		     return;
+	    if (iterator( pt->elem )) {
+	       t->selfOrganize = savedSelfOrganize;
+	       return;
+	    }
       }
    }
+   t->selfOrganize = savedSelfOrganize;
+}
+
+/* \doc |set_init_position| returns a position marker for some arbitary
+   first element in the set.  This marker can be used with
+   |set_next_position| and |set_get_position|. */
+
+set_Position set_init_position( set_Set set )
+{
+   setType       t = (setType)set;
+   unsigned long i;
+
+   _set_check( t, __FUNCTION__ );
+   for (i = 0; i < t->prime; i++) if (t->buckets[i]) return t->buckets[i];
+   return NULL;
+}
+
+/* \doc |set_next_position| returns a position marker for the next element
+   in the set.  Elements are in arbitrary order based on their positions in
+   the hash table. */
+
+set_Position set_next_position( set_Set set, set_Position position )
+{
+   setType       t = (setType)set;
+   bucketType    b = (bucketType)position;
+   unsigned long i;
+   unsigned long h;
+
+   _set_check( t, __FUNCTION__ );
+   
+   if (!b) return NULL;
+   if (b->next) return b->next;
+
+   for (h = b->hash % t->prime, i = h + 1; i < t->prime; i++)
+      if (t->buckets[i]) return t->buckets[i];
+   
+   return NULL;
+}
+
+/* \doc |set_get_position| returns the element associated with the
+   |position| marker, or "NULL" if there is no such element. */
+
+void *set_get_position( set_Position position )
+{
+   bucketType b = (bucketType)position;
+
+   if (!b) return NULL;
+   return (void *)b->elem;	/* Discard const */
+}
+
+/* \doc |set_self_organization| sets the |selfOrganize| flag for the |set|
+   to |flag|.  |flag| should be 0 or 1.  The value of the previous flag is
+   returned. */
+
+int set_self_organization( set_Set set, int flag )
+{
+   setType t = (setType)set;
+   int     current;
+
+   _set_check( t, __FUNCTION__ );
+
+   current         = t->selfOrganize;
+   t->selfOrganize = flag;
+   return current;
 }
 
 /* \doc |set_union| returns a new set which is the union of |set1| and
@@ -319,6 +428,9 @@ set_Set set_union( set_Set set1, set_Set set2 )
    set_Set       set;
    unsigned long i;
 
+   _set_check( t1, __FUNCTION__ );
+   _set_check( t2, __FUNCTION__ );
+   
    if (t1->hash != t2->hash)
 	 err_fatal( __FUNCTION__,
 		    "Sets do not have identical hash functions\n" );
@@ -361,7 +473,11 @@ set_Set set_inter( set_Set set1, set_Set set2 )
    setType       t2 = (setType)set2;
    set_Set       set;
    unsigned long i;
+   int           savedSelfOrganize;
 
+   _set_check( t1, __FUNCTION__ );
+   _set_check( t2, __FUNCTION__ );
+   
    if (t1->hash != t2->hash)
 	 err_fatal( __FUNCTION__,
 		    "Sets do not have identical hash functions\n" );
@@ -372,6 +488,8 @@ set_Set set_inter( set_Set set1, set_Set set2 )
 
    set = set_create( t1->hash, t1->compare );
 
+   savedSelfOrganize = t2->selfOrganize;
+   t2->selfOrganize  = 0;	/* save time on set_member */
    for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
@@ -381,6 +499,7 @@ set_Set set_inter( set_Set set1, set_Set set2 )
 		   set_insert( set, pt->elem );
       }
    }
+   t2->selfOrganize = savedSelfOrganize;
 
    return set;
 }
@@ -397,7 +516,11 @@ set_Set set_diff( set_Set set1, set_Set set2 )
    setType       t2 = (setType)set2;
    set_Set       set;
    unsigned long i;
+   int           savedSelfOrganize;
 
+   _set_check( t1, __FUNCTION__ );
+   _set_check( t2, __FUNCTION__ );
+   
    if (t1->hash != t2->hash)
 	 err_fatal( __FUNCTION__,
 		    "Sets do not have identical hash functions\n" );
@@ -408,6 +531,8 @@ set_Set set_diff( set_Set set1, set_Set set2 )
 
    set = set_create( t1->hash, t1->compare );
 
+   savedSelfOrganize = t2->selfOrganize;
+   t2->selfOrganize  = 0;	/* save time on set_member */
    for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
@@ -417,6 +542,7 @@ set_Set set_diff( set_Set set1, set_Set set2 )
 		   set_insert( set, pt->elem );
       }
    }
+   t2->selfOrganize = savedSelfOrganize;
 
    return set;
 }
@@ -431,7 +557,11 @@ int set_equal( set_Set set1, set_Set set2 )
    setType       t1 = (setType)set1;
    setType       t2 = (setType)set2;
    unsigned long i;
+   int           savedSelfOrganize;
 
+   _set_check( t1, __FUNCTION__ );
+   _set_check( t2, __FUNCTION__ );
+   
    if (t1->hash != t2->hash)
 	 err_fatal( __FUNCTION__,
 		    "Sets do not have identical hash functions\n" );
@@ -442,14 +572,20 @@ int set_equal( set_Set set1, set_Set set2 )
 
    if (t1->entries != t2->entries) return 0; /* not equal */
 
+   savedSelfOrganize = t2->selfOrganize;
+   t2->selfOrganize  = 0;	/* save time on set_member */
    for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
 	 
 	 for (pt = t1->buckets[i]; pt; pt = pt->next)
-	       if (!set_member( t2, pt->elem )) return 0; /* not equal */
+	       if (!set_member( t2, pt->elem )) {
+		  t2->selfOrganize = savedSelfOrganize;
+		  return 0; /* not equal */
+	       }
       }
    }
+   t2->selfOrganize = savedSelfOrganize;
 
    return 1;			/* equal */
 }
@@ -458,6 +594,7 @@ int set_count( set_Set set )
 {
    setType t = (setType)set;
 
+   _set_check( t, __FUNCTION__ );
    return t->entries;
 }
 
@@ -471,6 +608,8 @@ set_Stats set_get_stats( set_Set set )
    unsigned long i;
    unsigned long count;
 
+   _set_check( t, __FUNCTION__ );
+   
    s->size           = t->prime;
    s->resizings      = t->resizings;
    s->entries        = 0;
@@ -512,6 +651,8 @@ void set_print_stats( set_Set set, FILE *stream )
    FILE      *str = stream ? stream : stdout;
    set_Stats  s   = set_get_stats( t );
 
+   _set_check( t, __FUNCTION__ );
+   
    fprintf( str, "Statistics for set at %p:\n", set );
    fprintf( str, "   %lu resizings to %lu total\n", s->resizings, s->size );
    fprintf( str, "   %lu entries (%lu buckets used, %lu without overflow)\n",
