@@ -1,6 +1,6 @@
 /* set.c -- Set routines for Khepera
  * Created: Wed Nov  9 13:31:24 1994 by faith@cs.unc.edu
- * Revised: Sun Aug 27 22:56:56 1995 by r.faith@ieee.org
+ * Revised: Tue Aug 29 03:47:05 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.4 1995/08/28 15:33:22 faith Exp $
+ * $Id: set.c,v 1.5 1995/08/29 18:16:23 faith Exp $
  *
  * \section{Set Routines}
  *
@@ -55,7 +55,7 @@ typedef struct set {
    unsigned long misses;
    unsigned long (*hash)( const void * );
    int           (*compare)( const void *, const void * );
-   int           selfOrganize;
+   int           readonly;
 } *setType;
 
 static void _set_check( setType t, const char *function )
@@ -91,7 +91,7 @@ static set_Set _set_create( unsigned long seed,
    t->misses       = 0;
    t->hash         = hash ? hash : hsh_string_hash;
    t->compare      = compare ? compare : hsh_string_compare;
-   t->selfOrganize = 1;
+   t->readonly     = 0;
 
    for (i = 0; i < t->prime; i++) t->buckets[i] = NULL;
 
@@ -184,6 +184,12 @@ static void _set_destroy_table( set_Set set )
 
 void set_destroy( set_Set set )
 {
+   setType       t = (setType)set;
+
+   _set_check( t, __FUNCTION__ );
+
+   if (t->readonly)
+      err_internal( __FUNCTION__, "Attempt to destroy readonly table\n" );
    _set_destroy_buckets( set );
    _set_destroy_table( set );
 }
@@ -222,6 +228,9 @@ int set_insert( set_Set set, const void *elem )
    unsigned long h;
 
    _set_check( t, __FUNCTION__ );
+
+   if (t->readonly)
+      err_internal( __FUNCTION__, "Attempt to insert into readonly table\n" );
    
 				/* Keep table less than half full */
    if (t->entries * 2 > t->prime) {
@@ -267,6 +276,9 @@ int set_delete( set_Set set, const void *elem )
    unsigned long h = t->hash( elem ) % t->prime;
 
    _set_check( t, __FUNCTION__ );
+
+   if (t->readonly)
+      err_internal( __FUNCTION__, "Attempt to delete from readonly set\n" );
    
    if (t->buckets[h]) {
       bucketType pt;
@@ -306,7 +318,7 @@ int set_member( set_Set set, const void *elem )
 	    if (!t->compare( pt->elem, elem )) {
 	       if (!prev) {
 		  ++t->hits;
-	       } else if (t->selfOrganize) {
+	       } else if (!t->readonly) {
 				/* Self organize */
 		  prev->next    = pt->next;
 		  pt->next      = t->buckets[h];
@@ -332,12 +344,12 @@ void set_iterate( set_Set set,
 {
    setType       t = (setType)set;
    unsigned long i;
-   int           savedSelfOrganize;
+   int           savedReadonly;
 
    _set_check( t, __FUNCTION__ );
-   
-   savedSelfOrganize = t->selfOrganize;
-   t->selfOrganize   = 0;	/* avoid iterator error if set_member called */
+
+   savedReadonly = t->readonly;
+   t->readonly   = 1;
    
    for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
@@ -345,12 +357,13 @@ void set_iterate( set_Set set,
 	 
 	 for (pt = t->buckets[i]; pt; pt = pt->next)
 	    if (iterator( pt->elem )) {
-	       t->selfOrganize = savedSelfOrganize;
+	       t->readonly = savedReadonly;
 	       return;
 	    }
       }
    }
-   t->selfOrganize = savedSelfOrganize;
+   
+   t->readonly = savedReadonly;
 }
 
 /* \doc |set_init_position| returns a position marker for some arbitary
@@ -363,7 +376,10 @@ set_Position set_init_position( set_Set set )
    unsigned long i;
 
    _set_check( t, __FUNCTION__ );
-   for (i = 0; i < t->prime; i++) if (t->buckets[i]) return t->buckets[i];
+   for (i = 0; i < t->prime; i++) if (t->buckets[i]) {
+      t->readonly = 1;
+      return t->buckets[i];
+   }
    return NULL;
 }
 
@@ -380,12 +396,17 @@ set_Position set_next_position( set_Set set, set_Position position )
 
    _set_check( t, __FUNCTION__ );
    
-   if (!b) return NULL;
+   if (!b) {
+      t->readonly = 0;
+      return NULL;
+   }
+   
    if (b->next) return b->next;
 
    for (h = b->hash % t->prime, i = h + 1; i < t->prime; i++)
       if (t->buckets[i]) return t->buckets[i];
-   
+
+   t->readonly = 0;
    return NULL;
 }
 
@@ -400,19 +421,21 @@ void *set_get_position( set_Position position )
    return (void *)b->elem;	/* Discard const */
 }
 
-/* \doc |set_self_organization| sets the |selfOrganize| flag for the |set|
-   to |flag|.  |flag| should be 0 or 1.  The value of the previous flag is
-   returned. */
+/* \doc |set_readonly| sets the |readonly| flag for the |set| to |flag|.
+   |flag| should be 0 or 1.  The value of the previous flag is returned.
+   When a set is marked as readonly, self-organization of the
+   bucket-overflow lists will not take place, and any attempt to modify the
+   list (e.g., insertion or deletion) will result in an error. */
 
-int set_self_organization( set_Set set, int flag )
+int set_readonly( set_Set set, int flag )
 {
    setType t = (setType)set;
    int     current;
 
    _set_check( t, __FUNCTION__ );
 
-   current         = t->selfOrganize;
-   t->selfOrganize = flag;
+   current     = t->readonly;
+   t->readonly = flag;
    return current;
 }
 
@@ -473,7 +496,7 @@ set_Set set_inter( set_Set set1, set_Set set2 )
    setType       t2 = (setType)set2;
    set_Set       set;
    unsigned long i;
-   int           savedSelfOrganize;
+   int           savedReadonly;
 
    _set_check( t1, __FUNCTION__ );
    _set_check( t2, __FUNCTION__ );
@@ -488,8 +511,8 @@ set_Set set_inter( set_Set set1, set_Set set2 )
 
    set = set_create( t1->hash, t1->compare );
 
-   savedSelfOrganize = t2->selfOrganize;
-   t2->selfOrganize  = 0;	/* save time on set_member */
+   savedReadonly = t2->readonly;
+   t2->readonly  = 1;		/* save time on set_member */
    for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
@@ -499,7 +522,7 @@ set_Set set_inter( set_Set set1, set_Set set2 )
 		   set_insert( set, pt->elem );
       }
    }
-   t2->selfOrganize = savedSelfOrganize;
+   t2->readonly = savedReadonly;
 
    return set;
 }
@@ -516,7 +539,7 @@ set_Set set_diff( set_Set set1, set_Set set2 )
    setType       t2 = (setType)set2;
    set_Set       set;
    unsigned long i;
-   int           savedSelfOrganize;
+   int           savedReadonly;
 
    _set_check( t1, __FUNCTION__ );
    _set_check( t2, __FUNCTION__ );
@@ -531,8 +554,8 @@ set_Set set_diff( set_Set set1, set_Set set2 )
 
    set = set_create( t1->hash, t1->compare );
 
-   savedSelfOrganize = t2->selfOrganize;
-   t2->selfOrganize  = 0;	/* save time on set_member */
+   savedReadonly = t2->readonly;
+   t2->readonly  = 1;		/* save time on set_member */
    for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
@@ -542,7 +565,7 @@ set_Set set_diff( set_Set set1, set_Set set2 )
 		   set_insert( set, pt->elem );
       }
    }
-   t2->selfOrganize = savedSelfOrganize;
+   t2->readonly = savedReadonly;
 
    return set;
 }
@@ -557,7 +580,7 @@ int set_equal( set_Set set1, set_Set set2 )
    setType       t1 = (setType)set1;
    setType       t2 = (setType)set2;
    unsigned long i;
-   int           savedSelfOrganize;
+   int           savedReadonly;
 
    _set_check( t1, __FUNCTION__ );
    _set_check( t2, __FUNCTION__ );
@@ -572,20 +595,20 @@ int set_equal( set_Set set1, set_Set set2 )
 
    if (t1->entries != t2->entries) return 0; /* not equal */
 
-   savedSelfOrganize = t2->selfOrganize;
-   t2->selfOrganize  = 0;	/* save time on set_member */
+   savedReadonly = t2->readonly;
+   t2->readonly  = 1;		/* save time on set_member */
    for (i = 0; i < t1->prime; i++) {
       if (t1->buckets[i]) {
 	 bucketType pt;
 	 
 	 for (pt = t1->buckets[i]; pt; pt = pt->next)
 	       if (!set_member( t2, pt->elem )) {
-		  t2->selfOrganize = savedSelfOrganize;
+		  t2->readonly = savedReadonly;
 		  return 0; /* not equal */
 	       }
       }
    }
-   t2->selfOrganize = savedSelfOrganize;
+   t2->readonly = savedReadonly;
 
    return 1;			/* equal */
 }

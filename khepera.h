@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Tue Aug 29 02:51:23 1995 by r.faith@ieee.org
+ * Revised: Tue Aug 29 03:45:53 1995 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.6 1995/08/29 07:10:20 faith Exp $
+ * $Id: khepera.h,v 1.7 1995/08/29 18:16:21 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -165,7 +165,7 @@ extern set_Position        set_init_position( set_Set set );
 extern set_Position        set_next_position( set_Set set,
 					      set_Position position );
 extern void                *set_get_position( set_Position position );
-extern int                 set_self_organization( set_Set set, int flag );
+extern int                 set_readonly( set_Set set, int flag );
 
 #define SET_POSITION_INIT(P,S) ((P)=set_init_position(S))
 #define SET_POSITION_NEXT(P,S) ((P)=set_next_position(S,P))
@@ -181,7 +181,7 @@ extern int                 set_self_organization( set_Set set, int flag );
 /* if the SET_ITERATE loop is exited before all element in the set are
    seen, then SET_ITERATE_END should be called.  Calling this function
    after complete loops does no harm.*/
-#define SET_ITERATE_END(S) set_self_organization(S,1)
+#define SET_ITERATE_END(S) set_readonly(S,0)
 
 /* stack.c */
 
