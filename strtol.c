@@ -16,12 +16,21 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
+#if 0
 #include <ansidecl.h>
+#endif
 #include <ctype.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <errno.h>
 
+#ifdef __sparc__
+extern int errno;
+extern int toupper(int);
+#endif
+
+#define CONST const
 
 #ifndef	UNSIGNED
 #define	UNSIGNED	0
@@ -39,8 +48,7 @@ unsigned long int
 #else
 long int
 #endif
-DEFUN(strtol, (nptr, endptr, base),
-      CONST char *nptr AND char **endptr AND int base)
+strtol(CONST char *nptr, char **endptr, int base)
 {
   int negative;
   register unsigned long int cutoff;
