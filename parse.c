@@ -1,6 +1,6 @@
 /* parse.c -- Support for calling parsers from Libmaa
  * Created: Mon Apr 24 17:40:51 1995 by faith@cs.unc.edu
- * Revised: Sun Mar 16 09:38:05 1997 by faith@cs.unc.edu
+ * Revised: Tue May 20 23:14:32 1997 by faith@acm.org
  * Copyright 1995, 1997 Rickard E. Faith (faith@cs.unc.edu)
  * 
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: parse.c,v 1.3 1997/03/18 01:37:41 faith Exp $
+ * $Id: parse.c,v 1.4 1997/05/21 04:22:31 faith Exp $
  *
  * \section{Parsing (and Lexing) Support}
  * 
@@ -193,3 +193,16 @@ double prs_make_double( const char *string, int length )
    buffer[length] = '\0';
    return atof( buffer );
 }
+
+
+#if defined(__linux__) && defined(__ELF__)
+#include <gnu-stabs.h>
+# ifdef weak_symbol
+int yydebug;
+FILE *yyin;
+int yyparse( void ) { return 0; }
+weak_symbol(yydebug);
+weak_symbol(yyin);
+weak_symbol(yyparse);
+# endif
+#endif

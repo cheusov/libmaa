@@ -1,7 +1,7 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Thu Apr 17 14:04:42 1997 by faith@cs.unc.edu
-# Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
+# Revised: Tue May 20 23:50:52 1997 by faith@acm.org
+# Copyright 1995, 1996, 1997 Rickard E. Faith (faith@acm.org)
 # 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -17,23 +17,30 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.32 1997/04/21 15:23:33 faith Exp $
+# $Id: Makefile.in,v 1.33 1997/05/21 04:22:28 faith Exp $
 #
-
-MAA_MAJOR=0
-MAA_MINOR=90
-
-.SUFFIXES:
-.SUFFIXES: .c .o
 
 ifneq (,)
 This makefile requires GNU Make.
 endif
 
+MAA_MAJOR=@MAA_MAJOR@
+MAA_MINOR=@MAA_MINOR@
+VER=$(MAA_MAJOR).$(MAA_MINOR)
+VERSION=$(VER).$(shell fgrep Revision version.c \
+	| head -1 \
+	| sed 's,^.*Revision: [^.]*.,,' \
+	| sed 's, $$.*$$,,')
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+
 srcdir=		@srcdir@
 VPATH=		@srcdir@
 prefix=		@prefix@
 exec_prefix=	@exec_prefix@
+libdir=         @libdir@
+includedir=     @includedir@
 subdirs=        @subdirs@ doc
 
 SHELL=		/bin/sh
@@ -50,7 +57,9 @@ LDFLAGS=        @LDFLAGS@
 VFLAGS=         -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
 XTRACFLAGS=     @WCFLAGS@ @XTRACFLAGS@ @DEFS@ $(VFLAGS) @CPPFLAGS@ -I.
 XTRALDFLAGS=    @WLDFLAGS@ @XTRALDFLAGS@ -L.
+RPATHFLAGS=     @RPATHFLAGS@
 LDLIBS=		-lmaa @LIBS@ -lm
+LDSHARED=       @LDSHARED@
 
 HEADERS= config.h maa.h maaP.h decl.h obstack.h @XTRAHEADERS@
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
@@ -62,13 +71,24 @@ TESTS=	 settest hashtest stringtest debugtest \
 	 primetest listtest bittest argtest sltest prtest basetest
 EXES=    memtest prtest
 
-LIBS=    libmaa.a
+LIBS=    @TARGETLIBS@
 
 lib: $(LIBS)
 
 all: $(LIBS) $(EXES) $(TESTS)
 	echo making $@ in doc; \
 	(cd doc && $(MAKE) $@) || exit 1;
+
+install: $(LIBS)
+	install -m 644 libmaa.a $(libdir)
+	install -m 644 maa.h $(includedir)
+	if [ -e libmaa.so.$(VERSION) ]; then \
+		install -m 755 libmaa.so.$(VERSION) $(libdir); \
+		cd $(libdir); \
+		rm -f libmaa.so libmaa.so.$(VER); \
+		ln -s libmaa.so.$(VERSION) libmaa.so; \
+		ln -s libmaa.so.$(VERSION) libmaa.so.$(VER); \
+	fi
 
 tests: $(TESTS)
 	@for i in $(TESTS); do \
@@ -95,15 +115,21 @@ ALLFLAGS=$(XTRACFLAGS) $(CFLAGS) $(XTRALDFLAGS) $(LDFLAGS)
 %: %.c
 	$(CC) $(ALLFLAGS) -o $@ $< $(LDLIBS)
 %test: %test.c
-	$(CC) $(ALLFLAGS) -o $@ $< rnd.o $(LDLIBS)
+	$(CC) $(ALLFLAGS) $(RPATHFLAGS) -o $@ $< rnd.o $(LDLIBS)
 
 dmalloc/dmalloc.h:
 	echo making all in dmalloc
 	(cd dmalloc && $(MAKE) all) || exit 1
 
-libmaa.a:: $(LIBOBJS)
+libmaa.a: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
-	$(RANLIB) $@
+	-@ ($(RANLIB) $@ || true) 2> /dev/null
+
+libmaa.so: $(LIBOBJS)
+	$(LDSHARED) -o libmaa.so.$(VERSION) $(LIBOBJS)
+	-rm -f libmaa.so libmaa.so.$(VER)
+	ln -s libmaa.so.$(VERSION) libmaa.so.$(VER)
+	ln -s libmaa.so.$(VERSION) libmaa.so
 
 $(LIBOBJS): $(HEADERS) # version.stamp # don't automatically bump version
 $(EXES):    $(HEADERS) $(LIBS)
@@ -160,6 +186,7 @@ clean:
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
 	-rm -f *.o *.s *~ core a.out config.log $(TESTS) $(EXES)
+	-rm -f $(LIBS) libmaa.so.*
 	-rm -f *.log *.aux *.toc *.dvi *.ps *.out.new
 	-rm -f *.cfg *.dtk .inslog tca.map .pure
 	-rm -f version.stamp version.tmp mkrnd
@@ -170,7 +197,7 @@ distclean: clean
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
 	-rm -f config.h config.cache config.status stamp-h.in stamp-h
-	-rm -f configure Makefile $(LIBS)
+	-rm -f configure Makefile
 
 tags:
 	etags: *.c
@@ -186,14 +213,14 @@ ${srcdir}/config.h.in: stamp-h.in
 ${srcdir}/stamp-h.in: configure.in
 	cd ${srcdir} && autoheader
 	date > ${srcdir}/stamp-h.in
-     
+
 config.h: stamp-h
 stamp-h: config.h.in config.status
 	./config.status
-     
+
 Makefile: Makefile.in config.status
 	./config.status
-     
+
 config.status: configure
 	./config.status --recheck
 
