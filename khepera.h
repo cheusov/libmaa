@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.23 1995/10/31 18:47:51 faith Exp $
+ * $Id: khepera.h,v 1.24 1995/11/01 11:33:04 yakowenk Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -147,6 +147,7 @@ extern unsigned long hsh_string_hash( const void *key );
 extern unsigned long hsh_pointer_hash( const void *key );
 extern int           hsh_string_compare( const void *key1, const void *key2 );
 extern int           hsh_pointer_compare( const void *key1, const void *key2 );
+extern void          hsh_key_strings(hsh_HashTable);
 
 /* set.c */
 
@@ -747,6 +748,7 @@ extern int           typ_tre_unlink(tre_Node);
 extern unsigned long typ_hash(const typ_Expr);
 extern int           typ_compare(const typ_Expr, const typ_Expr);
 extern void          typ_dump(typ_Expr);
+extern void          typ_print(typ_Expr);
 extern lst_List      typ_constraints_get(typ_Expr);
 extern void          typ_constraints_set(typ_Expr, lst_List);
 extern src_Type      typ_trace_info_get(typ_Expr);

@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.4 1995/10/27 04:20:02 faith Exp $
+ * $Id: hash.c,v 1.5 1995/11/01 11:33:02 yakowenk Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -341,6 +341,26 @@ void hsh_iterate( hsh_HashTable table,
 		     return;
       }
    }
+}
+
+/* a function callable from hsh_iterate() to print key values */
+int _hsh_key_strings( const void *k, const void *d ) {
+   const char *s;
+   static int i = 0;
+   
+   if (k == NULL) { i=0; return 0; }
+   
+   s = k;
+   printf("%s  ",s);
+   if ((i += strlen(s)+2) >= 60) { i=0; printf("\n"); }
+   return 0;
+}
+
+/* print all keys in table t as strings */
+void hsh_key_strings(hsh_HashTable t) {
+   _hsh_key_strings(NULL,NULL);
+   hsh_iterate(t,_hsh_key_strings);
+   printf("\n");
 }
 
 /* \doc |hsh_get_stats| returns statistics about the |table|.  The
