@@ -1,6 +1,6 @@
 /* source.c -- Source code management for Libmaa
  * Created: Mon Dec 26 19:42:03 1994 by faith@cs.unc.edu
- * Revised: Mon Mar 17 22:09:15 1997 by faith@cs.unc.edu
+ * Revised: Wed Mar 19 13:04:16 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996, 1997 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.3 1997/03/18 12:39:06 faith Exp $
+ * $Id: source.c,v 1.4 1997/03/19 21:10:24 faith Exp $
  *
  * \section{Source Code Management}
  *
@@ -134,7 +134,7 @@ void src_cpp_line( const char *line, int length )
    strncpy( tmp, line, length );
    tmp[ length ] = '\0';
 
-   args = arg_argify( tmp );
+   args = arg_argify( tmp, 0 );
 
    if ((lineno = atoi( arg_get( args, 1 ) )) > 0) --lineno;
    else                                           lineno = 1;

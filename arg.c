@@ -1,6 +1,6 @@
 /* arg.c -- Argument list support
  * Created: Sun Jan  7 13:39:29 1996 by r.faith@ieee.org
- * Revised: Sun Mar  9 21:02:48 1997 by faith@cs.unc.edu
+ * Revised: Wed Mar 19 14:59:51 1997 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.6 1997/03/10 21:39:41 faith Exp $
+ * $Id: arg.c,v 1.7 1997/03/19 21:10:22 faith Exp $
  *
  * \section{Argument List Routines}
  *
@@ -124,7 +124,7 @@ arg_List arg_addn( arg_List arg, const char *string, int length )
    return a;
 }
 
-/* \doc Grow the next item of |arg| with |lenght| characters of |string|.
+/* \doc Grow the next item of |arg| with |length| characters of |string|.
    Several calls to |arg_grow| should be followed by a single call to
    |arg_finish| without any intervening calls to other functions which
    modify |arg|. */
@@ -193,10 +193,10 @@ void arg_get_vector( arg_List arg, int *argc, char ***argv )
 
 /* \doc Break up |string| into arguments, placing them as items in |arg|.
    Items within single or double quotes may contain spaces.  The quotes are
-   stripped as in shell argument processing.  A back-slash will escape the
-   next character, unless it is the last character in |string|. */
+   stripped as in shell argument processing.  In this version, backslash is
+   "not" a special quoting character. */
 
-arg_List arg_argify( const char *string )
+arg_List arg_argify( const char *string, int quoteStyle )
 {
    Arg        a = arg_create();
    const char *last;
@@ -239,24 +239,28 @@ arg_List arg_argify( const char *string )
 	 break;
       case '"':
       case '\'':
-   if (quote == *pt) {
-	    arg_grow( a, last, len );
-	    quote = 0;
+	 if (!(quoteStyle & ARG_NO_QUOTE)) {
+	    if (quote == *pt) {
+	       arg_grow( a, last, len );
+	       quote = 0;
 /* 	    last  = pt + 1; */
-	    len   = -1;
-	 } else {
-	    arg_grow( a, last, len );
-	    quote = *pt;
-	    last  = pt + 1;
-	    len   = -1;
+	       len   = -1;
+	    } else {
+	       arg_grow( a, last, len );
+	       quote = *pt;
+	       last  = pt + 1;
+	       len   = -1;
+	    }
 	 }
 	 break;
       case '\\':
-	 if (pt[1]) {
-	    arg_grow( a, last, len );
-	    arg_grow( a, ++pt, 1 );
-	    last = pt + 1;
-	    len  = -1;
+	 if (!(quoteStyle & ARG_NO_ESCAPE)) {
+	    if (pt[1]) {
+	       arg_grow( a, last, len );
+	       arg_grow( a, ++pt, 1 );
+	       last = pt + 1;
+	       len  = -1;
+	    }
 	 }
 	 break;
       }
@@ -267,8 +271,10 @@ arg_List arg_argify( const char *string )
        && *last != '\n'
        && *last != '\r'
        && *last != '\v'
-       && *last != '\f')
-      arg_addn( a, last, len );
+       && *last != '\f') {
+      arg_grow( a, last, len );
+      arg_finish( a );
+   }
 
    return a;
 }

@@ -1,6 +1,6 @@
 /* pr.c -- Process creation and tracking support
  * Created: Sun Jan  7 13:34:08 1996 by r.faith@ieee.org
- * Revised: Wed Oct  2 20:42:53 1996 by faith@cs.unc.edu
+ * Revised: Wed Mar 19 13:04:19 1997 by faith@cs.unc.edu
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.8 1996/10/03 01:36:06 faith Exp $
+ * $Id: pr.c,v 1.9 1997/03/19 21:10:23 faith Exp $
  *
  * \section{Process Management Routines}
  *
@@ -147,7 +147,7 @@ int pr_open( const char *command, int flags, int *infd, int *outfd, int *errfd)
       err_internal( __FUNCTION__,
 		    "Cannot use/create stderr when duping to stdout\n" );
    
-   list = arg_argify( command );
+   list = arg_argify( command, 0 );
    arg_get_vector( list, &argc, &argv );
    PRINTF(MAA_PR,("Execing %s with \"%s\"\n", argv[0], command ));
 
@@ -407,7 +407,7 @@ int pr_spawn( const char *command )
    
    _pr_init();
 
-   list = arg_argify( command );
+   list = arg_argify( command, 0 );
    arg_get_vector( list, &argc, &argv );
    PRINTF(MAA_PR,("Execing %s with \"%s\"\n", argv[0], command ));
    

@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sun Mar 16 09:38:04 1997 by faith@cs.unc.edu
+ * Revised: Wed Mar 19 14:57:14 1997 by faith@cs.unc.edu
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.27 1997/03/18 01:37:39 faith Exp $
+ * $Id: maa.h,v 1.28 1997/03/19 21:10:23 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -422,6 +422,9 @@ extern void   _tim_shutdown( void );
 
 /* arg.c */
 
+#define ARG_NO_ESCAPE 0x0001	/* Backslashed are not escape characters */
+#define ARG_NO_QUOTE  0x0002	/* Don't use quote marks for quoting */
+
 typedef void *arg_List;
 
 extern arg_List   arg_create( void );
@@ -433,7 +436,7 @@ extern arg_List   arg_finish( arg_List arg );
 extern const char *arg_get( arg_List arg, int item );
 extern int        arg_count( arg_List arg );
 extern void       arg_get_vector( arg_List arg, int *argc, char ***argv );
-extern arg_List   arg_argify( const char *string );
+extern arg_List   arg_argify( const char *string, int quoteStyle );
 
 /* pr.c */
 
