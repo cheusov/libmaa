@@ -1,6 +1,6 @@
 /* khepera.h -- Header file for visible Khepera functions
  * Created: Thu Nov  3 19:48:30 1994 by faith@cs.unc.edu
- * Revised: Sun Sep 10 13:01:07 1995 by r.faith@ieee.org
+ * Revised: Thu Sep 28 19:13:12 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: khepera.h,v 1.9 1995/09/11 02:20:13 faith Exp $
+ * $Id: khepera.h,v 1.10 1995/09/29 00:55:42 faith Exp $
  */
 
 #ifndef _KHEPERA_H_
@@ -82,6 +82,11 @@ extern __inline__ void *xrealloc( void *pt, unsigned int size );
 extern __inline__ void xfree( void *pt );
 extern __inline__ char *xstrdup( const char *s );
 #endif
+
+/* bit.c */
+extern __inline__ void bit_set( unsigned long flags, int bit );
+extern __inline__ void bit_clr( unsigned long flags, int bit );
+extern __inline__ int  bit_tst( unsigned long flags, int bit );
 
 /* prime.c */
 
@@ -434,6 +439,7 @@ extern void      _sym_shutdown( void );
    const char             *string;              \
    int                    integer;              \
    double                 real;                 \
+   unsigned long          bits;                 \
    sym_Scope              scope
 
 #if KH_MAGIC
@@ -452,6 +458,10 @@ typedef struct tre_Stats {
 } *tre_Stats;
 
 extern void tre_set_size( int size );
+extern void tre_set_guard( int guard );
+extern void tre_set_id_flag( int id, int flag );
+extern void tre_clr_id_flag( int id, int flag );
+extern int  tre_tst_id_flag( int id, int flag );
 extern void tre_register( int id, const char *name,
 			  void (*create_callback)( tre_Node node ),
 			  void (*destroy_callback)( tre_Node node ) );
@@ -459,6 +469,10 @@ extern void tre_register_name( int id, const char *name );
 extern void tre_register_callbacks( int id,
 				    void (*create_callback)( tre_Node node ),
 				    void (*destroy_callback)( tre_Node node ));
+extern void tre_add_create_callback( int id,
+				     void (*create_callback)( tre_Node node ));
+extern void tre_add_destroy_callback( int id,
+				      void (*destroy_callback)(tre_Node node));
 extern void tre_register_format( int id, int count, const char *label,
 				 const char *format, ... );
 
@@ -500,6 +514,9 @@ extern tre_Node   tre_disconnect( tre_Node node );
 extern void       tre_delete( tre_Node node );
 extern tre_Node   tre_mk( int id, src_Type src, ... );
 extern tre_Node   tre_set_src( tre_Node node, src_Type src );
+extern tre_Node   tre_set_flag( tre_Node node, int flag );
+extern tre_Node   tre_clr_flag( tre_Node node, int flag );
+extern int        tre_tst_flag( tre_Node node, int flag );
 extern tre_Node   tre_set_string( tre_Node node, const char *string );
 extern tre_Node   tre_set_integer( tre_Node node, int i );
 extern tre_Node   tre_set_real( tre_Node node, double r );

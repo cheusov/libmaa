@@ -1,6 +1,6 @@
 /* debug.c -- Debugging support for Khepera
  * Created: Fri Dec 23 10:53:10 1994 by faith@cs.unc.edu
- * Revised: Fri Jul  7 08:58:14 1995 by r.faith@ieee.org
+ * Revised: Thu Sep 28 18:58:12 1995 by faith@cs.unc.edu
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.2 1995/08/24 14:59:07 faith Exp $
+ * $Id: debug.c,v 1.3 1995/09/29 00:55:41 faith Exp $
  *
  * \section{Debugging Support}
  *
@@ -148,7 +148,7 @@ void dbg_set( const char *name )
 /* \doc Thsi inlined function tests the |flag|, returning non-zero if the
    |flag| is set, and zero otherwise. */
 
-int dbg_test( dbg_Type flag )
+__inline__ int dbg_test( dbg_Type flag )
 {
    return TEST( flag, setFlags );
 }
