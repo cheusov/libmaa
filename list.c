@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.16 2002/08/02 19:43:15 faith Exp $
+ * $Id: list.c,v 1.17 2002/08/05 12:07:04 cheusov Exp $
  *
  * \section{List Routines}
  *
@@ -119,8 +119,14 @@ void lst_destroy( lst_List list )
 
 void lst_append( lst_List list, const void *datum )
 {
-   listType l = (listType)list;
-   dataType d = mem_get_object( mem );
+   listType l;
+   dataType d;
+
+   if (!list)
+      return;
+
+   l = (listType)list;
+   d = mem_get_object( mem );
 
    _lst_allocated += sizeof(struct data);
    _lst_check( l, __FUNCTION__ );
