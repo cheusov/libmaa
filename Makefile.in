@@ -1,6 +1,6 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@cs.unc.edu
-# Revised: Sun Jan  7 20:26:17 1996 by r.faith@ieee.org
+# Revised: Fri Jan 12 14:44:08 1996 by r.faith@ieee.org
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 # 
 # This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.11 1996/01/08 03:26:42 faith Exp $
+# $Id: Makefile.in,v 1.12 1996/01/15 03:47:59 faith Exp $
 #
 
 MAA_MAJOR=0
@@ -56,13 +56,13 @@ RANLIB=		@RANLIB@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
 
-HEADERS= ../config.h maa.h maaP.h decl.h obstack.h
+HEADERS= config.h maa.h maaP.h decl.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o getopt.o getopt1.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
-	 debug.o maa.o prime.o bit.o timer.o version.o arg.o
+	 debug.o maa.o prime.o bit.o timer.o version.o arg.o pr.o
 TESTS=	 settest hashtest stringtest debugtest \
 	 primetest listtest bittest argtest
-EXES=    memtest
+EXES=    memtest prtest
 
 LIBS=    libmaa.a
 
@@ -106,7 +106,7 @@ version.stamp: version.c
 
 version.c:
 	echo "/* Stamp: `date` */" > version.c
-	echo 'const char *maa_revision_string = "$$Revision: 1.11 $$";' >> version.c
+	echo 'const char *maa_revision_string = "$$Revision: 1.12 $$";' >> version.c
 
 libmaa.a:: $(LIBOBJS)
 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
@@ -128,8 +128,25 @@ distclean: clean
 tags:
 	etags: *.c
 
+# The following is based on the "Automatic Remaking" node in the GNU
+# Autoconf documentation:
 
-# This is from the textutils-1.11 lib/Makefile.in
-subdir=libmaa
-Makefile: Makefile.in ../config.status
-	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
+$(srcdir)/configure: configure.in
+	cd $(srcdir) && autoconf
+
+# autoheader might not change config.h.in, so touch a stamp file.
+${srcdir}/config.h.in: stamp-h.in
+${srcdir}/stamp-h.in: configure.in
+	cd ${srcdir} && autoheader
+	date > ${srcdir}/stamp-h.in
+     
+config.h: stamp-h
+stamp-h: config.h.in config.status
+	./config.status
+     
+Makefile: Makefile.in config.status
+	./config.status
+     
+config.status: configure
+	./config.status --recheck
+

@@ -1,6 +1,6 @@
 /* error.c -- Error reporting routines for Khepera
  * Created: Wed Dec 21 12:55:00 1994 by faith@cs.unc.edu
- * Revised: Mon Jan  1 14:56:33 1996 by r.faith@ieee.org
+ * Revised: Sun Jan 14 13:42:40 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.7 1996/01/02 04:09:38 faith Exp $
+ * $Id: error.c,v 1.8 1996/01/15 03:48:03 faith Exp $
  *
  * \section{Error Reporting Routines}
  *
@@ -67,10 +67,39 @@ void err_fatal( const char *routine, const char *format, ... )
    
    va_start( ap, format );
    vfprintf( stderr, format, ap );
-#if 0
-   if (errno) perror( routine );
-#endif
    va_end( ap );
+   
+   fflush( stderr );
+   fflush( stdout );
+   exit( 1 );
+}
+
+/* \doc |err_fatal_errno| flushes "stdout", prints a fatal error report on
+   "stderr", prints the system error corresponding to |errno|, flushes
+   "stderr" and "stdout", and calls |exit|.  |routine| is the name of the
+   routine in which the error took place. */
+
+void err_fatal_errno( const char *routine, const char *format, ... )
+{
+   va_list ap;
+   int     errorno = errno;
+
+   fflush( stdout );
+   if (_err_programName)
+      fprintf( stderr, "\n%s:%s: ", _err_programName, routine );
+   else
+      fprintf( stderr, "\n%s: ", routine );
+   
+   va_start( ap, format );
+   vfprintf( stderr, format, ap );
+   va_end( ap );
+
+#if HAVE_STRERROR
+   fprintf( stderr, "%s: %s\n", routine, strerror( errorno ) );
+#else
+   errno = errorno;
+   perror( routine );
+#endif
    
    fflush( stderr );
    fflush( stdout );

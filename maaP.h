@@ -1,6 +1,6 @@
 /* maaP.h -- Internal header file for libmaa
  * Created: Sun Nov 19 13:19:44 1995 by faith@cs.unc.edu
- * Revised: Sun Nov 19 14:08:53 1995 by faith@cs.unc.edu
+ * Revised: Fri Jan 12 15:25:57 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.1 1995/11/19 19:28:46 faith Exp $
+ * $Id: maaP.h,v 1.2 1996/01/15 03:48:06 faith Exp $
  */
 
 #ifndef _MAAP_H_
@@ -51,21 +51,25 @@ char *alloca ();
 # if HAVE_STRINGS_H
 #  include <strings.h>
 # endif
-# ifndef HAVE_STRCHR
+# if !HAVE_STRCHR
 #  define strchr index
 #  define strrchr rindex
 # endif
-# ifndef HAVE_MEMCPY
+# if !HAVE_MEMCPY
 #  define memcpy(d, s, n) bcopy ((s), (d), (n))
 #  define memmove(d, s, n) bcopy ((s), (d), (n))
 # endif
 #endif
 
-#ifndef HAVE_STRDUP
-char *strdup();
+#if !HAVE_STRDUP
+char *strdup( const char * );
 #endif
 
-#ifndef HAVE_STRTOUL
+#if !HAVE_STRTOL
+long strtol( const char *, char **, int );
+#endif
+
+#if !HAVE_STRTOUL
 unsigned long int strtoul( const char *, char **, int );
 #endif
 
@@ -113,7 +117,9 @@ declarations for standard library calls.  We provide them here for
 situations that we know about. */
 #include "decl.h"
 
+#if HAVE_LIMITS_H
 #include <limits.h>
+#endif
 #ifndef RAND_MAX
 # define RAND_MAX INT_MAX
 #endif

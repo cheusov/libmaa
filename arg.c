@@ -1,6 +1,6 @@
 /* arg.c -- Argument list support
  * Created: Sun Jan  7 13:39:29 1996 by r.faith@ieee.org
- * Revised: Sun Jan  7 21:40:36 1996 by r.faith@ieee.org
+ * Revised: Sun Jan 14 13:53:14 1996 by r.faith@ieee.org
  * Copyright 1996 Rickard E. Faith (r.faith@ieee.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.1 1996/01/08 03:26:43 faith Exp $
+ * $Id: arg.c,v 1.2 1996/01/15 03:48:00 faith Exp $
  *
  * \section{Argument List Routines}
  *
@@ -35,7 +35,7 @@ typedef struct Arg {
 #endif
    int        argc;		/* Current count */
    int        argm;		/* Maximum count */
-   const char **argv;		/* Vector */
+   char       **argv;		/* Vector */
    mem_String object;
 } *Arg;
 
@@ -97,7 +97,7 @@ arg_List arg_add( arg_List arg, const char *string )
    if (a->argm <= a->argc + 2 )
       a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
    
-   a->argv[a->argc++] = new;
+   a->argv[a->argc++] = (char *)new; /* discard const */
    a->argv[a->argc]   = NULL;
 
    return a;
@@ -116,7 +116,7 @@ arg_List arg_addn( arg_List arg, const char *string, int length )
    if (a->argm <= a->argc + 2 )
       a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
    
-   a->argv[a->argc++] = new;
+   a->argv[a->argc++] = (char *)new; /* discard const */
    a->argv[a->argc]   = NULL;
 
    return a;
@@ -148,7 +148,7 @@ arg_List arg_finish( arg_List arg )
    if (a->argm <= a->argc + 2 )
       a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
    
-   a->argv[a->argc++] = new;
+   a->argv[a->argc++] = (char *)new; /* discard const */
    a->argv[a->argc]   = NULL;
 
    return a;
@@ -158,7 +158,7 @@ arg_List arg_finish( arg_List arg )
 
 const char *arg_get( arg_List arg, int item )
 {
-   Arg        a = (Arg)arg;
+   Arg a = (Arg)arg;
    
    _arg_check( a, __FUNCTION__ );
    if (item < 0 || item >= a->argc)
@@ -170,9 +170,9 @@ const char *arg_get( arg_List arg, int item )
 }
 
 /* \doc Get an |argc| and |argv| from |arg|.  These are suitable for use in
-   calls to |exec|.  The |argc+1| item in |argv| is "NULL". */
+   calls to |exec|.  The |argc|+1 item in |argv| is "NULL". */
 
-void arg_get_vector( arg_List arg, int *argc, const char ***argv )
+void arg_get_vector( arg_List arg, int *argc, char ***argv )
 {
    Arg        a = (Arg)arg;
 

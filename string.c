@@ -1,6 +1,6 @@
 /* string.c -- String pool for Khepera
  * Created: Wed Dec 21 21:32:34 1994 by faith@cs.unc.edu
- * Revised: Sat Dec 30 21:36:38 1995 by faith@cs.unc.edu
+ * Revised: Sun Jan 14 13:50:04 1996 by r.faith@ieee.org
  * Copyright 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.6 1995/12/31 03:12:40 faith Exp $
+ * $Id: string.c,v 1.7 1996/01/15 03:48:08 faith Exp $
  *
  * \section{String Pool Routines}
  *
@@ -153,7 +153,7 @@ str_Stats str_pool_get_stats( str_Pool pool )
 
 void str_pool_print_stats( str_Pool pool, FILE *stream )
 {
-   FILE      *str = stream ?: stdout;
+   FILE      *str = stream ? stream : stdout;
    str_Stats s    = str_pool_get_stats( pool );
 
    fprintf( str, "Statistics for %sstring pool at %p:\n",

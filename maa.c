@@ -1,6 +1,6 @@
 /* maa.c -- General Support for libmaa
  * Created: Sun Nov 19 13:24:35 1995 by faith@cs.unc.edu
- * Revised: Sun Jan  7 21:50:41 1996 by r.faith@ieee.org
+ * Revised: Sat Jan 13 13:50:32 1996 by r.faith@ieee.org
  * Copyright 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.4 1996/01/08 03:26:49 faith Exp $
+ * $Id: maa.c,v 1.5 1996/01/15 03:48:04 faith Exp $
  *
  * \section{General Support}
  *
@@ -37,6 +37,7 @@ void maa_init( const char *programName )
    
    _dbg_register( KH_MEMORY,    "memory" );
    _dbg_register( KH_TIME,      "time" );
+   _dbg_register( MAA_PR,       "pr" );
 
 #ifndef __CHECKER__
 #ifdef HAVE_ATEXIT
@@ -57,6 +58,7 @@ void maa_shutdown( void )
       str_print_stats( stderr );
    }
 
+   _pr_shutdown();
    str_destroy();
    _lst_shutdown();
 
@@ -80,14 +82,18 @@ int maa_version_minor( void )
 
 const char *maa_version( void )
 {
-   static char       buffer[80];
-   char              *pt;
-   char              *colon;
+   static char buffer[80];
+   char        *pt;
+   char        *colon;
+   char        *dot;
    
    sprintf( buffer, "libmaa, version %d.%d.", MAA_MAJOR, MAA_MINOR );
-   if ((colon = strchr( maa_revision_string, ':'))) {
+   if ((colon = strchr( maa_revision_string, ':') )) {
 				/* Assume an RCS Revision string */
-      strcat( buffer, colon + 1 );
+      if ((dot = strchr( colon, '.' )))
+	 strcat( buffer, dot + 1 );
+      else
+	 strcat( buffer, colon + 2 );
       pt = strrchr( buffer, '$') - 1;
       if (!pt)                  /* Stripped RCS Revision string? */
             pt = buffer + strlen( buffer ) - 1;

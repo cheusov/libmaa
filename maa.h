@@ -1,6 +1,6 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@cs.unc.edu
- * Revised: Sun Jan  7 21:48:31 1996 by r.faith@ieee.org
+ * Revised: Sun Jan 14 13:53:13 1996 by r.faith@ieee.org
  * Copyright 1994, 1995, 1996 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.5 1996/01/08 03:26:50 faith Exp $
+ * $Id: maa.h,v 1.6 1996/01/15 03:48:05 faith Exp $
  */
 
 #ifndef _MAA_H_
@@ -60,6 +60,8 @@
 #define SYM_SYMBOL_MAGIC_FREED  0xefcdab89
 #define ARG_MAGIC               0xfeedbead
 #define ARG_MAGIC_FREED         0xefdeebda
+#define PR_MAGIC                0x0bad7734
+#define PR_MAGIC_FREED          0xb0da7743
 #endif
 
 /* version.c */
@@ -69,8 +71,9 @@ extern const char *maa_revision_string;
 
 /* maa.c */
 
-#define KH_MEMORY    0xc1000000	/* Print memory usage statistics at exit */
-#define KH_TIME      0xc2000000	/* Print timer information at exit */
+#define KH_MEMORY    0xc8000000	/* Print memory usage statistics at exit */
+#define KH_TIME      0xc4000000	/* Print timer information at exit       */
+#define MAA_PR       0xc2000000	/* Debug process routines                */
 
 extern void       maa_init( const char *programName );
 extern void       maa_shutdown( void );
@@ -261,6 +264,9 @@ extern void       err_set_program_name( const char *programName );
 extern const char *err_program_name( void );
 extern void       err_fatal( const char *routine, const char *format, ... )
    __attribute__((noreturn,format(printf, 2, 3)));
+extern void       err_fatal_errno( const char *routine,
+				   const char *format, ... )
+   __attribute__((noreturn,format(printf, 2, 3)));
 
 extern void       err_warning( const char *routine, const char *format, ... )
    __attribute__((format(printf, 2, 3)));
@@ -370,10 +376,22 @@ extern arg_List   arg_addn( arg_List arg, const char *string, int length );
 extern void       arg_grow( arg_List arg, const char *string, int length );
 extern arg_List   arg_finish( arg_List arg );
 extern const char *arg_get( arg_List arg, int item );
-extern void       arg_get_vector( arg_List arg,
-				  int *argc, const char ***argv );
+extern void       arg_get_vector( arg_List arg, int *argc, char ***argv );
 extern arg_List   arg_argify( const char *string );
 
 /* pr.c */
+
+#define PR_USE_STDIN        0x00000001
+#define PR_USE_STDOUT       0x00000002
+#define PR_USE_STDERR       0x00000004
+#define PR_CREATE_STDIN     0x00000010
+#define PR_CREATE_STDOUT    0x00000020
+#define PR_CREATE_STDERR    0x00000040
+#define PR_STDERR_TO_STDOUT 0x00000100
+
+extern int  pr_open( const char *command, int flags,
+		     FILE **instr, FILE **outstr, FILE **errstr );
+extern int  pr_close( FILE *str );
+extern void _pr_shutdown( void );
 
 #endif

@@ -1,6 +1,6 @@
 /* timer.c -- Timer support
  * Created: Sat Oct  7 13:05:31 1995 by faith@cs.unc.edu
- * Revised: Sat Dec 30 21:19:07 1995 by faith@cs.unc.edu
+ * Revised: Fri Jan 12 15:07:18 1996 by r.faith@ieee.org
  * Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: timer.c,v 1.9 1995/12/31 03:12:41 faith Exp $
+ * $Id: timer.c,v 1.10 1996/01/15 03:48:09 faith Exp $
  *
  * \section{Timer Support}
  *
@@ -57,8 +57,13 @@ void tim_start( const char *name )
       entry->real = entry->user = entry->system = 0;
       hsh_insert( _tim_Hash, name, entry );
    }
-   
+
+#if HAVE_GETTIMEOFDAY
    gettimeofday( &entry->real_mark, NULL );
+#else
+   time( &entry->real_mark.tv_sec );
+   entry->real_mark.tv_usec = 0;
+#endif
    getrusage( RUSAGE_SELF, &rusage );
    
    memcpy( (void *)&entry->user_mark, (void *)&rusage.ru_utime,
@@ -79,7 +84,12 @@ void tim_stop( const char *name )
    (((now).tv_sec - (then).tv_sec) * 1000000 + (now).tv_usec - (then).tv_usec)
 
    _tim_check();
+#if HAVE_GETTIMEOFDAY
    gettimeofday( &real, NULL );
+#else
+   time( &real.tv_sec );
+   real.tv_usec = 0;
+#endif
    getrusage( RUSAGE_SELF, &rusage );
    if (!(entry = (tim_Entry)hsh_retrieve( _tim_Hash, name ) ))
       err_internal ( __FUNCTION__, "No timer: %s\n", name );
