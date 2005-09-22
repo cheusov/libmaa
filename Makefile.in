@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.46 2004/12/23 18:56:45 cheusov Exp $
+# $Id: Makefile.in,v 1.47 2005/09/22 08:42:14 cheusov Exp $
 #
 
 ifneq (,)
@@ -53,7 +53,7 @@ INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
 AWK=            @AWK@
 
-CFLAGS=		@CFLAGS@ $(VFLAGS) @CPPFLAGS@ @DEFS@ @WCFLAGS@ -I.
+CFLAGS=		-fPIC @CFLAGS@ $(VFLAGS) @CPPFLAGS@ @DEFS@ @WCFLAGS@ -I.
 LDFLAGS=        @LDFLAGS@
 VFLAGS=         -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
 XTRACFLAGS=     @XTRACFLAGS@
