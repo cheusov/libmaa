@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.17 2004/11/07 12:12:29 cheusov Exp $
+ * $Id: log.c,v 1.18 2005/11/20 19:47:18 cheusov Exp $
  * 
  */
 
@@ -297,7 +297,7 @@ static void _log_base_va(
    const char *format, va_list ap )
 {
    time_t t;
-   char   buf[4096];
+   static char   buf[4096];
    char   *pt;
    char   *info_main;
 
