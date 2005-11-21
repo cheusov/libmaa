@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.18 2005/11/20 19:47:18 cheusov Exp $
+ * $Id: log.c,v 1.19 2005/11/21 18:57:05 cheusov Exp $
  * 
  */
 
@@ -297,35 +297,40 @@ static void _log_base_va(
    const char *format, va_list ap )
 {
    time_t t;
-   static char   buf[4096];
-   char   *pt;
-   char   *info_main;
+   static char   buf [4096] = "";
+   static char   buf_main [4096] = "";
+   static char   buf_preamble [256] = "";
 
    if (!logOpen) return;
 
    time(&t);
 
    if (logFd >= 0 || logUserStream) {
+      /* preamble */
       if (inhibitFull) {
-         pt = buf;
+         buf_preamble [0] = 0;
       } else {
-         sprintf( buf,
-                  "%24.24s %s %s[%ld]: ",
-                  ctime(&t),
-                  logHostname,
-                  logIdent,
-                  (long int)getpid() );
-         pt = buf + strlen( buf );
+         snprintf (buf_preamble, sizeof (buf_preamble),
+		   "%24.24s %s %s[%ld]: ",
+		   ctime(&t),
+		   logHostname,
+		   logIdent,
+		   (long int) getpid());
       }
 
-      info_main = pt;
+      /* main part of log message */
+      vsnprintf (buf_main, sizeof (buf_main), format, ap );
 
+      /* full log message */
       if (routine){
-	 sprintf( pt, "(%s) ", routine );
-	 pt = buf + strlen( buf );
+	 snprintf (buf, sizeof (buf), "%s(%s) %s\n",
+		   buf_preamble, routine, buf_main);
+      }else{
+	 snprintf (buf, sizeof (buf), "%s%s\n",
+		   buf_preamble, buf_main);
       }
-      vsprintf( pt, format, ap );
-      
+
+      /* writing */
       if (logFd >= 0) {
           _log_check_filename();
           write( logFd, buf, strlen(buf) );
@@ -334,7 +339,7 @@ static void _log_base_va(
          fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
                                                   open stream with "a" */
 	 if (logUserStream == stdout || logUserStream == stderr)
-	    fprintf( logUserStream, "%s", info_main );
+	    fprintf( logUserStream, "%s", buf_main );
 	 else
 	    fprintf( logUserStream, "%s", buf );
 
