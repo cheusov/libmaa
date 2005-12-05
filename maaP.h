@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.24 2005/09/21 19:04:49 cheusov Exp $
+ * $Id: maaP.h,v 1.25 2005/12/05 17:21:20 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
@@ -29,21 +29,18 @@
 #include "config.h"
 #endif
 
-#ifndef __GNUC__
-#define __FUNCTION__ __FILE__
-#endif
-
 #if HAVE_ALLOCA_H
 # include <alloca.h>
 #endif
 
-/* AIX requires this to be the first thing in the file.  */
-#ifdef HAVE_ALLOCA
-# ifdef _AIX
-#  pragma alloca
-# else
-#  ifndef alloca /* predefined by HP cc +Olibcalls */
-    char *alloca ();
+#ifndef HAVE_ALLOCA
+# ifndef alloca /* predefined by HP cc +Olibcalls */
+#  ifdef _AIX
+#   pragma alloca
+#  else
+#   if !defined(__svr4__) && !defined(__sgi__)	/* not on IRIX */
+     void *alloca(size_t size);
+#   endif
 #  endif
 # endif
 #endif
