@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.47 2005/09/22 08:42:14 cheusov Exp $
+# $Id: Makefile.in,v 1.48 2006/04/08 21:22:09 cheusov Exp $
 #
 
 ifneq (,)
@@ -62,7 +62,7 @@ RPATHFLAGS=     @RPATHFLAGS@
 LDLIBS=		-lmaa @LIBS@ -lm
 LDSHARED=       @LDSHARED@
 
-HEADERS= config.h maa.h maaP.h decl.h obstack.h @XTRAHEADERS@
+HEADERS= config.h maa.h maaP.h obstack.h @XTRAHEADERS@
 LIBOBJS= @LIBOBJS@ obstack.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
 	 debug.o flags.o maa.o prime.o bit.o timer.o version.o \

@@ -17,16 +17,12 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: memtest.c,v 1.4 2002/08/02 19:43:15 faith Exp $
+ * $Id: memtest.c,v 1.5 2006/04/08 21:22:09 cheusov Exp $
  * 
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#ifdef __sparc__
-extern int printf( const char *, ... );
-#endif
 
 int main( void )
 {
