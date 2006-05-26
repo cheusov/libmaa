@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.22 2004/11/17 12:39:54 cheusov Exp $
+ * $Id: hash.c,v 1.23 2006/05/26 20:38:53 cheusov Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -476,13 +476,9 @@ unsigned long hsh_string_hash( const void *key )
 {
    const char           *pt = (const char *)key;
    unsigned long        h  = 0;
-   static const char    *prev_pt = NULL;
-   static unsigned long prev_h = 0;
 
    if (!pt)
       err_internal( __FUNCTION__, "String-valued keys may not be NULL\n" );
-
-   if (prev_pt == pt) return prev_h;
 
    while (*pt) {
       h += *pt++;
@@ -493,8 +489,7 @@ unsigned long hsh_string_hash( const void *key )
 #endif
    }
 
-   prev_pt = pt;
-   return prev_h = h  & 0xffffffff;
+   return h & 0xffffffff;
 }
 
 unsigned long hsh_pointer_hash( const void *key )
@@ -502,16 +497,12 @@ unsigned long hsh_pointer_hash( const void *key )
    const char           *pt;
    unsigned long        h   = 0;
    int                  i;
-   static const char    *prev_pt = NULL;
-   static unsigned long prev_h = 0;
 
 #ifdef WORDS_BIGENDIAN
    pt = ((const char *)&key) + SIZEOF_VOID_P - 1;
 #else
    pt = (const char *)&key;
 #endif
-   
-   if (key == prev_pt) return prev_h;
    
    for (i = 0; i < SIZEOF_VOID_P; i++) {
 #ifdef WORDS_BIGENDIAN
@@ -526,8 +517,7 @@ unsigned long hsh_pointer_hash( const void *key )
 #endif
    }
 
-   prev_pt = pt;
-   return prev_h = h & 0xffffffff;
+   return h & 0xffffffff;
 }
 
 int hsh_string_compare( const void *key1, const void *key2 )
