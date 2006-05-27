@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.42 2004/10/12 10:23:38 cheusov Exp $
+ * $Id: maa.h,v 1.43 2006/05/27 14:25:58 cheusov Exp $
  */
 
 #ifndef _MAA_H_
@@ -534,6 +534,7 @@ extern void txt_soundex2(
 
 extern const char    *b64_encode( unsigned long val );
 extern unsigned long b64_decode( const char *val );
+extern unsigned long b64_decode_buf (const char *val, size_t len);
 
 /* base26.c */
 

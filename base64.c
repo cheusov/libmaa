@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: base64.c,v 1.5 2002/08/02 19:43:15 faith Exp $
+ * $Id: base64.c,v 1.6 2006/05/27 14:25:58 cheusov Exp $
  *
  * \section{Base-64 Routines}
  *
@@ -93,12 +93,11 @@ const char *b64_encode( unsigned long val )
    return result + 5;
 }
 
-unsigned long b64_decode( const char *val )
+unsigned long b64_decode_buf (const char *val, size_t len)
 {
    unsigned long v = 0;
    int           i;
    int           offset = 0;
-   int           len = strlen( val );
 
    for (i = len - 1; i >= 0; i--) {
       int tmp = b64_index[ (unsigned char)val[i] ];
@@ -106,10 +105,15 @@ unsigned long b64_decode( const char *val )
       if (tmp == XX)
 	 err_internal( __FUNCTION__,
 		       "Illegal character in base64 value: `%c'\n", val[i] );
-      
+
       v |= tmp << offset;
       offset += 6;
    }
 
    return v;
+}
+
+unsigned long b64_decode (const char *val)
+{
+   return b64_decode_buf (val, strlen (val));
 }
