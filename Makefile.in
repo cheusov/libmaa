@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.49 2006/12/09 22:01:37 cheusov Exp $
+# $Id: Makefile.in,v 1.50 2006/12/09 22:10:08 cheusov Exp $
 #
 
 ifneq (,)
@@ -54,7 +54,7 @@ AWK=            @AWK@
 
 VERCFLAGS=       -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
 CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I.
-LDFLAGS=        @LDFLAGS@ @LIBS@ libmaa.la -lm
+LDFLAGS=        @LDFLAGS@ @LIBS@ .libs/libmaa.a -lm
 RPATHFLAGS=     @RPATHFLAGS@
 
 HEADERS= config.h maa.h maaP.h obstack.h
@@ -108,13 +108,13 @@ arggram.c: arggram.txt
 	libtool --mode=compile $(CC) -c $(CFLAGS) $<
 
 %: %.o
-	libtool --mode=link $(CC) $(LDFLAGS) -o $@ $< $(LDLIBS)
+	libtool --mode=link $(CC) -o $@ $< $(LDFLAGS)
 
 ALLFLAGS=$(CFLAGS) $(LDFLAGS)
 %: %.c
-	$(CC) $(ALLFLAGS) -o $@ $< $(LDLIBS)
+	$(CC) $(ALLFLAGS) -o $@ $< $(LDFLAGS)
 %test: %test.c rnd.o
-	$(CC) $(ALLFLAGS) $(RPATHFLAGS) -o $@ $< rnd.o $(LDLIBS)
+	$(CC) $(ALLFLAGS) $(RPATHFLAGS) -o $@ $< rnd.o $(LDFLAGS)
 
 dmalloc/dmalloc.h:
 	echo making all in dmalloc
