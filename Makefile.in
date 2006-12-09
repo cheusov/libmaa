@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.48 2006/04/08 21:22:09 cheusov Exp $
+# $Id: Makefile.in,v 1.49 2006/12/09 22:01:37 cheusov Exp $
 #
 
 ifneq (,)
@@ -47,22 +47,17 @@ SHELL=		/bin/sh
 
 CC=		@CC@
 CPP=		@CPP@
-RANLIB=		@RANLIB@
 INSTALL=        @INSTALL@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
 AWK=            @AWK@
 
-CFLAGS=		-fPIC @CFLAGS@ $(VFLAGS) @CPPFLAGS@ @DEFS@ @WCFLAGS@ -I.
-LDFLAGS=        @LDFLAGS@
-VFLAGS=         -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
-XTRACFLAGS=     @XTRACFLAGS@
-XTRALDFLAGS=    @WLDFLAGS@ @XTRALDFLAGS@ -L.
+VERCFLAGS=       -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
+CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I.
+LDFLAGS=        @LDFLAGS@ @LIBS@ libmaa.la -lm
 RPATHFLAGS=     @RPATHFLAGS@
-LDLIBS=		-lmaa @LIBS@ -lm
-LDSHARED=       @LDSHARED@
 
-HEADERS= config.h maa.h maaP.h obstack.h @XTRAHEADERS@
+HEADERS= config.h maa.h maaP.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
 	 debug.o flags.o maa.o prime.o bit.o timer.o version.o \
@@ -81,18 +76,14 @@ all: $(LIBS) $(EXES) $(TESTS)
 	(cd doc && $(MAKE) $@) || exit 1;
 
 install: $(LIBS)
-	install -m 644 libmaa.a $(libdir)
-	install -m 644 maa.h $(includedir)
-	if [ -e libmaa.so.$(VERSION) ]; then \
-		install -m 755 libmaa.so.$(VERSION) $(libdir); \
-		cd $(libdir); \
-		rm -f libmaa.so libmaa.so.$(VER); \
-		ln -s libmaa.so.$(VERSION) libmaa.so; \
-		ln -s libmaa.so.$(VERSION) libmaa.so.$(VER); \
-	fi
+	mkdir -p $(libdir) && \
+	   libtool --mode=install install -c libmaa.la $(libdir)
+	mkdir -p $(includedir) && \
+	   install -m 644 maa.h $(includedir)
 
 uninstall:
-	rm -f $(libdir)/libmaa.{a,so,so.$(VER),so.$(VERSION)} $(includedir)/maa.h
+	rm -f $(includedir)/maa.h
+	libtool --mode=uninstall rm -f $(libdir)/libmaa.la
 
 tests: $(TESTS)
 	@for i in $(TESTS); do \
@@ -114,12 +105,12 @@ arggram.c: arggram.txt
 	@AWK@ -f ./arggram2c < $< > $@
 
 %.o: %.c
-	$(CC) -c $(XTRACFLAGS) $(CFLAGS) $<
+	libtool --mode=compile $(CC) -c $(CFLAGS) $<
 
 %: %.o
-	$(CC) $(XTRALDFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+	libtool --mode=link $(CC) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
-ALLFLAGS=$(XTRACFLAGS) $(CFLAGS) $(XTRALDFLAGS) $(LDFLAGS)
+ALLFLAGS=$(CFLAGS) $(LDFLAGS)
 %: %.c
 	$(CC) $(ALLFLAGS) -o $@ $< $(LDLIBS)
 %test: %test.c rnd.o
@@ -130,12 +121,9 @@ dmalloc/dmalloc.h:
 	(cd dmalloc && $(MAKE) all) || exit 1
 
 libmaa.a: $(LIBOBJS)
-	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
-	-@ ($(RANLIB) $@ || true) 2> /dev/null
-
-.PHONY : libmaa.so
-libmaa.so: $(LIBOBJS)
-	$(LDSHARED) -o libmaa.so.$(VERSION) $(LIBOBJS)
+	libtool --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
+	   -rpath "${libdir}" \
+	   -version-info "$(MAA_MAJOR):$(MAA_MINOR)" 
 
 $(LIBOBJS): $(HEADERS) # version.stamp # don't automatically bump version
 $(EXES):    $(HEADERS) $(LIBS)
@@ -190,8 +178,9 @@ clean:
 		echo making $@ in $$subdir; \
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
-	-rm -f *.o *.s *~ core a.out config.log $(TESTS) $(EXES)
-	-rm -f $(LIBS) libmaa.so.* arggram.c
+	-rm -rf .libs
+	-rm -f *~ *.la *.lo *.o core a.out config.log $(TESTS) $(EXES)
+	-rm -f $(LIBS) arggram.c
 	-rm -f *.log *.aux *.toc *.dvi *.ps *.out.new
 	-rm -f *.cfg *.dtk .inslog tca.map .pure
 	-rm -f version.stamp version.tmp mkrnd
@@ -203,6 +192,7 @@ distclean: clean
 	done
 	-rm -f config.h config.cache config.status stamp-h.in stamp-h
 	-rm -f Makefile
+	-rm -rf autom4te.cache
 
 tags:
 	etags: *.c
