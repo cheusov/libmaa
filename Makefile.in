@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.50 2006/12/09 22:10:08 cheusov Exp $
+# $Id: Makefile.in,v 1.51 2006/12/09 22:21:56 cheusov Exp $
 #
 
 ifneq (,)
@@ -105,16 +105,13 @@ arggram.c: arggram.txt
 	@AWK@ -f ./arggram2c < $< > $@
 
 %.o: %.c
-	libtool --mode=compile $(CC) -c $(CFLAGS) $<
+	libtool --mode=compile $(CC) -o $@ -c $(CFLAGS) $<
 
 %: %.o
 	libtool --mode=link $(CC) -o $@ $< $(LDFLAGS)
 
-ALLFLAGS=$(CFLAGS) $(LDFLAGS)
-%: %.c
-	$(CC) $(ALLFLAGS) -o $@ $< $(LDFLAGS)
 %test: %test.c rnd.o
-	$(CC) $(ALLFLAGS) $(RPATHFLAGS) -o $@ $< rnd.o $(LDFLAGS)
+	$(CC) $(CFLAGS) $(RPATHFLAGS) -o $@ $< rnd.o $(LDFLAGS)
 
 dmalloc/dmalloc.h:
 	echo making all in dmalloc
