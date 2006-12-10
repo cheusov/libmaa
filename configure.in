@@ -18,7 +18,7 @@ dnl You should have received a copy of the GNU General Public License along
 dnl with this program; if not, write to the Free Software Foundation, Inc.,
 dnl 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
-dnl $Id: configure.in,v 1.31 2006/07/03 22:32:06 cheusov Exp $
+dnl $Id: configure.in,v 1.32 2006/12/10 11:07:56 cheusov Exp $
 dnl
 dnl Flag conventions:
 dnl     CFLAGS and LDFLAGS should be settable on the make commandline
@@ -33,7 +33,7 @@ dnl     YCFLAGS is for yacc
 dnl     LCFLAGS is for lex
 
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.31 $)
+AC_REVISION($Revision: 1.32 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
 AC_CONFIG_HEADER(config.h)
@@ -59,23 +59,13 @@ AC_ISC_POSIX
 
 REALCC="$CC"
 if test "$CC" = gcc; then
-    CFLAGS='-g -O'
-    WCFLAGS='-Wall -pedantic'
+    CFLAGS="$CFLAGS -g -O -Wall -pedantic"
 else
-    CFLAGS='-g'
+    CFLAGS="$CFLAGS -g"
 fi
 
 needs_xmalloc=1
 local_dmalloc=0
-
-case "$host" in
-dnl did include: -Winline
-*linux*)
-    WCFLAGS="$WCFLAGS -pipe -Wcast-align \
-        -Wmissing-prototypes -Wshadow -Wnested-externs -Waggregate-return";;
-sparc-sun-sunos4*)
-    WCFLAGS="$WCFLAGS -pipe";;
-esac
 
 AC_ARG_WITH(cflags,
 [  --with-cflags=FLAGS     use FLAGS for CFLAGS],
@@ -165,35 +155,6 @@ fi
 
 TARGETLIBS=libmaa.a
 RPATHFLAGS=""
-if test $shared = 1; then
-    TARGETLIBS="$TARGETLIBS libmaa.so"
-    CFLAGS="-DSHARED_LIBMAA $CFLAGS"
-    if test "$CC" = gcc; then 
-	CFLAGS="$CFLAGS -fPIC"
-	LDSHARED="gcc -shared"
-	LDSHARED="$LDSHARED -Wl,-soname,libmaa.so.$MAA_MAJOR.$MAA_MINOR"
-	RPATHFLAGS="-Wl,-rpath,."
-    else
-	case "$host" in
-	sparc-sun-sunos4*)
-	    CFLAGS="$CFLAGS -PIC"
-	    LDSHARED="ld";;
-	sparc-sun-sunos5*)
-	    CFLAGS="$CFLAGS -KPIC -R."
-	    LDSHARED="$CC -G";;
-	mips-sgi-irix*)
-	    CFLAGS="$CFLAGS -rpath ."
-	    LDSHARED="$CC -shared";;
-	*hpux*)
-	    CFLAGS="$CFLAGS +z"
-	    LDSHARED="ld -b";;
-	*)
-	    CFLAGS="$CFLAGS"
-	    LDSHARED="$CC -shared"
-	    RPATHFLAGS="-Wl,-rpath,.";;
-	esac
-    fi
-fi
 
 dnl Checks for programs.
 echo Checking for programs
@@ -213,7 +174,7 @@ echo Checking for libraries
 if test "$local_dmalloc" = 0 -a "$needs_dmalloc" = 1; then
     AC_CHECK_LIB(dmalloc,main,
         REALLIBS="$REALLIBS -ldmalloc"
-        XTRACFLAGS="-DDMALLOC_FUNC_CHECK",
+        CFLAGS="-DDMALLOC_FUNC_CHECK $CFLAGS",
     local_dmalloc=1)
 fi
 
@@ -221,7 +182,7 @@ if test "$local_dmalloc" = 1; then
     AC_MSG_CHECKING(for dmalloc in local source tree)
     if test -d dmalloc; then
         REALLIBS="$REALLIBS -L./dmalloc -ldmalloc"
-        XTRACFLAGS="-DDMALLOC_FUNC_CHECK -I./dmalloc"
+        CFLAGS="-DDMALLOC_FUNC_CHECK -I./dmalloc $CFLAGS"
         XTRAHEADERS="./dmalloc/dmalloc.h"
         extra_subdirs="$extra_subdirs dmalloc"
 
@@ -231,7 +192,7 @@ if test "$local_dmalloc" = 1; then
     else
         if test -d ../dmalloc; then
             REALLIBS="$REALLIBS -L../dmalloc -ldmalloc"
-            XTRACFLAGS="-DDMALLOC_FUNC_CHECK -I../dmalloc"
+            CFLAGS="-DDMALLOC_FUNC_CHECK -I../dmalloc $CFLAGS"
             XTRAHEADERS="../dmalloc/dmalloc.h"
             AC_MSG_RESULT(../dmalloc)
         else
@@ -305,11 +266,6 @@ AC_SUBST(MAA_MINOR)
 AC_SUBST(MAA_MAJOR)
 AC_SUBST(RPATHFLAGS)
 AC_SUBST(TARGETLIBS)
-AC_SUBST(LDSHARED)
-AC_SUBST(WCFLAGS)
-AC_SUBST(WLDFLAGS)
-AC_SUBST(XTRACFLAGS)
-AC_SUBST(XTRALDFLAGS)
 AC_SUBST(XTRAHEADERS)
 AC_SUBST(AWK)
 AC_CONFIG_FILES([Makefile doc/Makefile arggram2c])
