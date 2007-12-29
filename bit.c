@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: bit.c,v 1.8 2002/08/02 19:43:15 faith Exp $
+ * $Id: bit.c,v 1.9 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Bit manipulation routines}
  *
@@ -71,7 +71,7 @@ __inline__ int bit_cnt( unsigned long *flags )
    x = ((x >> 16) + x) & 0x0000ffff0000ffff;
    return (x + (x >> 32)) & 0xff;
 #else
-   err_internal( __FUNCTION__,
+   err_internal( __func__,
 		 "Implemented for 32-bit and 64-bit longs, not %d-bit longs\n",
 		 SIZEOF_LONG * 8 );
 #endif

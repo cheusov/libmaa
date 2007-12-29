@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: list.c,v 1.18 2003/10/26 13:00:10 cheusov Exp $
+ * $Id: list.c,v 1.19 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{List Routines}
  *
@@ -101,7 +101,7 @@ void lst_destroy( lst_List list )
    listType l = (listType)list;
    dataType d;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    for (d = l->head; d;) {
       dataType next = d->next;
@@ -129,7 +129,7 @@ void lst_append( lst_List list, const void *datum )
    d = mem_get_object( mem );
 
    _lst_allocated += sizeof(struct data);
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    d->datum = datum;
    d->next  = NULL;
@@ -150,7 +150,7 @@ void lst_push( lst_List list, const void *datum )
    dataType d = mem_get_object( mem );
 
    _lst_allocated += sizeof(struct data);
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    d->datum = datum;
    d->next  = l->head;
@@ -167,7 +167,7 @@ void *lst_pop( lst_List list )
    listType l     = (listType)list;
    void     *datum = NULL;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    if (l->head) {
       dataType old = l->head;
@@ -190,7 +190,7 @@ void *lst_top( lst_List list )
 {
    listType l = (listType)list;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    if (l->head)
 	 return (void *)l->head->datum;	/* Discard const */
@@ -207,12 +207,12 @@ void *lst_nth_get( lst_List list, unsigned int n )
    dataType     d;
    unsigned int i;
    
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    if (n < 1 || n > l->count) return NULL;
    for (i = 1, d = l->head; i < n && d; i++, d = d->next);
    if (i != n)
-      err_internal( __FUNCTION__, "Can't find element %d of %d\n",
+      err_internal( __func__, "Can't find element %d of %d\n",
 		    n, l->count );
    return (void *)d->datum;	/* Discard const. */
 }
@@ -228,14 +228,14 @@ void lst_nth_set( lst_List list, unsigned int n, const void *datum )
    dataType     d;
    unsigned int i;
    
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    if (n < 1 || n > l->count)
-      err_fatal( __FUNCTION__, "Attempt to change element %d of %d elements\n",
+      err_fatal( __func__, "Attempt to change element %d of %d elements\n",
 		 n, l->count );
    for (i = 1, d = l->head; i < n && d; i++, d = d->next);
    if (i != n)
-      err_internal( __FUNCTION__, "Can't find element %d of %d\n",
+      err_internal( __func__, "Can't find element %d of %d\n",
 		    n, l->count );
    
    d->datum = datum;
@@ -251,7 +251,7 @@ int lst_member( lst_List list, const void *datum )
    listType l = (listType)list;
    dataType d;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    for (d = l->head; d; d = d->next)
       if (d->datum == datum) return 1;
@@ -265,7 +265,7 @@ unsigned int lst_length( lst_List list )
 {
    listType l = (listType)list;
    
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    return l->count;
 }
 
@@ -279,7 +279,7 @@ void lst_truncate( lst_List list, unsigned int length )
    dataType     next;
    unsigned int i;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    if (l->count <= length) return;
 
@@ -321,7 +321,7 @@ void lst_truncate_position( lst_List list, lst_Position position )
    dataType     d;
    dataType     next;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    if (!position) {
       next = l->head;
@@ -354,7 +354,7 @@ int lst_iterate( lst_List list, int (*iterator)( const void *datum ) )
    listType l = (listType)list;
    dataType d;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    for (d = l->head; d; d = d->next) if (iterator( d->datum )) return 1;
    return 0;
@@ -372,7 +372,7 @@ int lst_iterate_arg( lst_List list,
    listType l = (listType)list;
    dataType d;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    for (d = l->head; d; d = d->next) if (iterator( d->datum, arg )) return 1;
    return 0;
@@ -386,7 +386,7 @@ lst_Position lst_init_position( lst_List list )
 {
    listType l = (listType)list;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    return l->head;
 }
 
@@ -398,7 +398,7 @@ lst_Position lst_last_position( lst_List list )
 {
    listType l = (listType)list;
 
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    return l->tail;
 }
 
@@ -423,12 +423,12 @@ lst_Position lst_nth_position( lst_List list, unsigned int n )
    dataType     d;
    unsigned int i;
    
-   _lst_check( l, __FUNCTION__ );
+   _lst_check( l, __func__ );
    
    if (n < 1 || n > l->count) return NULL;
    for (i = 1, d = l->head; i < n && d; i++, d = d->next);
    if (i != n)
-      err_internal( __FUNCTION__, "Can't find element %d of %d\n",
+      err_internal( __func__, "Can't find element %d of %d\n",
 		    n, l->count );
    return d;
 }

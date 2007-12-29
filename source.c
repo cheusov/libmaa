@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.11 2003/09/19 18:18:53 cheusov Exp $
+ * $Id: source.c,v 1.12 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Source Code Management}
  *
@@ -59,7 +59,7 @@ static mem_Object InfoHeap;
 void src_create( void )
 {
    if (Lines)
-	 err_fatal( __FUNCTION__, "Source manager already created\n" );
+	 err_fatal( __func__, "Source manager already created\n" );
 
    Lines      = xmalloc( (Count = INCREMENT) * sizeof( char * ) );
    StringHeap = mem_create_strings();
@@ -163,7 +163,7 @@ src_Type src_get( int length )
    sourceType *new;
 
    if (!Lines)
-	 err_fatal( __FUNCTION__, "Source manager does not exist\n" );
+	 err_fatal( __func__, "Source manager does not exist\n" );
    
    Info.length = length;
    new = mem_get_object( InfoHeap );
@@ -196,7 +196,7 @@ const char *src_filename( src_Type source )
    sourceType *s = (sourceType *)source;
 
    if (!Lines)
-	 err_fatal( __FUNCTION__, "Source manager never created\n" );
+	 err_fatal( __func__, "Source manager never created\n" );
 
    return s ? s->file : "";
 }
@@ -209,7 +209,7 @@ int src_linenumber( src_Type source )
    sourceType *s = (sourceType *)source;
 
    if (!Lines)
-	 err_fatal( __FUNCTION__, "Source manager never created\n" );
+	 err_fatal( __func__, "Source manager never created\n" );
 
    return s ? s->line : 0;
 }
@@ -222,7 +222,7 @@ int src_offset( src_Type source )
    sourceType *s = (sourceType *)source;
 
    if (!Lines)
-	 err_fatal( __FUNCTION__, "Source manager never created\n" );
+	 err_fatal( __func__, "Source manager never created\n" );
 
    return s ? s->offset : 0;
 }
@@ -235,7 +235,7 @@ int src_length( src_Type source )
    sourceType *s = (sourceType *)source;
 
    if (!Lines)
-	 err_fatal( __FUNCTION__, "Source manager never created\n" );
+	 err_fatal( __func__, "Source manager never created\n" );
 
    return s ? s->length : 0;
 }
@@ -248,7 +248,7 @@ const char *src_source_line( src_Type source )
    sourceType *s = (sourceType *)source;
 
    if (!Lines)
-	 err_fatal( __FUNCTION__, "Source manager never created\n" );
+	 err_fatal( __func__, "Source manager never created\n" );
 
    return s ? Lines[ s->index ] : "";
 }

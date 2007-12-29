@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: xmalloc.c,v 1.9 2004/10/05 10:32:09 cheusov Exp $
+ * $Id: xmalloc.c,v 1.10 2007/12/29 13:16:10 cheusov Exp $
  */
 
 #include "maaP.h"
@@ -38,7 +38,7 @@ __inline__ void *xmalloc( unsigned int size )
 {
    void *pt = malloc( size );
 
-   if (!pt) err_fatal( __FUNCTION__,
+   if (!pt) err_fatal( __func__,
 		       "Out of memory while allocating %lu bytes\n",
 		       (unsigned long)size );
    return pt;
@@ -48,7 +48,7 @@ __inline__ void *xcalloc( unsigned int num, unsigned int size )
 {
    void *pt = calloc( num, size );
 
-   if (!pt) err_fatal( __FUNCTION__,
+   if (!pt) err_fatal( __func__,
 		       "Out of memory while allocating %lu X %lu byte block\n",
 		       (unsigned long)num, (unsigned long)size );
    return pt;
@@ -58,7 +58,7 @@ __inline__ void *xrealloc( void *pt, unsigned int size )
 {
    void *new = realloc( pt, size );
 
-   if (!new) err_fatal( __FUNCTION__,
+   if (!new) err_fatal( __func__,
 			"Out of memory while reallocating block at %p to"
 			" %lu bytes\n",
 			pt,
@@ -69,14 +69,14 @@ __inline__ void *xrealloc( void *pt, unsigned int size )
 __inline__ void xfree( void *pt )
 {
    if (pt) free( pt );
-   else err_fatal( __FUNCTION__, "Attempt to free null pointer\n" );
+   else err_fatal( __func__, "Attempt to free null pointer\n" );
 }
 
 __inline__ char *xstrdup( const char *s )
 {
    char *pt = strdup( s );
 
-   if (!pt) err_fatal( __FUNCTION__,
+   if (!pt) err_fatal( __func__,
 		       "Out of memory while duplicating string\n" );
 
    return pt;

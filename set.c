@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: set.c,v 1.17 2002/08/02 19:43:15 faith Exp $
+ * $Id: set.c,v 1.18 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Set Routines}
  *
@@ -129,7 +129,7 @@ set_HashFunction set_get_hash( set_Set set )
 {
    setType t = (setType)set;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    return t->hash;
 }
 
@@ -137,7 +137,7 @@ set_CompareFunction set_get_compare( set_Set set )
 {
    setType t = (setType)set;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    return t->compare;
 }
 
@@ -146,7 +146,7 @@ static void _set_destroy_buckets( set_Set set )
    unsigned long i;
    setType       t = (setType)set;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    for (i = 0; i < t->prime; i++) {
       bucketType b = t->buckets[i];
 
@@ -166,7 +166,7 @@ static void _set_destroy_table( set_Set set )
 {
    setType t = (setType)set;
    
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    
 #if MAA_MAGIC
    t->magic = SET_MAGIC_FREED;
@@ -186,9 +186,9 @@ void set_destroy( set_Set set )
 {
    setType       t = (setType)set;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    if (t->readonly)
-      err_internal( __FUNCTION__, "Attempt to destroy readonly set\n" );
+      err_internal( __func__, "Attempt to destroy readonly set\n" );
    _set_destroy_buckets( set );
    _set_destroy_table( set );
 }
@@ -199,7 +199,7 @@ static void _set_insert( set_Set set, unsigned int hash, const void *elem )
    unsigned long h = hash % t->prime;
    bucketType    b;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    
    b        = xmalloc( sizeof( struct bucket ) );
    b->hash  = hash;
@@ -226,9 +226,9 @@ int set_insert( set_Set set, const void *elem )
    unsigned long hashValue = t->hash( elem );
    unsigned long h;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    if (t->readonly)
-      err_internal( __FUNCTION__, "Attempt to insert into readonly set\n" );
+      err_internal( __func__, "Attempt to insert into readonly set\n" );
    
 				/* Keep table less than half full */
    if (t->entries * 2 > t->prime) {
@@ -273,9 +273,9 @@ int set_delete( set_Set set, const void *elem )
    setType       t = (setType)set;
    unsigned long h = t->hash( elem ) % t->prime;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    if (t->readonly)
-      err_internal( __FUNCTION__, "Attempt to delete from readonly set\n" );
+      err_internal( __func__, "Attempt to delete from readonly set\n" );
    
    if (t->buckets[h]) {
       bucketType pt;
@@ -304,7 +304,7 @@ int set_member( set_Set set, const void *elem )
    setType       t = (setType)set;
    unsigned long h = t->hash( elem ) % t->prime;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    
    ++t->retrievals;
    if (t->buckets[h]) {
@@ -343,7 +343,7 @@ int set_iterate( set_Set set,
    unsigned long i;
    int           savedReadonly;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
 
    savedReadonly = t->readonly;
    t->readonly   = 1;
@@ -379,7 +379,7 @@ int set_iterate_arg( set_Set set,
    unsigned long i;
    int           savedReadonly;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
 
    savedReadonly = t->readonly;
    t->readonly   = 1;
@@ -409,7 +409,7 @@ set_Position set_init_position( set_Set set )
    setType       t = (setType)set;
    unsigned long i;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    for (i = 0; i < t->prime; i++) if (t->buckets[i]) {
       t->readonly = 1;
       return t->buckets[i];
@@ -428,7 +428,7 @@ set_Position set_next_position( set_Set set, set_Position position )
    unsigned long i;
    unsigned long h;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    
    if (!b) {
       t->readonly = 0;
@@ -466,7 +466,7 @@ int set_readonly( set_Set set, int flag )
    setType t = (setType)set;
    int     current;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
 
    current     = t->readonly;
    t->readonly = flag;
@@ -485,15 +485,15 @@ set_Set set_add( set_Set set1, set_Set set2 )
    setType       t2 = (setType)set2;
    unsigned long i;
 
-   _set_check( t1, __FUNCTION__ );
-   _set_check( t2, __FUNCTION__ );
+   _set_check( t1, __func__ );
+   _set_check( t2, __func__ );
    
    if (t1->hash != t2->hash)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical hash functions\n" );
 
    if ( t1->compare != t2->compare )
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical comparison functions\n" );
 
    for (i = 0; i < t2->prime; i++) {
@@ -520,15 +520,15 @@ set_Set set_del( set_Set set1, set_Set set2 )
    setType       t2 = (setType)set2;
    unsigned long i;
 
-   _set_check( t1, __FUNCTION__ );
-   _set_check( t2, __FUNCTION__ );
+   _set_check( t1, __func__ );
+   _set_check( t2, __func__ );
    
    if (t1->hash != t2->hash)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical hash functions\n" );
 
    if ( t1->compare != t2->compare )
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical comparison functions\n" );
 
    for (i = 0; i < t2->prime; i++) {
@@ -555,15 +555,15 @@ set_Set set_union( set_Set set1, set_Set set2 )
    set_Set       set;
    unsigned long i;
 
-   _set_check( t1, __FUNCTION__ );
-   _set_check( t2, __FUNCTION__ );
+   _set_check( t1, __func__ );
+   _set_check( t2, __func__ );
    
    if (t1->hash != t2->hash)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical hash functions\n" );
 
    if ( t1->compare != t2->compare )
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical comparison functions\n" );
 
    set = set_create( t1->hash, t1->compare );
@@ -602,15 +602,15 @@ set_Set set_inter( set_Set set1, set_Set set2 )
    unsigned long i;
    int           savedReadonly;
 
-   _set_check( t1, __FUNCTION__ );
-   _set_check( t2, __FUNCTION__ );
+   _set_check( t1, __func__ );
+   _set_check( t2, __func__ );
    
    if (t1->hash != t2->hash)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical hash functions\n" );
 
    if ( t1->compare != t2->compare )
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical comparison functions\n" );
 
    set = set_create( t1->hash, t1->compare );
@@ -645,15 +645,15 @@ set_Set set_diff( set_Set set1, set_Set set2 )
    unsigned long i;
    int           savedReadonly;
 
-   _set_check( t1, __FUNCTION__ );
-   _set_check( t2, __FUNCTION__ );
+   _set_check( t1, __func__ );
+   _set_check( t2, __func__ );
    
    if (t1->hash != t2->hash)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical hash functions\n" );
 
    if ( t1->compare != t2->compare )
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical comparison functions\n" );
 
    set = set_create( t1->hash, t1->compare );
@@ -686,15 +686,15 @@ int set_equal( set_Set set1, set_Set set2 )
    unsigned long i;
    int           savedReadonly;
 
-   _set_check( t1, __FUNCTION__ );
-   _set_check( t2, __FUNCTION__ );
+   _set_check( t1, __func__ );
+   _set_check( t2, __func__ );
    
    if (t1->hash != t2->hash)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical hash functions\n" );
 
    if ( t1->compare != t2->compare )
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Sets do not have identical comparison functions\n" );
 
    if (t1->entries != t2->entries) return 0; /* not equal */
@@ -721,7 +721,7 @@ int set_count( set_Set set )
 {
    setType t = (setType)set;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    return t->entries;
 }
 
@@ -735,7 +735,7 @@ set_Stats set_get_stats( set_Set set )
    unsigned long i;
    unsigned long count;
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    
    s->size           = t->prime;
    s->resizings      = t->resizings;
@@ -760,7 +760,7 @@ set_Stats set_get_stats( set_Set set )
    }
 
    if ( t->entries != s->entries )
-	 err_internal( __FUNCTION__,
+	 err_internal( __func__,
 		       "Incorrect count for entries: %lu vs. %lu\n",
 		       t->entries,
 		       s->entries );
@@ -778,7 +778,7 @@ void set_print_stats( set_Set set, FILE *stream )
    FILE      *str = stream ? stream : stdout;
    set_Stats  s   = set_get_stats( t );
 
-   _set_check( t, __FUNCTION__ );
+   _set_check( t, __func__ );
    
    fprintf( str, "Statistics for set at %p:\n", set );
    fprintf( str, "   %lu resizings to %lu total\n", s->resizings, s->size );

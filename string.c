@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: string.c,v 1.17 2004/11/17 12:39:54 cheusov Exp $
+ * $Id: string.c,v 1.18 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{String Pool Routines}
  *
@@ -60,7 +60,7 @@ void str_pool_destroy( str_Pool pool )
    poolInfo p = (poolInfo)pool;
    
    if (!p || !p->string || !p->hash)
-	 err_fatal( __FUNCTION__, "String pool improperly initialized\n" );
+	 err_fatal( __func__, "String pool improperly initialized\n" );
 
    mem_destroy_strings( p->string );
    hsh_destroy( p->hash );

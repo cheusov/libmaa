@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: flags.c,v 1.6 2004/01/07 14:35:26 cheusov Exp $
+ * $Id: flags.c,v 1.7 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Flag Support}
  *
@@ -82,7 +82,7 @@ void flg_register( flg_Type flag, const char *name )
    
    for (tmp = flag & 0x3fffffff; tmp && !(tmp & 1); tmp >>= 1);
    if (!tmp || tmp >> 1)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Malformed flag (%lx):"
 		    " a single low-order bit must be set\n",
 		    flag );
@@ -90,7 +90,7 @@ void flg_register( flg_Type flag, const char *name )
    if (!hash) hash = hsh_create( NULL, NULL );
    
    if (_flg_exists( flag ))
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "The flag %lx has been used for \"%s\""
 		    " and cannot be reused for \"%s\"\n",
 		    flag,
@@ -107,8 +107,8 @@ void flg_set( const char *name )
 {
    flg_Type flag;
 
-   if (!name) err_internal( __FUNCTION__, "name is NULL\n" );
-   if (!hash) err_fatal( __FUNCTION__, "No flag names registered\n" );
+   if (!name) err_internal( __func__, "name is NULL\n" );
+   if (!hash) err_fatal( __func__, "No flag names registered\n" );
    if (!strcmp( name, "none" )) {
       setFlags[0] = setFlags[1] = setFlags[2] = setFlags[3] = 0;
       return;
@@ -127,7 +127,7 @@ void flg_set( const char *name )
       {
 	 fprintf( stderr, "Valid flags are:\n" );
 	 flg_list( stderr );
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "\"%s\" is not a valid flag\n",
 		    name );
       } else {

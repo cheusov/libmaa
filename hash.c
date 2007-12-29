@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.23 2006/05/26 20:38:53 cheusov Exp $
+ * $Id: hash.c,v 1.24 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Hash Table Routines}
  *
@@ -132,7 +132,7 @@ static void _hsh_destroy_buckets( hsh_HashTable table )
    unsigned long i;
    tableType     t    = (tableType)table;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    for (i = 0; i < t->prime; i++) {
       bucketType b = t->buckets[i];
 
@@ -168,9 +168,9 @@ static void _hsh_destroy_table( hsh_HashTable table )
 
 void hsh_destroy( hsh_HashTable table )
 {
-   _hsh_check( table, __FUNCTION__ );
+   _hsh_check( table, __func__ );
    if (((tableType)table)->readonly)
-      err_internal( __FUNCTION__, "Attempt to destroy readonly table\n" );
+      err_internal( __func__, "Attempt to destroy readonly table\n" );
    _hsh_destroy_buckets( table );
    _hsh_destroy_table( table );
 }
@@ -184,7 +184,7 @@ static void _hsh_insert( hsh_HashTable table,
    unsigned long h = hash % t->prime;
    bucketType    b;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    
    b        = xmalloc( sizeof( struct bucket ) );
    b->key   = key;
@@ -215,9 +215,9 @@ int hsh_insert( hsh_HashTable table,
    unsigned long hashValue = t->hash( key );
    unsigned long h;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    if (t->readonly)
-      err_internal( __FUNCTION__, "Attempt to insert into readonly table\n" );
+      err_internal( __func__, "Attempt to insert into readonly table\n" );
    
 				/* Keep table less than half full */
    if (t->entries * 2 > t->prime) {
@@ -263,9 +263,9 @@ int hsh_delete( hsh_HashTable table, const void *key )
    tableType     t = (tableType)table;
    unsigned long h = t->hash( key ) % t->prime;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    if (t->readonly)
-      err_internal( __FUNCTION__, "Attempt to delete from readonly table\n" );
+      err_internal( __func__, "Attempt to delete from readonly table\n" );
    
    if (t->buckets[h]) {
       bucketType pt;
@@ -296,7 +296,7 @@ const void *hsh_retrieve( hsh_HashTable table,
    tableType     t = (tableType)table;
    unsigned long h = t->hash( key ) % t->prime;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    
    ++t->retrievals;
    if (t->buckets[h]) {
@@ -337,7 +337,7 @@ int hsh_iterate( hsh_HashTable table,
    bucketType    pt;
    bucketType    next;		/* Save, because pt might vanish. */
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    
    for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
@@ -369,7 +369,7 @@ int hsh_iterate_arg( hsh_HashTable table,
    bucketType    pt;
    bucketType    next;		/* Save, because pt might vanish. */
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    
    for (i = 0; i < t->prime; i++) {
       if (t->buckets[i]) {
@@ -413,7 +413,7 @@ hsh_Stats hsh_get_stats( hsh_HashTable table )
    unsigned long i;
    unsigned      count;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    
    s->size           = t->prime;
    s->resizings      = t->resizings;
@@ -437,7 +437,7 @@ hsh_Stats hsh_get_stats( hsh_HashTable table )
       }
    }
    if (t->entries != s->entries )
-	 err_internal( __FUNCTION__,
+	 err_internal( __func__,
 		       "Incorrect count for entries: %lu vs. %lu\n",
 		       t->entries,
 		       s->entries );
@@ -454,7 +454,7 @@ void hsh_print_stats( hsh_HashTable table, FILE *stream )
    FILE      *str = stream ? stream : stdout;
    hsh_Stats s    = hsh_get_stats( table );
 
-   _hsh_check( table, __FUNCTION__ );
+   _hsh_check( table, __func__ );
    
    fprintf( str, "Statistics for hash table at %p:\n", table );
    fprintf( str, "   %lu resizings to %lu total\n", s->resizings, s->size );
@@ -478,7 +478,7 @@ unsigned long hsh_string_hash( const void *key )
    unsigned long        h  = 0;
 
    if (!pt)
-      err_internal( __FUNCTION__, "String-valued keys may not be NULL\n" );
+      err_internal( __func__, "String-valued keys may not be NULL\n" );
 
    while (*pt) {
       h += *pt++;
@@ -523,7 +523,7 @@ unsigned long hsh_pointer_hash( const void *key )
 int hsh_string_compare( const void *key1, const void *key2 )
 {
    if (!key1 || !key2)
-      err_internal( __FUNCTION__,
+      err_internal( __func__,
 		    "String-valued keys may not be NULL: key1=%p, key2=%p\n",
 		    key1, key2 );
    return strcmp( (const char *)key1, (const char *)key2 );
@@ -548,7 +548,7 @@ hsh_Position hsh_init_position( hsh_HashTable table )
    tableType     t = (tableType)table;
    unsigned long i;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    for (i = 0; i < t->prime; i++) if (t->buckets[i]) {
       t->readonly = 1;
       return t->buckets[i];
@@ -567,7 +567,7 @@ hsh_Position hsh_next_position( hsh_HashTable table, hsh_Position position )
    unsigned long i;
    unsigned long h;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
    
    if (!b) {
       t->readonly = 0;
@@ -609,7 +609,7 @@ int hsh_readonly( hsh_HashTable table, int flag )
    tableType t = (tableType)table;
    int       current;
 
-   _hsh_check( t, __FUNCTION__ );
+   _hsh_check( t, __func__ );
 
    current     = t->readonly;
    t->readonly = flag;

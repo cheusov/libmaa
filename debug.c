@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: debug.c,v 1.13 2002/08/02 19:43:15 faith Exp $
+ * $Id: debug.c,v 1.14 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Debugging Support}
  *
@@ -63,7 +63,7 @@ static const char *_dbg_name( dbg_Type flag )
    void         *key;
    void         *datum;
 
-   if (!hash) err_fatal( __FUNCTION__, "No debugging names registered\n" );
+   if (!hash) err_fatal( __func__, "No debugging names registered\n" );
    HSH_ITERATE( hash, position, key, datum ) {
       if (flag == (dbg_Type)datum) {
 	 HSH_ITERATE_END( hash );
@@ -82,7 +82,7 @@ void _dbg_register( dbg_Type flag, const char *name )
    
    for (tmp = flag & 0x3fffffff; tmp && !(tmp & 1); tmp >>= 1);
    if (!tmp || tmp >> 1)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Malformed flag (%lx):"
 		    " a single low-order bit must be set\n",
 		    flag );
@@ -90,7 +90,7 @@ void _dbg_register( dbg_Type flag, const char *name )
    if (!hash) hash = hsh_create( NULL, NULL );
    
    if (_dbg_exists( flag ))
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "The debug flag %lx has been used for \"%s\""
 		    " and cannot be reused for \"%s\"\n",
 		    flag,
@@ -112,7 +112,7 @@ void dbg_register( dbg_Type flag, const char *name )
 {
 				/* These values are reserved for Khepera */
    if ((flag & 0xc0000000) == 0xc0000000)
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "Flag (%lx) may not have both high-order bits set\n",
 		    flag );
 
@@ -126,8 +126,8 @@ void dbg_set( const char *name )
 {
    dbg_Type flag;
 
-   if (!name) err_internal( __FUNCTION__, "name is NULL\n" );
-   if (!hash) err_fatal( __FUNCTION__, "No debugging names registered\n" );
+   if (!name) err_internal( __func__, "name is NULL\n" );
+   if (!hash) err_fatal( __func__, "No debugging names registered\n" );
    if (!strcmp( name, "none" )) {
       setFlags[0] = setFlags[1] = setFlags[2] = setFlags[3] = 0;
       return;
@@ -144,7 +144,7 @@ void dbg_set( const char *name )
 	 
 	 fprintf( stderr, "Valid debugging flags are:\n" );
 	 dbg_list( stderr );
-	 err_fatal( __FUNCTION__,
+	 err_fatal( __func__,
 		    "\"%s\" is not a valid debugging flag\n",
 		    name );
       } else {

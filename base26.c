@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: base26.c,v 1.3 2002/08/02 19:43:15 faith Exp $
+ * $Id: base26.c,v 1.4 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Base-26 Routines}
  *
@@ -86,7 +86,7 @@ unsigned long b26_decode( const char *val )
       int tmp = b26_index[ (unsigned char)val[i] ];
 
       if (tmp == XX)
-	 err_internal( __FUNCTION__,
+	 err_internal( __func__,
 		       "Illegal character in base26 value: `%c' (%d)\n",
 		       val[i], val[i] );
 

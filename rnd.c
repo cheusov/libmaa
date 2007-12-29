@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: rnd.c,v 1.3 2002/08/02 19:43:15 faith Exp $
+ * $Id: rnd.c,v 1.4 2007/12/29 13:16:10 cheusov Exp $
  * 
  */
 
@@ -763,14 +763,14 @@ int get_rand( int ll, int ul )
    int    val;
 
    if (randpt >= MAXRND)
-      err_internal( __FUNCTION__,
+      err_internal( __func__,
 		    "Ran out of random numbers (only %d available)\n",
 		    MAXRND );
 
    val = floor( ll + r * (ul - ll) );
    if (val > ul)
-      err_internal( __FUNCTION__, "%d > %d\n", val, ul );
+      err_internal( __func__, "%d > %d\n", val, ul );
    if (val < ll)
-      err_internal( __FUNCTION__, "%d < %d\n", val, ll );
+      err_internal( __func__, "%d < %d\n", val, ll );
    return val;
 }

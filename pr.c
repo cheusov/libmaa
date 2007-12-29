@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: pr.c,v 1.11 2002/08/02 19:43:15 faith Exp $
+ * $Id: pr.c,v 1.12 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Process Management Routines}
  *
@@ -135,16 +135,16 @@ int pr_open( const char *command, int flags, int *infd, int *outfd, int *errfd)
    if (flags & ~(PR_USE_STDIN | PR_USE_STDOUT | PR_USE_STDERR
 		 | PR_CREATE_STDIN | PR_CREATE_STDOUT | PR_CREATE_STDERR
 		 | PR_STDERR_TO_STDOUT))
-      err_internal( __FUNCTION__, "Illegal flags: 0x%08x\n", flags );
+      err_internal( __func__, "Illegal flags: 0x%08x\n", flags );
    if ((flags & PR_USE_STDIN) && (flags & PR_CREATE_STDIN))
-      err_internal( __FUNCTION__, "Cannot both use and create stdin\n" );
+      err_internal( __func__, "Cannot both use and create stdin\n" );
    if ((flags & PR_USE_STDOUT) && (flags & PR_CREATE_STDOUT))
-      err_internal( __FUNCTION__, "Cannot both use and create stdout\n" );
+      err_internal( __func__, "Cannot both use and create stdout\n" );
    if ((flags & PR_USE_STDERR) && (flags & PR_CREATE_STDERR))
-      err_internal( __FUNCTION__, "Cannot both use and create stderr\n" );
+      err_internal( __func__, "Cannot both use and create stderr\n" );
    if ((flags & PR_STDERR_TO_STDOUT)
        && ((flags & PR_USE_STDERR) || (flags & PR_CREATE_STDERR)))
-      err_internal( __FUNCTION__,
+      err_internal( __func__,
 		    "Cannot use/create stderr when duping to stdout\n" );
    
    list = arg_argify( command, 0 );
@@ -152,14 +152,14 @@ int pr_open( const char *command, int flags, int *infd, int *outfd, int *errfd)
    PRINTF(MAA_PR,("Execing %s with \"%s\"\n", argv[0], command ));
 
    if ((flags & PR_CREATE_STDIN) && pipe( fdin ) < 0)
-      err_fatal_errno( __FUNCTION__, "Cannot create pipe for stdin\n" );
+      err_fatal_errno( __func__, "Cannot create pipe for stdin\n" );
    if ((flags & PR_CREATE_STDOUT) && pipe( fdout ) < 0)
-      err_fatal_errno( __FUNCTION__, "Cannot create pipe for stdout\n" );
+      err_fatal_errno( __func__, "Cannot create pipe for stdout\n" );
    if ((flags & PR_CREATE_STDERR) && pipe( fderr ) < 0)
-      err_fatal_errno( __FUNCTION__, "Cannot create pipe for stderr\n" );
+      err_fatal_errno( __func__, "Cannot create pipe for stderr\n" );
    
    if ((pid = fork()) < 0)
-      err_fatal_errno( __FUNCTION__, "Cannot fork\n" );
+      err_fatal_errno( __func__, "Cannot fork\n" );
 
    if (pid == 0) {		/* child */
       int        i;
@@ -241,7 +241,7 @@ int pr_wait( int pid )
 	 if (errno == ECHILD) return 0;	/* We've already waited */
 				/* This is really bad... */
 	 PRINTF(MAA_PR,("waitpid() < 0, errno = %d\n", errno ));
-	 perror( __FUNCTION__ );
+	 perror( __func__ );
 	 return -1;
       }
    }
@@ -265,9 +265,9 @@ int pr_close_nowait( int fd )
    int pid;
 
    if (!_pr_objects)
-      err_internal( __FUNCTION__, "No previous call to pr_open()\n" );
+      err_internal( __func__, "No previous call to pr_open()\n" );
    if (!(pid = _pr_objects[ fd ].pid))
-      err_internal( __FUNCTION__, "File (%d) not created by pr_open()\n", fd );
+      err_internal( __func__, "File (%d) not created by pr_open()\n", fd );
 
    _pr_objects[ fd ].pid = 0;
 
@@ -298,7 +298,7 @@ int pr_readwrite( int in, int out,
    int            status;
    
    if ((flags = fcntl( in, F_GETFL )) < 0)
-      err_fatal_errno( __FUNCTION__, "Can't get flags for output stream\n" );
+      err_fatal_errno( __func__, "Can't get flags for output stream\n" );
 #ifdef O_NONBLOCK
    flags |= O_NONBLOCK;
 #else
@@ -307,7 +307,7 @@ int pr_readwrite( int in, int out,
    fcntl( in, F_SETFL, flags );
 
    if ((flags = fcntl( out, F_GETFL )) < 0)
-      err_fatal_errno( __FUNCTION__, "Can't get flags for input stream\n" );
+      err_fatal_errno( __func__, "Can't get flags for input stream\n" );
 #ifdef O_NONBLOCK
    flags |= O_NONBLOCK;
 #else
@@ -332,8 +332,8 @@ int pr_readwrite( int in, int out,
    
       switch ((retval = select( n, &rfds, &wfds, &efds, &tv )))
       {
-      case -1: err_fatal_errno( __FUNCTION__, "Filter failed\n" ); break;
-/*       case 0:  err_fatal( __FUNCTION__, "Filter hung\n" );         break; */
+      case -1: err_fatal_errno( __func__, "Filter failed\n" ); break;
+/*       case 0:  err_fatal( __func__, "Filter hung\n" );         break; */
       default:
 	 if (dbg_test(MAA_PR)) {
 	    printf( "select(2) returns %d,"
@@ -349,7 +349,7 @@ int pr_readwrite( int in, int out,
 	 if (inLen) {
 	    if ((count = write( in, inPt, inLen )) <= 0) {
 	       if (errno != EAGAIN)
-		  err_fatal_errno( __FUNCTION__, "Error writing to filter\n" );
+		  err_fatal_errno( __func__, "Error writing to filter\n" );
 	    } else {
 	       PRINTF(MAA_PR,("  wrote %d\n",count));
 	       inLen -= count;
@@ -363,21 +363,21 @@ int pr_readwrite( int in, int out,
 	 if ((count = read( out, outPt, outMaxLen )) <= 0) {
 	    if (!count) {
 	       if (inLen)
-		  err_fatal( __FUNCTION__,
+		  err_fatal( __func__,
 			     "End of output, but input not flushed\n" );
 	       if ((status = pr_close( out )))
-		  err_warning( __FUNCTION__,
+		  err_warning( __func__,
 			       "Filter had non-zero exit status: 0x%x\n",
 			       status );
 	       return outLen;
 	    } else if (errno != EAGAIN)
-	       err_fatal_errno( __FUNCTION__, "Error reading from filter\n" );
+	       err_fatal_errno( __func__, "Error reading from filter\n" );
 	 } else {
 	    PRINTF(MAA_PR,("  read %d\n",count));
 	    outLen    += count;
 	    outPt     += count;
 	    if ((outMaxLen -= count) < 0)
-	       err_fatal( __FUNCTION__, "Output buffer overflow\n" );
+	       err_fatal( __func__, "Output buffer overflow\n" );
 	 }
 	 break;
       }
@@ -412,7 +412,7 @@ int pr_spawn( const char *command )
    PRINTF(MAA_PR,("Execing %s with \"%s\"\n", argv[0], command ));
    
    if ((pid = fork()) < 0)
-      err_fatal_errno( __FUNCTION__, "Cannot fork\n" );
+      err_fatal_errno( __func__, "Cannot fork\n" );
 
    if (pid == 0) {		/* child */
       execvp( argv[0], argv );
@@ -429,7 +429,7 @@ int pr_spawn( const char *command )
 	 if (errno == ECHILD) return 0;	/* We've already waited */
 				/* This is really bad... */
 	 PRINTF(MAA_PR,("waitpid() < 0, errno = %d\n", errno ));
-	 perror( __FUNCTION__ );
+	 perror( __func__ );
 	 return -1;
       }
    }

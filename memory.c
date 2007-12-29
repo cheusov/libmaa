@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: memory.c,v 1.9 2002/08/02 19:43:15 faith Exp $
+ * $Id: memory.c,v 1.10 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Memory Management Routines}
  *
@@ -108,7 +108,7 @@ void mem_destroy_strings( mem_String info )
 {
    stringInfo i = (stringInfo)info;
 
-   _mem_magic_strings( i, __FUNCTION__ );
+   _mem_magic_strings( i, __func__ );
 #if MAA_MAGIC
    i->magic = MEM_STRINGS_MAGIC_FREED;
 #endif
@@ -126,7 +126,7 @@ const char *mem_strcpy( mem_String info, const char *string )
    stringInfo i   = (stringInfo)info;
    int        len = strlen( string );
 
-   _mem_magic_strings( i, __FUNCTION__ );
+   _mem_magic_strings( i, __func__ );
    
    ++i->count;
    i->bytes += len + 1;
@@ -143,7 +143,7 @@ const char *mem_strncpy( mem_String info,
 {
    stringInfo i = (stringInfo)info;
 
-   _mem_magic_strings( i, __FUNCTION__ );
+   _mem_magic_strings( i, __func__ );
    
    ++i->count;
    i->bytes += len + 1;
@@ -160,7 +160,7 @@ void mem_grow( mem_String info, const char *string, int len )
 {
    stringInfo i = (stringInfo)info;
    
-   _mem_magic_strings( i, __FUNCTION__ );
+   _mem_magic_strings( i, __func__ );
    
    i->bytes += len;
    obstack_grow( i->obstack, string, len );
@@ -173,7 +173,7 @@ const char *mem_finish( mem_String info )
 {
    stringInfo i = (stringInfo)info;
    
-   _mem_magic_strings( i, __FUNCTION__ );
+   _mem_magic_strings( i, __func__ );
    
    ++i->count;
    i->bytes += 1;
@@ -190,7 +190,7 @@ mem_StringStats mem_get_string_stats( mem_String info )
    stringInfo      i = (stringInfo)info;
    mem_StringStats s = xmalloc( sizeof( struct mem_StringStats ) );
 
-   _mem_magic_strings( i, __FUNCTION__ );
+   _mem_magic_strings( i, __func__ );
    
    s->count = i->count;
    s->bytes = i->bytes;
@@ -207,7 +207,7 @@ void mem_print_string_stats( mem_String info, FILE *stream )
    FILE            *str = stream ? stream : stdout;
    mem_StringStats s    = mem_get_string_stats( info );
 
-   _mem_magic_strings( info, __FUNCTION__ );
+   _mem_magic_strings( info, __func__ );
    
    fprintf( str, "Statistics for string memory manager at %p:\n", info );
    fprintf( str, "   %d strings, using %d bytes\n", s->count, s->bytes );
@@ -260,7 +260,7 @@ void mem_destroy_objects( mem_Object info )
 {
    objectInfo i = (objectInfo)info;
    
-   _mem_magic_objects( i, __FUNCTION__ );
+   _mem_magic_objects( i, __func__ );
 #if MAA_MAGIC
    i->magic = MEM_OBJECTS_MAGIC_FREED;
 #endif
@@ -282,7 +282,7 @@ void *mem_get_object( mem_Object info )
    objectInfo  i   = (objectInfo)info;
    void       *obj = stk_pop( i->stack );
 
-   _mem_magic_objects( i, __FUNCTION__ );
+   _mem_magic_objects( i, __func__ );
 
    if (!obj) {
       obj = obstack_alloc( i->obstack, i->size );
@@ -316,7 +316,7 @@ void mem_free_object( mem_Object info, void *obj )
 {
    objectInfo i = (objectInfo)info;
 
-   _mem_magic_objects( i, __FUNCTION__ );
+   _mem_magic_objects( i, __func__ );
 
    stk_push( i->stack, obj );
    --i->used;
@@ -331,7 +331,7 @@ mem_ObjectStats mem_get_object_stats( mem_Object info )
    objectInfo      i = (objectInfo)info;
    mem_ObjectStats s = xmalloc( sizeof( struct mem_ObjectStats ) );
 
-   _mem_magic_objects( i, __FUNCTION__ );
+   _mem_magic_objects( i, __func__ );
 
    if (info) {
       s->total  = i->total;
@@ -357,7 +357,7 @@ void mem_print_object_stats( mem_Object info, FILE *stream )
    FILE            *str = stream ? stream : stdout;
    mem_ObjectStats s    = mem_get_object_stats( info );
 
-   _mem_magic_objects( info, __FUNCTION__ );
+   _mem_magic_objects( info, __func__ );
 
    fprintf( str, "Statistics for object memory manager at %p:\n", info );
    fprintf( str,

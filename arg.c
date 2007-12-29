@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: arg.c,v 1.14 2004/11/17 16:37:03 cheusov Exp $
+ * $Id: arg.c,v 1.15 2007/12/29 13:16:10 cheusov Exp $
  *
  * \section{Argument List Routines}
  *
@@ -78,7 +78,7 @@ void arg_destroy( arg_List arg )
 {
    Arg a = (Arg)arg;
    
-   _arg_check( a, __FUNCTION__ );
+   _arg_check( a, __func__ );
    mem_destroy_strings( a->object );
    xfree( a->argv );
 #if MAA_MAGIC
@@ -94,7 +94,7 @@ arg_List arg_add( arg_List arg, const char *string )
    Arg        a = (Arg)arg;
    const char *new;
    
-   _arg_check( a, __FUNCTION__ );
+   _arg_check( a, __func__ );
    new = mem_strcpy( a->object, string );
    if (a->argm <= a->argc + 2 )
       a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
@@ -113,7 +113,7 @@ arg_List arg_addn( arg_List arg, const char *string, int length )
    Arg        a = (Arg)arg;
    const char *new;
    
-   _arg_check( a, __FUNCTION__ );
+   _arg_check( a, __func__ );
    new = mem_strncpy( a->object, string, length );
    if (a->argm <= a->argc + 2 )
       a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
@@ -133,7 +133,7 @@ void arg_grow( arg_List arg, const char *string, int length )
 {
    Arg        a = (Arg)arg;
 
-   _arg_check( a, __FUNCTION__ );
+   _arg_check( a, __func__ );
    mem_grow( a->object, string, length );
 }
 
@@ -145,7 +145,7 @@ arg_List arg_finish( arg_List arg )
    Arg        a = (Arg)arg;
    const char *new;
    
-   _arg_check( a, __FUNCTION__ );
+   _arg_check( a, __func__ );
    new = mem_finish( a->object );
    if (a->argm <= a->argc + 2 )
       a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
@@ -162,9 +162,9 @@ const char *arg_get( arg_List arg, int item ) /* FIXME! inline? */
 {
    Arg a = (Arg)arg;
    
-   _arg_check( a, __FUNCTION__ );
+   _arg_check( a, __func__ );
    if (item < 0 || item >= a->argc)
-      err_internal( __FUNCTION__,
+      err_internal( __func__,
 		    "Request for item %d in list containing %d items\n",
 		    item,
 		    a->argc );
@@ -175,7 +175,7 @@ const char *arg_get( arg_List arg, int item ) /* FIXME! inline? */
 
 int arg_count( arg_List arg )	/* FIXME! inline? */
 {
-   _arg_check( arg, __FUNCTION__ );
+   _arg_check( arg, __func__ );
    return ((Arg)arg)->argc;
 }
 
@@ -186,7 +186,7 @@ void arg_get_vector( arg_List arg, int *argc, char ***argv )
 {
    Arg        a = (Arg)arg;
 
-   _arg_check( a, __FUNCTION__ );
+   _arg_check( a, __func__ );
    *argc = a->argc;
    *argv = a->argv;
 }
@@ -298,7 +298,7 @@ arg_List arg_argify( const char *string, int quoteStyle )
       break;
    default:
       /* Oooops! */
-      err_internal( __FUNCTION__, "arg.c:arg_argify is buggy!!!:\n");
+      err_internal( __func__, "arg.c:arg_argify is buggy!!!:\n");
    }
 
    return a;

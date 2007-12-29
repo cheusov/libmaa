@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.19 2005/11/21 18:57:05 cheusov Exp $
+ * $Id: log.c,v 1.20 2007/12/29 13:16:10 cheusov Exp $
  * 
  */
 
@@ -146,7 +146,7 @@ void log_set_facility(const char *facility)
             return;
         }
     }
-    err_fatal(__FUNCTION__, "%s is not a valid facility name\n", facility);
+    err_fatal(__func__, "%s is not a valid facility name\n", facility);
 }
 
 const char *log_get_facility(void)
@@ -168,7 +168,7 @@ void log_syslog( const char *ident )
 {
    if (ident){
       if (logSyslog)
-	 err_internal( __FUNCTION__, "Syslog facility already open\n" );
+	 err_internal( __func__, "Syslog facility already open\n" );
 
       openlog( ident, LOG_PID|LOG_NOWAIT, logFacility );
       ++logOpen;
@@ -214,7 +214,7 @@ static void _log_check_filename(void)
        if (logFd >= 0) close(logFd);
        log_mkpath(logFilename);
        if ((logFd = open( logFilename, O_WRONLY|O_CREAT|O_APPEND, 0644 )) < 0)
-           err_fatal_errno( __FUNCTION__,
+           err_fatal_errno( __func__,
                             "Cannot open \"%s\" for append\n", logFilename );
    }
 }
@@ -223,7 +223,7 @@ void log_file( const char *ident, const char *filename )
 {
    if (ident && filename){
       if (logFd >= 0)
-	 err_internal( __FUNCTION__,
+	 err_internal( __func__,
 		       "Log file \"%s\" open when trying to open \"%s\"\n",
 		       logFilename, filename );
 
@@ -261,7 +261,7 @@ void log_stream( const char *ident, FILE *stream )
 {
    if (ident && stream){
       if (logUserStream)
-	 err_internal( __FUNCTION__, "User stream already open\n" );
+	 err_internal( __func__, "User stream already open\n" );
 
       logUserStream = stream;
       logIdent      = str_find( ident );
