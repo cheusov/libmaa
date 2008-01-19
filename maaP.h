@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.27 2006/04/09 08:53:00 cheusov Exp $
+ * $Id: maaP.h,v 1.28 2008/01/19 23:05:25 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
@@ -117,11 +117,8 @@ extern char *optarg;
 /* We actually need a few non-ANSI C things... */
 #if defined(__STRICT_ANSI__)
 extern char     *strdup( const char * );
-extern int      fileno( FILE *stream );
 extern FILE     *fdopen( int fildes, const char *mode );
-extern void     bcopy( const void *src, void *dest, int n );
 extern long int random( void );
-extern void     srandom( unsigned int );
 #endif
 
 #if HAVE_SYS_RESOURCE_H
