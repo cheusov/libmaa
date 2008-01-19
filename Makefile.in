@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.54 2008/01/11 21:57:50 cheusov Exp $
+# $Id: Makefile.in,v 1.55 2008/01/19 23:07:04 cheusov Exp $
 #
 
 ifneq (,)
@@ -47,6 +47,7 @@ SHELL=		/bin/sh
 
 CC=		@CC@
 CPP=		@CPP@
+LIBTOOL=	@LIBTOOL@
 INSTALL=        @INSTALL@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
@@ -77,13 +78,13 @@ all: $(LIBS) $(EXES) $(TESTS)
 
 install: $(LIBS)
 	mkdir -p $(libdir) && \
-	   libtool --mode=install $(INSTALL) -c libmaa.la $(libdir)
+	   $(LIBTOOL) --mode=install $(INSTALL) -c libmaa.la $(libdir)
 	mkdir -p $(includedir) && \
 	   $(INSTALL_DATA) -m 644 ${srcdir}/maa.h $(includedir)
 
 uninstall:
 	rm -f $(includedir)/maa.h
-	libtool --mode=uninstall rm -f $(libdir)/libmaa.la
+	$(LIBTOOL) --mode=uninstall rm -f $(libdir)/libmaa.la
 
 tests: $(TESTS)
 	@for i in $(TESTS); do \
@@ -105,10 +106,10 @@ arggram.c: arggram.txt
 	@AWK@ -f ./arggram2c < $< > $@
 
 %.o: %.c
-	libtool --mode=compile $(CC) -o $@ -c $(CFLAGS) $<
+	$(LIBTOOL) --tag=CC --mode=compile $(CC) -o $@ -c $(CFLAGS) $<
 
 %: %.o
-	libtool --mode=link $(CC) -o $@ $< $(LDFLAGS)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $< $(LDFLAGS)
 
 %test: %test.c rnd.o
 	$(CC) $(CFLAGS) $(RPATHFLAGS) -o $@ $< rnd.o $(LDFLAGS)
@@ -118,7 +119,7 @@ dmalloc/dmalloc.h:
 	(cd dmalloc && $(MAKE) all) || exit 1
 
 libmaa.a: $(LIBOBJS)
-	libtool --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
+	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
 	   -rpath "${libdir}" \
 	   -version-info "$(MAA_MAJOR):$(MAA_MINOR)" 
 
@@ -205,7 +206,7 @@ $(srcdir)/configure: configure.in
 ${srcdir}/config.h.in: stamp-h.in
 ${srcdir}/stamp-h.in: configure.in
 	cd ${srcdir} && autoheader
-	date > ${srcdir}/stamp-h.in
+	touch ${srcdir}/stamp-h.in
 
 config.h: stamp-h
 stamp-h: config.h.in config.status
