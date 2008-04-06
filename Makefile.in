@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.56 2008/01/22 20:34:46 cheusov Exp $
+# $Id: Makefile.in,v 1.57 2008/04/06 21:03:54 cheusov Exp $
 #
 
 ifneq (,)
@@ -78,9 +78,9 @@ all: $(LIBS) $(EXES) $(TESTS)
 
 install: $(LIBS)
 	mkdir -p $(libdir) && \
-	   $(LIBTOOL) --mode=install $(INSTALL) -c libmaa.la $(libdir)
+	   $(LIBTOOL) --mode=install $(INSTALL) -c libmaa.la $(DESTDIR)$(libdir)
 	mkdir -p $(includedir) && \
-	   $(INSTALL_DATA) -m 644 ${srcdir}/maa.h $(includedir)
+	   $(INSTALL_DATA) -m 644 ${srcdir}/maa.h $(DESTDIR)$(includedir)
 
 uninstall:
 	rm -f $(includedir)/maa.h
