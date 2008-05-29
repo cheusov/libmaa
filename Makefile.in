@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.58 2008/05/29 21:29:46 cheusov Exp $
+# $Id: Makefile.in,v 1.59 2008/05/29 22:44:17 cheusov Exp $
 #
 
 ifneq (,)
@@ -86,7 +86,8 @@ uninstall:
 	rm -f $(DESTDIR)$(includedir)/maa.h
 	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(libdir)/libmaa.la
 
-tests: $(TESTS)
+.PHONY: test
+test: $(TESTS)
 	@for i in $(TESTS); do \
 		./$$i | fgrep -v ' at ' > ./$$i.out.new; \
 		if cmp ./$$i.out $$i.out.new; \
@@ -95,7 +96,8 @@ tests: $(TESTS)
 		fi; \
 	done
 
-tests-update: $(TESTS)
+.PHONY: test-update
+test-update: $(TESTS)
 	@for i in $(TESTS); do \
 		echo Writing $$i.out; \
 		./$$i | fgrep -v ' at ' > $$i.out; \
