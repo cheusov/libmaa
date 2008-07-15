@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.28 2008/01/19 23:05:25 cheusov Exp $
+ * $Id: maaP.h,v 1.29 2008/07/15 21:45:41 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
@@ -50,34 +50,34 @@
 # if HAVE_STRINGS_H
 #  include <strings.h>
 # endif
-# if !HAVE_STRCHR
+# if !defined(HAVE_STRCHR)
 #  define strchr index
 #  define strrchr rindex
 # endif
-# if !HAVE_MEMCPY
+# if !defined(HAVE_MEMCPY)
 #  define memcpy(d, s, n) bcopy ((s), (d), (n))
 #  define memmove(d, s, n) bcopy ((s), (d), (n))
 # endif
 #endif
 
-#if !HAVE_STRLCPY
+#if !defined(HAVE_STRLCPY)
 extern size_t strlcpy_libmaa (char *s, const char * wc, size_t size);
 #define strlcpy strlcpy_libmaa
 #endif
 
-#if !HAVE_STRDUP
+#if !defined(HAVE_STRDUP)
 extern char *strdup( const char * );
 #endif
 
-#if !HAVE_STRTOL
+#if !defined(HAVE_STRTOL)
 extern long strtol( const char *, char **, int );
 #endif
 
-#if !HAVE_STRTOUL
+#if !defined(HAVE_STRTOUL)
 extern unsigned long int strtoul( const char *, char **, int );
 #endif
 
-#if !SIZEOF_VOID_P
+#if !defined(SIZEOF_VOID_P)
 # define SIZEOF_VOID_P sizeof (void *)
 #endif
 
@@ -105,7 +105,7 @@ extern unsigned long int strtoul( const char *, char **, int );
 #if HAVE_GETOPT_H
 # include <getopt.h>
 #else
-#if !HAVE_GETOPT
+#if !defined(HAVE_GETOPT)
 extern int  getopt( int, char * const *, const char * );
 extern int  optind;
 extern char *optarg;
