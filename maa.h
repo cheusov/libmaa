@@ -1,6 +1,5 @@
 /* maa.h -- Header file for visible libmaa functions
  * Created: Sun Nov 19 13:21:21 1995 by faith@dict.org
- * Revised: Sat Mar 30 11:54:49 2002 by faith@dict.org
  * Copyright 1994-1998, 2002 Rickard E. Faith (faith@dict.org)
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -17,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.43 2006/05/27 14:25:58 cheusov Exp $
+ * $Id: maa.h,v 1.44 2008/08/30 18:56:18 cheusov Exp $
  */
 
 #ifndef _MAA_H_
