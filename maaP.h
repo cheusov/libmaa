@@ -17,13 +17,23 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.29 2008/07/15 21:45:41 cheusov Exp $
+ * $Id: maaP.h,v 1.30 2008/10/01 23:57:39 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
 #define _MAAP_H_
 
 #include <stddef.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+#if defined(__INTERIX)
+/* bug in Interix-3.5 header files */
+long random (void);
+int isascii (int c);
+int gethostname(char *, size_t);
+void vsyslog (int priority, const char *message, va_list args);
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -98,7 +108,6 @@ extern unsigned long int strtoul( const char *, char **, int );
 #if HAVE_UNISTD_H
 # include <sys/types.h>
 # include <unistd.h>
-# include <stdlib.h>
 #endif
 
 /* Handle getopt correctly */
@@ -127,9 +136,6 @@ extern long int random( void );
 
 /* Provide assert() */
 #include <assert.h>
-
-/* Provide stdarg support */
-#include <stdarg.h>
 
 #if HAVE_LIMITS_H
 #include <limits.h>
