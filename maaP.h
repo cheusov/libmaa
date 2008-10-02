@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.30 2008/10/01 23:57:39 cheusov Exp $
+ * $Id: maaP.h,v 1.31 2008/10/02 00:05:04 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#if defined(__INTERIX)
+#if defined(__INTERIX) && !defined(_ALL_SOURCE)
 /* bug in Interix-3.5 header files */
 long random (void);
 int isascii (int c);
