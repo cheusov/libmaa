@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.31 2008/10/02 00:05:04 cheusov Exp $
+ * $Id: maaP.h,v 1.32 2008/10/03 02:30:58 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
@@ -28,7 +28,7 @@
 #include <stdarg.h>
 
 #if defined(__INTERIX) && !defined(_ALL_SOURCE)
-/* bug in Interix-3.5 header files */
+/* bug in Interix-3.5 header files? */
 long random (void);
 int isascii (int c);
 int gethostname(char *, size_t);
@@ -73,10 +73,6 @@ void vsyslog (int priority, const char *message, va_list args);
 #if !defined(HAVE_STRLCPY)
 extern size_t strlcpy_libmaa (char *s, const char * wc, size_t size);
 #define strlcpy strlcpy_libmaa
-#endif
-
-#if !defined(HAVE_STRDUP)
-extern char *strdup( const char * );
 #endif
 
 #if !defined(HAVE_STRTOL)
