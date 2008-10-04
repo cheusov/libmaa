@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.59 2008/05/29 22:44:17 cheusov Exp $
+# $Id: Makefile.in,v 1.60 2008/10/04 08:54:50 cheusov Exp $
 #
 
 ifneq (,)
@@ -88,13 +88,17 @@ uninstall:
 
 .PHONY: test
 test: $(TESTS)
-	@for i in $(TESTS); do \
+	@ex=0; \
+	for i in $(TESTS); do \
 		./$$i | fgrep -v ' at ' > ./$$i.out.new; \
 		if cmp ./$$i.out $$i.out.new; \
-			then echo PASSED $$i; rm -f $$i.out.new; \
-			else echo FAILED $$i; \
+		then \
+			echo PASSED $$i; rm -f $$i.out.new; \
+		else \
+			echo FAILED $$i; ex=1; \
 		fi; \
-	done
+	done; \
+	exit $$ex
 
 .PHONY: test-update
 test-update: $(TESTS)
@@ -190,8 +194,9 @@ distclean: clean
 		echo making $@ in $$subdir; \
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
-	-rm -f config.h config.cache config.status stamp-h.in stamp-h
-	-rm -f Makefile arggram2c
+	-rm -f config.h config.h.in
+	-rm -f config.cache config.status stamp-h.in stamp-h
+	-rm -f Makefile arggram2c configure
 	-rm -rf autom4te.cache
 
 tags:
