@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: xmalloc.c,v 1.11 2008/10/01 23:37:33 cheusov Exp $
+ * $Id: xmalloc.c,v 1.12 2008/10/04 08:01:21 cheusov Exp $
  */
 
 #include "maaP.h"
@@ -76,11 +76,11 @@ __inline__ char *xstrdup( const char *s )
 {
    size_t len = strlen (s);
    char *pt = xmalloc (len + 1);
-   memcpy (pt, s, len + 1);
 
    if (!pt) err_fatal( __func__,
 		       "Out of memory while duplicating string\n" );
 
+   memcpy (pt, s, len + 1);
    return pt;
 }
 
