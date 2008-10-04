@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: prtest.c,v 1.5 2002/08/02 19:43:15 faith Exp $
+ * $Id: prtest.c,v 1.6 2008/10/04 09:24:03 cheusov Exp $
  * 
  */
 
@@ -25,11 +25,13 @@
 
 int main( int argc, char **argv )
 {
-   int  prev = 0;
-   int  next; 
+   int  fdin = 0;
+   int  fdout;
    char buf[BUFSIZ];
    int  c;
    int  i;
+   pid_t pid = 0;
+   ssize_t cnt = 0;
 
    maa_init( argv[0] );
 
@@ -39,20 +41,23 @@ int main( int argc, char **argv )
       }
 
    if (argc-optind == 0) {
-      pr_open( "echo foo", PR_USE_STDIN | PR_CREATE_STDOUT,
-	       &prev, &next, NULL );
+      pid = pr_open( "echo foo", PR_USE_STDIN | PR_CREATE_STDOUT,
+	       &fdin, &fdout, NULL );
    } else {
       for (i = optind; i < argc; i++) {
 	 pr_open( argv[i], PR_USE_STDIN | PR_CREATE_STDOUT,
-		  &prev, &next, NULL );
-	 prev = next;
+		  &fdin, &fdout, NULL );
+	 fdin = fdout;
       }
    }
-   
-   while ((read( next, buf, BUFSIZ )))
-      printf( "Got: \"%s\"\n", buf );
-   printf( "status = 0x%02x\n", pr_close( next ) );
-   
+
+   printf ("Got:");
+   while (cnt = read (fdout, buf, BUFSIZ-1), cnt > 0){
+      buf [cnt] = 0;
+      printf( " \"%s\"\n", buf );
+   }
+   printf( "status = 0x%02x\n", pr_close (fdout) );
+
 #if 0
    printf( "%s\n", maa_version() );
 
