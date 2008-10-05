@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.33 2008/10/04 09:29:38 cheusov Exp $
+ * $Id: maaP.h,v 1.34 2008/10/05 07:41:29 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
@@ -26,6 +26,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <unistd.h>
 
 #if defined(__INTERIX) && !defined(_ALL_SOURCE)
 /* bug in Interix-3.5 header files? */
@@ -33,6 +34,7 @@ long random (void);
 int isascii (int c);
 int gethostname(char *, size_t);
 void vsyslog (int priority, const char *message, va_list args);
+int getopt (int argc, char * const *argv, const char *optstring);
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -109,12 +111,9 @@ extern unsigned long int strtoul( const char *, char **, int );
 /* Handle getopt correctly */
 #if HAVE_GETOPT_H
 # include <getopt.h>
-#else
+#endif
 #if !defined(HAVE_GETOPT)
 extern int  getopt( int, char * const *, const char * );
-#else
-# include <unistd.h>
-#endif
 #endif
 extern int  optind;
 extern char *optarg;
