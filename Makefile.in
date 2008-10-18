@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.62 2008/10/18 12:14:49 cheusov Exp $
+# $Id: Makefile.in,v 1.63 2008/10/18 12:30:30 cheusov Exp $
 #
 
 ifneq (,)
@@ -43,7 +43,7 @@ prefix=		@prefix@
 exec_prefix=	@exec_prefix@
 libdir=         @libdir@
 includedir=     @includedir@
-subdirs=        @subdirs@ doc
+subdirs=        doc
 
 SHELL=		/bin/sh
 
@@ -200,6 +200,9 @@ distclean: clean
 	-rm -f config.cache config.status stamp-h.in stamp-h
 	-rm -f Makefile arggram2c configure
 	-rm -rf autom4te.cache
+
+cvsclean: distclean
+	rm -rf configure config.h.in
 
 tags:
 	etags: *.c
