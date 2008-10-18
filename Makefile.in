@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.61 2008/10/10 09:37:54 cheusov Exp $
+# $Id: Makefile.in,v 1.62 2008/10/18 12:14:49 cheusov Exp $
 #
 
 ifneq (,)
@@ -26,7 +26,9 @@ endif
 
 MAA_MAJOR=@MAA_MAJOR@
 MAA_MINOR=@MAA_MINOR@
-VER=$(MAA_MAJOR).$(MAA_MINOR)
+MAA_TEENY=@MAA_TEENY@
+
+VER=$(MAA_MAJOR).$(MAA_MINOR).$(MAA_TEENY)
 VERSION=$(VER).$(shell fgrep Revision version.c \
 	| head -1 \
 	| sed 's,^.*Revision: [^.]*.,,' \
@@ -53,10 +55,9 @@ INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=	@INSTALL_DATA@
 AWK=            @AWK@
 
-VERCFLAGS=       -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR)
+VERCFLAGS=       -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR) -DMAA_TEENY=$(MAA_TEENY)
 CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I.
 LDFLAGS=        @LDFLAGS@ @LIBS@ .libs/libmaa.a -lm
-RPATHFLAGS=     @RPATHFLAGS@
 
 HEADERS= config.h maa.h maaP.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o \
@@ -68,15 +69,15 @@ TESTS=	 settest hashtest stringtest debugtest \
 	 primetest listtest bittest argtest sltest prtest basetest
 EXES=    memtest prtest
 
-LIBS=    @TARGETLIBS@
+MAALIB=  libmaa.a
 
-lib: $(LIBS)
+lib: $(MAALIB)
 
-all: $(LIBS) $(EXES) $(TESTS)
+all: $(MAALIB) $(EXES) $(TESTS)
 	echo making $@ in doc; \
 	(cd doc && $(MAKE) $@) || exit 1;
 
-install: $(LIBS)
+install: $(MAALIB)
 	mkdir -p $(DESTDIR)$(libdir) && \
 	   $(LIBTOOL) --mode=install $(INSTALL) -c libmaa.la $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(includedir) && \
@@ -119,7 +120,7 @@ arggram.c: arggram.txt
 	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $< $(LDFLAGS)
 
 %test: %test.c rnd.o
-	$(CC) $(CFLAGS) $(RPATHFLAGS) -o $@ $< rnd.o $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $< rnd.o $(LDFLAGS)
 
 dmalloc/dmalloc.h:
 	echo making all in dmalloc
@@ -131,8 +132,8 @@ libmaa.a: $(LIBOBJS)
 	   -version-info "$(MAA_MAJOR):$(MAA_MINOR)" 
 
 $(LIBOBJS): $(HEADERS) # version.stamp # don't automatically bump version
-$(EXES):    $(HEADERS) $(LIBS)
-$(TESTS):   $(HEADERS) $(LIBS) rnd.o
+$(EXES):    $(HEADERS) $(MAALIB)
+$(TESTS):   $(HEADERS) $(MAALIB) rnd.o
 
 date := $(shell date)
 version.stamp: version.c
@@ -185,7 +186,7 @@ clean:
 	done
 	-rm -rf .libs
 	-rm -f *~ *.la *.lo *.o core a.out config.log $(TESTS) $(EXES)
-	-rm -f $(LIBS) arggram.c
+	-rm -f $(MAALIB) arggram.c
 	-rm -f *.log *.aux *.toc *.dvi *.ps *.out.new
 	-rm -f *.cfg *.dtk .inslog tca.map .pure
 	-rm -f version.stamp version.tmp mkrnd

@@ -18,7 +18,7 @@ dnl You should have received a copy of the GNU General Public License along
 dnl with this program; if not, write to the Free Software Foundation, Inc.,
 dnl 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
-dnl $Id: configure.in,v 1.40 2008/10/17 10:37:39 cheusov Exp $
+dnl $Id: configure.in,v 1.41 2008/10/18 12:14:49 cheusov Exp $
 dnl
 dnl Flag conventions:
 dnl     CFLAGS and LDFLAGS should be settable on the make commandline
@@ -33,24 +33,17 @@ dnl     YCFLAGS is for yacc
 dnl     LCFLAGS is for lex
 
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.40 $)
+AC_REVISION($Revision: 1.41 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
 AC_CONFIG_HEADER(config.h)
 
 MAA_MAJOR=1
 MAA_MINOR=0
+MAA_TEENY=3
 
-echo Configuring for libmaa $MAA_MAJOR.$MAA_MINOR
+echo Configuring for libmaa $MAA_MAJOR.$MAA_MINOR.$MAA_TEENY
 echo .
-
-AC_ARG_WITH(cc,
-[  --with-cc               with cc (instead of gcc)],
-[
-if test "x${withval}" = xyes; then
-    CC=cc
-fi
-])
 
 AC_CANONICAL_HOST
 AC_PROG_AWK
@@ -68,83 +61,6 @@ fi
 needs_xmalloc=1
 local_dmalloc=0
 
-AC_ARG_WITH(cflags,
-[  --with-cflags=FLAGS     use FLAGS for CFLAGS],
-[
-if test "x${withval}" = xyes; then
-    CFLAGS="$withval"
-fi
-])
-
-AC_ARG_WITH(prof,
-[  --with-prof             with prof profiling],
-[
-if test "x${withval}" = xyes; then
-    CFLAGS="$CFLAGS -p"
-    LDFLAGS="$LDFLAGS -p"
-fi
-])
-
-AC_ARG_WITH(gprof,
-[  --with-gprof            with gprof profiling],
-[
-if test "x${withval}" = xyes; then
-    CFLAGS="$CFLAGS -pg"
-    LDFLAGS="$LDFLAGS -pg"
-fi
-])
-
-AC_ARG_WITH(dmalloc,
-[  --with-dmalloc          with Gray Watson's debugging malloc],
-[
-if test "x${withval}" = xyes; then
-    needs_dmalloc=1
-    needs_xmalloc=0
-fi
-])
-
-AC_ARG_WITH(local-dmalloc,
-[  --with-local-dmalloc    with dmalloc built in local source tree],
-[
-if test "x${withval}" = xyes; then
-    needs_dmalloc=1
-    local_dmalloc=1
-    needs_xmalloc=0
-fi
-])
-
-AC_ARG_WITH(checker,
-[  --with-checker          with Checker support (Linux only)],
-[
-if test "x${withval}" = xyes; then
-    REALCC=checkergcc
-fi
-])
-
-AC_ARG_WITH(efence,
-[  --with-efence           with Electric Fence (by Bruce Perens)],
-[
-if test "x${withval}" = xyes; then
-    REALLIBS="$REALLIBS -lefence"
-fi
-])
-
-AC_ARG_WITH(insure,
-[  --with-insure           with Insure support (from ParaSoft Corp.)],
-[
-if test "x${withval}" = xyes; then
-    REALCC=insight
-fi
-])
-
-AC_ARG_WITH(purify,
-[  --with-purify           with Purify support (from Pure, Inc.)],
-[
-if test "x${withval}" = xyes; then
-    REALCC="purify gcc"
-fi
-])
-
 shared=0
 AC_ARG_ENABLE(shared,
 [  --enable-shared         enable shared libraries],
@@ -153,9 +69,6 @@ if test "x${enableval}" = xyes; then
     shared=1
 fi
 ])
-
-TARGETLIBS=libmaa.a
-RPATHFLAGS=""
 
 dnl Checks for programs.
 echo Checking for programs
@@ -173,36 +86,6 @@ AC_CHECK_PROG(LIBTOOL,libtool,libtool)
 
 echo .
 echo Checking for libraries
-
-if test "$local_dmalloc" = 0 -a "$needs_dmalloc" = 1; then
-    AC_CHECK_LIB(dmalloc,main,
-        REALLIBS="$REALLIBS -ldmalloc"
-        CFLAGS="-DDMALLOC_FUNC_CHECK $CFLAGS",
-    local_dmalloc=1)
-fi
-
-if test "$local_dmalloc" = 1; then
-    AC_MSG_CHECKING(for dmalloc in local source tree)
-    if test -d dmalloc; then
-        REALLIBS="$REALLIBS -L./dmalloc -ldmalloc"
-        CFLAGS="-DDMALLOC_FUNC_CHECK -I./dmalloc $CFLAGS"
-        XTRAHEADERS="./dmalloc/dmalloc.h"
-        extra_subdirs="$extra_subdirs dmalloc"
-
-	AC_CONFIG_SUBDIRS(dmalloc)
-
-        AC_MSG_RESULT(./dmalloc)
-    else
-        if test -d ../dmalloc; then
-            REALLIBS="$REALLIBS -L../dmalloc -ldmalloc"
-            CFLAGS="-DDMALLOC_FUNC_CHECK -I../dmalloc $CFLAGS"
-            XTRAHEADERS="../dmalloc/dmalloc.h"
-            AC_MSG_RESULT(../dmalloc)
-        else
-            AC_MSG_RESULT(no)
-        fi
-    fi
-fi
 
 #AC_CHECK_LIB(c,getopt,,     [AC_LIBOBJ([getopt])])
 #AC_CHECK_LIB(c,getopt_long,,[AC_LIBOBJ([getopt_long])])
@@ -264,11 +147,9 @@ echo Making output files
 CC="$REALCC"
 LIBS="$REALLIBS"
 
+AC_SUBST(MAA_TEENY)
 AC_SUBST(MAA_MINOR)
 AC_SUBST(MAA_MAJOR)
-AC_SUBST(RPATHFLAGS)
-AC_SUBST(TARGETLIBS)
-AC_SUBST(XTRAHEADERS)
 AC_SUBST(AWK)
 AC_SUBST(LIBTOOL)
 
