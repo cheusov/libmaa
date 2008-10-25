@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.20 2007/12/29 13:16:10 cheusov Exp $
+ * $Id: log.c,v 1.21 2008/10/25 14:40:13 cheusov Exp $
  * 
  */
 
@@ -29,6 +29,7 @@
 #include <syslog.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #if HAVE_SYS_PARAM_H
 # include <sys/param.h>
@@ -332,8 +333,8 @@ static void _log_base_va(
 
       /* writing */
       if (logFd >= 0) {
-          _log_check_filename();
-          write( logFd, buf, strlen(buf) );
+         _log_check_filename();
+         while (-1 == write (logFd, buf, strlen (buf)) && errno == EINTR);
       }
       if (logUserStream) {
          fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
