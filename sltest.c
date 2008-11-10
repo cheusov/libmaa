@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: sltest.c,v 1.5 2002/08/02 19:43:15 faith Exp $
+ * $Id: sltest.c,v 1.6 2008/11/10 21:21:36 cheusov Exp $
  * 
  */
 
@@ -25,6 +25,11 @@
 #include <math.h>
 
 #undef DUMP
+
+typedef union {
+   int i;
+   const void *p;
+} int_cpvoid_t;
 
 static int compare( const void *datum1, const void *datum2 )
 {
@@ -38,7 +43,10 @@ static int compare( const void *datum1, const void *datum2 )
 
 static int print( const void *datum )
 {
-   printf( "%d ", (int)datum );
+   int_cpvoid_t dat;
+   dat.i = 0;
+   dat.p = datum;
+   printf( "%d ", dat.i );
    return 0;
 }
 
@@ -52,6 +60,7 @@ int main( int argc, char **argv )
    sl_List       sl;
    int           count;
    int           i;
+   int_cpvoid_t  dat;
 
    maa_init( argv[0] );
    
@@ -69,10 +78,11 @@ int main( int argc, char **argv )
    sl = sl_create( compare, key, NULL );
    
    for (i = 1; i < count; i++) {
-      const void *datum = (void *)i;
+      dat.p = 0;
+      dat.i = i;
 
       printf( "adding %d\n", i );
-      sl_insert( sl, datum );
+      sl_insert( sl, dat.p );
 #ifdef DUMP
       _sl_dump( sl );
 #endif
