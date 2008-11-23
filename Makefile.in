@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.64 2008/11/15 22:38:51 cheusov Exp $
+# $Id: Makefile.in,v 1.65 2008/11/23 12:24:09 cheusov Exp $
 #
 
 ifneq (,)
@@ -56,7 +56,7 @@ INSTALL_DATA=	@INSTALL_DATA@
 AWK=            @AWK@
 
 VERCFLAGS=       -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR) -DMAA_TEENY=$(MAA_TEENY)
-CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I.
+CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I. -I${srcdir}
 LDFLAGS=        @LDFLAGS@ @LIBS@ .libs/libmaa.a -lm
 
 HEADERS= config.h maa.h maaP.h obstack.h
