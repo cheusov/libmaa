@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.11 2002/08/02 19:43:15 faith Exp $
+ * $Id: settest.c,v 1.12 2008/11/28 19:21:05 cheusov Exp $
  */
 
 #include "maaP.h"
@@ -79,7 +79,7 @@ int main( int argc, char **argv )
 
    if (count <= 200) set_iterate( t, iterator );
    
-   set_print_stats( t, stdout );
+/*   set_print_stats( t, stdout );*/
 
    set_iterate( t, freer );
    set_destroy( t );
@@ -114,7 +114,7 @@ int main( int argc, char **argv )
       xfree( key );
    }
    
-   set_print_stats( t, stdout );
+/*   set_print_stats( t, stdout );*/
 
    set_iterate( t, freer );
    set_destroy( t );
@@ -141,7 +141,7 @@ int main( int argc, char **argv )
 	    printf( "%ld is not a member of the set", key );
    }
    
-   set_print_stats( t, stdout );
+/*   set_print_stats( t, stdout );*/
 
    set_destroy( t );
 
