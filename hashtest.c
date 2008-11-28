@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hashtest.c,v 1.8 2002/08/02 19:43:15 faith Exp $
+ * $Id: hashtest.c,v 1.9 2008/11/28 19:23:36 cheusov Exp $
  */
 
 #include "maaP.h"
@@ -90,7 +90,7 @@ int main( int argc, char **argv )
 
    if (count <= 200) hsh_iterate( t, iterator );
    
-   hsh_print_stats( t, stdout );
+/*   hsh_print_stats( t, stdout );*/
 
    hsh_iterate( t, freer );
    hsh_destroy( t );
@@ -131,7 +131,7 @@ int main( int argc, char **argv )
       xfree( key );
    }
    
-   hsh_print_stats( t, stdout );
+/*   hsh_print_stats( t, stdout );*/
 
    hsh_iterate( t, freer );
    hsh_destroy( t );
@@ -164,7 +164,7 @@ int main( int argc, char **argv )
 		    datum, pt, key );
    }
    
-   hsh_print_stats( t, stdout );
+/*   hsh_print_stats( t, stdout );*/
 
    hsh_iterate( t, free_data );
    hsh_destroy( t );
