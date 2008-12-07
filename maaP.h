@@ -1,7 +1,7 @@
 /* maaP.h -- Internal header file for libmaa
  * Created: Sun Nov 19 13:19:44 1995 by faith@dict.org
- * Revised: Sat Mar 30 12:04:40 2002 by faith@dict.org
  * Copyright 1994-1998, 2002 Rickard E. Faith (faith@dict.org)
+ * Copyright 2002-2008 Aleksey Cheusov (vle@gmx.net)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maaP.h,v 1.34 2008/10/05 07:41:29 cheusov Exp $
+ * $Id: maaP.h,v 1.35 2008/12/07 17:00:58 cheusov Exp $
  */
 
 #ifndef _MAAP_H_
