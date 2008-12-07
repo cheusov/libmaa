@@ -1,8 +1,8 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@dict.org
-# Revised: Sat Mar 30 11:54:48 2002 by faith@dict.org
 # Copyright 1995-1998, 2002 Rickard E. Faith (faith@dict.org)
-# 
+# Copyright 2002-2008 Aleksey Cheusov (vle@gmx.net)
+
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 1, or (at your option) any
@@ -17,7 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.65 2008/11/23 12:24:09 cheusov Exp $
+# $Id: Makefile.in,v 1.66 2008/12/07 13:42:06 cheusov Exp $
 #
 
 ifneq (,)
@@ -28,11 +28,7 @@ MAA_MAJOR=@MAA_MAJOR@
 MAA_MINOR=@MAA_MINOR@
 MAA_TEENY=@MAA_TEENY@
 
-VER=$(MAA_MAJOR).$(MAA_MINOR).$(MAA_TEENY)
-VERSION=$(VER).$(shell fgrep Revision version.c \
-	| head -1 \
-	| sed 's,^.*Revision: [^.]*.,,' \
-	| sed 's, $$.*$$,,')
+VERSION=$(MAA_MAJOR).$(MAA_MINOR).$(MAA_TEENY)
 
 .SUFFIXES:
 .SUFFIXES: .c .o
@@ -62,7 +58,7 @@ LDFLAGS=        @LDFLAGS@ @LIBS@ .libs/libmaa.a -lm
 HEADERS= config.h maa.h maaP.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
-	 debug.o flags.o maa.o prime.o bit.o timer.o version.o \
+	 debug.o flags.o maa.o prime.o bit.o timer.o \
 	 arg.o pr.o sl.o base64.o base26.o source.o parse-concrete.o \
 	 text.o log.o
 TESTS=	 settest hashtest stringtest debugtest \
@@ -136,17 +132,6 @@ $(EXES):    $(HEADERS) $(MAALIB)
 $(TESTS):   $(HEADERS) $(MAALIB) rnd.o
 
 date := $(shell date)
-version.stamp: version.c
-	cp version.c version.tmp
-	echo "/* Stamp: `date` */" > version.c
-	fgrep Revision < version.tmp | tail -1 >> version.c
-	touch version.stamp
-	-rm -f version.tmp
-
-version.c:
-	echo "/* Stamp: `date` */" > version.c
-	echo 'const char *maa_revision_string = "XRevisionX";' | \
-		sed 's/X/$$/g' >> version.c
 
 .PHONY: ChangeLog
 ChangeLog:
@@ -154,28 +139,28 @@ ChangeLog:
 	rm -f ChangeLog; \
 	AWK=@AWK@ rcs2log -i 2 > ChangeLog)
 
-dist: ChangeLog
-	@( echo "Consider making version.stamp to bump version number"; \
-	CVSROOT=`cat CVS/Root`; \
-	export CVSROOT; \
-	VERSION=$(MAA_MAJOR).$(MAA_MINOR).`fgrep Revision version.c \
-		| head -1 \
-		| sed 's,^.*Revision: [^.]*.,,' \
-		| sed 's, $$.*$$,,'`; \
-	export VERSION; \
-	echo "***** Copying ChangeLog for libmaa-$${VERSION}..."; \
-	cp ChangeLog /tmp; \
-	echo "***** Exporting files for libmaa-$${VERSION}..."; \
-	cd /tmp; \
-	rm -rf /tmp/libmaa-$${VERSION}; \
-	cvs export -fNd libmaa-$${VERSION} -r HEAD libmaa; \
-	cd libmaa-$${VERSION}; \
-	autoconf; \
-	mv ../ChangeLog .; \
-	cd ..; \
-	echo "***** Taring and zipping libmaa-$${VERSION}.tar.gz..."; \
-	tar cvvf libmaa-$${VERSION}.tar libmaa-$${VERSION}; \
-	gzip -9 libmaa-$${VERSION}.tar; \
+cvsdist: ChangeLog
+	@( CVSROOT=`cat CVS/Root` && \
+	export CVSROOT && \
+	VERSION=$(VERSION) && \
+	VERSION_CVS=`echo $${VERSION} | tr . -` && \
+	export VERSION VERSION_CVS && \
+	$(MAKE) ChangeLog && \
+	cp ChangeLog /tmp/libmaa.ChangeLog.$${VERSION} && \
+	echo "***** Exporting files for libmaa-$${VERSION}..." && \
+	cd /tmp && \
+	rm -rf /tmp/libmaa-$${VERSION} && \
+	cvs export -fd libmaa-$${VERSION} \
+	   -r libmaa-$${VERSION_CVS} dictd1/libmaa && \
+	cd libmaa-$${VERSION} && \
+	mv /tmp/libmaa.ChangeLog.$${VERSION} ChangeLog && \
+	$(MAKE) -f Makefile.conf && \
+	rm -rf autom4te.cache libmaa/autom4te.cache && \
+	chmod -R a+rX,g-w . && \
+	cd .. && \
+	echo "***** Taring and zipping libmaa-$${VERSION}.tar.gz..." && \
+	tar cvvf libmaa-$${VERSION}.tar libmaa-$${VERSION} && \
+	gzip -9f libmaa-$${VERSION}.tar && \
 	echo "***** Done making /tmp/libmaa-$${VERSION}.tar.gz")
 
 .PHONY: clean cleandist tags
@@ -189,7 +174,7 @@ clean:
 	-rm -f $(MAALIB) arggram.c
 	-rm -f *.log *.aux *.toc *.dvi *.ps *.out.new
 	-rm -f *.cfg *.dtk .inslog tca.map .pure
-	-rm -f version.stamp version.tmp mkrnd
+	-rm -f mkrnd
 
 distclean: clean
 	@for subdir in `echo $(subdirs)`; do \

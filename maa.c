@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.c,v 1.17 2008/10/18 12:14:49 cheusov Exp $
+ * $Id: maa.c,v 1.18 2008/12/07 13:42:06 cheusov Exp $
  *
  * \section{General Support}
  *
@@ -83,30 +83,8 @@ int maa_version_teeny( void )
 const char *maa_version( void )
 {
    static char buffer[80];
-   char        *pt;
-   char        *colon;
-   char        *dot;
 
    sprintf( buffer, "Libmaa %d.%d.%d", MAA_MAJOR, MAA_MINOR, MAA_TEENY );
-   if ((colon = strchr( maa_revision_string, ':') )) {
-				/* Assume an RCS Revision string */
-      if ((dot = strchr( colon, '.' )))
-	 strcat( buffer, dot + 1 );
-      else
-	 strcat( buffer, colon + 2 );
-      pt = strrchr( buffer, '$') - 1;
-      if (!pt)                  /* Stripped RCS Revision string? */
-            pt = buffer + strlen( buffer ) - 1;
-      if (*pt != ' ')
-            ++pt;
-      *pt = '\0';
-   } else {                     /* Assume a simple number */
-      if (maa_revision_string[0] == '$')
-	 strcat( buffer, "0" );
-      else
-	 strcat( buffer, maa_revision_string );
-   }
       
    return buffer;
-
 }
