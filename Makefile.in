@@ -146,7 +146,8 @@ ChangeLog:
               -e 's,\(.*\)<\([^@<>]\+\)@\([^@<>]\+\)>\(.*\),\1<\2 at \3}\4,g' \
 	> ChangeLog)
 
-cvsdist: ChangeLog
+.PHONY: cvsdist
+cvsdist:
 	@( CVSROOT=`cat CVS/Root` && \
 	export CVSROOT && \
 	VERSION=$(VERSION) && \
