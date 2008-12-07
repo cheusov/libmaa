@@ -16,7 +16,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: maa.h,v 1.44 2008/08/30 18:56:18 cheusov Exp $
  */
 
 #ifndef _MAA_H_
