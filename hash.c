@@ -1,7 +1,7 @@
 /* hash.c -- Hash table routines for Khepera
  * Created: Thu Nov  3 20:07:29 1994 by faith@dict.org
- * Revised: Sat Mar 30 12:02:34 2002 by faith@dict.org
  * Copyright 1994-1997, 1999, 2002 Rickard E. Faith (faith@dict.org)
+ * Copyright 2002-2008 Aleksey Cheusov (vle@gmx.net)
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: hash.c,v 1.24 2007/12/29 13:16:10 cheusov Exp $
+ * $Id: hash.c,v 1.25 2008/12/07 14:53:02 cheusov Exp $
  *
  * \section{Hash Table Routines}
  *

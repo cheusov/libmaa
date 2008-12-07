@@ -1,7 +1,7 @@
 /* prtest.c -- 
  * Created: Fri Jan 12 14:18:32 1996 by faith@dict.org
- * Revised: Sat Mar 30 12:06:33 2002 by faith@dict.org
  * Copyright 1996, 2002 Rickard E. Faith (faith@dict.org)
+ * Copyright 2002-2008 Aleksey Cheusov (vle@gmx.net)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * $Id: prtest.c,v 1.6 2008/10/04 09:24:03 cheusov Exp $
+ * $Id: prtest.c,v 1.7 2008/12/07 14:53:02 cheusov Exp $
  * 
  */
 

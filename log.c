@@ -1,7 +1,7 @@
 /* log.c -- Logging routines, for a single, program-wide logging facility
  * Created: Mon Mar 10 09:37:21 1997 by faith@dict.org
- * Revised: Sun Mar 31 11:54:19 2002 by faith@dict.org
  * Copyright 1997-1999, 2001-2002 Rickard E. Faith (faith@dict.org)
+ * Copyright 2002-2008 Aleksey Cheusov (vle@gmx.net)
  * 
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.21 2008/10/25 14:40:13 cheusov Exp $
+ * $Id: log.c,v 1.22 2008/12/07 14:53:02 cheusov Exp $
  * 
  */
 

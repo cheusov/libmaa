@@ -1,7 +1,7 @@
 /* argtest.c -- 
  * Created: Sun Jan  7 20:23:34 1996 by faith@dict.org
- * Revised: Sat Mar 30 11:54:37 2002 by faith@dict.org
  * Copyright 1996, 2002 Rickard E. Faith (faith@dict.org)
+ * Copyright 2002-2008 Aleksey Cheusov (vle@gmx.net)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: argtest.c,v 1.9 2004/05/14 18:04:50 cheusov Exp $
+ * $Id: argtest.c,v 1.10 2008/12/07 14:53:02 cheusov Exp $
  */
 
 #include "maaP.h"
