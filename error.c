@@ -17,8 +17,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: error.c,v 1.19 2008/12/07 14:53:02 cheusov Exp $
- *
  * \section{Error Reporting Routines}
  *
  * \intro Several error reporting routines are provided.  These routines

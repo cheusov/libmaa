@@ -17,8 +17,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: source.c,v 1.13 2008/12/07 14:53:02 cheusov Exp $
- *
  * \section{Source Code Management}
  *
  * \intro Most of the source code management routines are designed to be

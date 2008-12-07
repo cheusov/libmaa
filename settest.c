@@ -17,7 +17,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: settest.c,v 1.13 2008/12/07 14:53:02 cheusov Exp $
  */
 
 #include "maaP.h"

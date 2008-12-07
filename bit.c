@@ -17,8 +17,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: bit.c,v 1.10 2008/12/07 14:53:02 cheusov Exp $
- *
  * \section{Bit manipulation routines}
  *
  * \intro These are a set of simple routine to manipulate bits in an

@@ -18,8 +18,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: prime.c,v 1.7 2008/12/07 14:53:02 cheusov Exp $
- *
  * \section{Prime Number Routines}
  *
  * \intro These routines are used to find the next larger prime number for

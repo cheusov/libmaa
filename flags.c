@@ -17,8 +17,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: flags.c,v 1.8 2008/12/07 14:53:02 cheusov Exp $
- *
  * \section{Flag Support}
  *
  * \intro These routines provide low-level support for run-time program

@@ -18,8 +18,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * $Id: log.c,v 1.22 2008/12/07 14:53:02 cheusov Exp $
- * 
  */
 
 #include "maaP.h"
