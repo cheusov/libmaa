@@ -23,7 +23,7 @@ dnl     CFLAGS and LDFLAGS should be settable on the make commandline
 dnl             for optimization and stripping.
 
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.45 $)
+AC_REVISION($Revision: 1.46 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
 AC_CONFIG_HEADER(config.h)
@@ -48,7 +48,6 @@ else
     CFLAGS="$CFLAGS"
 fi
 
-needs_xmalloc=1
 local_dmalloc=0
 
 dnl Checks for programs.
@@ -64,16 +63,6 @@ AC_CHECK_PROGS(REFBIBTEX,refbibtex)
 AC_CHECK_PROGS(BIBTEX,bibtex)
 
 AC_CHECK_PROG(LIBTOOL,libtool,libtool)
-
-echo .
-echo Checking for libraries
-
-#AC_CHECK_LIB(c,getopt,,     [AC_LIBOBJ([getopt])])
-#AC_CHECK_LIB(c,getopt_long,,[AC_LIBOBJ([getopt_long])])
-
-if test "$needs_xmalloc" = 1; then
-    AC_LIBOBJ([xmalloc])
-fi
 
 echo .
 echo Checking for header file support

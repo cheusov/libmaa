@@ -54,7 +54,7 @@ CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I. -I${srcdir}
 LDFLAGS=        @LDFLAGS@ @LIBS@ .libs/libmaa.a -lm
 
 HEADERS= config.h maa.h maaP.h obstack.h
-LIBOBJS= @LIBOBJS@ obstack.o \
+LIBOBJS= @LIBOBJS@ obstack.o xmalloc.o \
 	 hash.o set.o stack.o list.o error.o memory.o string.o \
 	 debug.o flags.o maa.o prime.o bit.o timer.o \
 	 arg.o pr.o sl.o base64.o base26.o source.o parse-concrete.o \
