@@ -23,7 +23,7 @@ dnl     CFLAGS and LDFLAGS should be settable on the make commandline
 dnl             for optimization and stripping.
 
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.46 $)
+AC_REVISION($Revision: 1.47 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
 AC_CONFIG_HEADER(config.h)
@@ -41,7 +41,6 @@ AC_PROG_CC
 #AC_PROG_LIBTOOL
 AC_ISC_POSIX
 
-REALCC="$CC"
 if test "$CC" = gcc; then
     CFLAGS="$CFLAGS -Wall -Werror"
 else
@@ -113,9 +112,6 @@ AC_REPLACE_FUNCS(strlcpy)
 
 echo .
 echo Making output files
-
-CC="$REALCC"
-LIBS="$REALLIBS"
 
 AC_SUBST(MAA_TEENY)
 AC_SUBST(MAA_MINOR)
