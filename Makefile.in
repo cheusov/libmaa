@@ -135,7 +135,16 @@ date := $(shell date)
 ChangeLog:
 	(echo "***** Making new ChangeLog..."; \
 	rm -f ChangeLog; \
-	AWK=@AWK@ rcs2log -i 2 > ChangeLog)
+	AWK=@AWK@ rcs2log -i 2 | \
+	sed -e 's,/cvsroot/dict/dictd1/,,g' \
+	      -e 's,/cvs/dict/dictd1/,,g' \
+	      -e 's,@[^>]*,@,g' \
+	      -e 's,cheusov@[^>]*,vle@gmx.net,g' \
+	      -e 's,faith@[^>]*,faith@dict.org,g' \
+	      -e 's,hilliard...hilliard@.*,Bob Hilliard  <hilliard@debian.org>,g' \
+	      -e 's,tek...tek@.*,Julian Squires  <tek@wiw.org>,g' \
+              -e 's,\(.*\)<\([^@<>]\+\)@\([^@<>]\+\)>\(.*\),\1<\2 at \3}\4,g' \
+	> ChangeLog)
 
 cvsdist: ChangeLog
 	@( CVSROOT=`cat CVS/Root` && \
