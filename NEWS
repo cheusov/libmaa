@@ -1,0 +1,45 @@
+Version 1.1.0, by Aleksey Cheusov, Sun,  7 Dec 2008 16:14:32 +0200
+
+   lots of code clean-ups
+
+   MAA_TEENY constant added. Now libmaa has version 1.1.0,
+   new maa_version_teeny function returns MAA_TEENY
+
+   REMOVED: XTRAHEADERS, TARGETLIBS, RPATHFLAGS configure variables.
+   Also removed are  --with-purify, --with-insure, --with-efence,
+   --with-checker, --with-local-dmalloc, --with-dmalloc, --with-gprof,
+   --with-prof, --with-cflags and --with-cc options.
+   Use standard CC, CFLAGS, CPPFLAGS, LDFLAGS and LIBS variables
+   for configuring.
+
+   compilation error on ALTlinux fixed: on latest glibc's write(2) is
+   marked as WUR , i.e. return value MUST be checked, otherwise
+   warnigns (errors with -Werror) are generated.
+
+   target 'tests' renamed to 'test',
+   target 'tests-update' renamed to 'test-update'
+
+   Hash_table statistics is removed from settest.c and hashtest.c
+   regression tests.  This is because regression tests fail under
+   64-platforms.
+
+   sltest.c (regression test): compilation failure on Linux/x86-64 fixed
+
+   avoid using strdup(3), it is not portable
+   (fails under Interix without -D_ALL_SOURCE).
+   Another compilation fixes for Interix
+
+   avoid using bcopy(3), use standard memcpy(3) instead
+
+   -Werror is used instead of -pedantic (for gcc only)
+
+   If at least one selftest fails (target 'test'), an exit status of
+   'make test' is 1.
+
+   'make test' now works correctly if it is run from
+   external obj/ directory
+
+   no '-g' hardcode for !gcc compilers
+   no '-g -O' for gcc
+
+Previous version (1997-2008) was a part of dictd tarball
