@@ -17,8 +17,6 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
-# $Id: Makefile.in,v 1.66 2008/12/07 13:42:06 cheusov Exp $
-#
 
 ifneq (,)
 This makefile requires GNU Make.
@@ -125,7 +123,7 @@ dmalloc/dmalloc.h:
 libmaa.a: $(LIBOBJS)
 	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
 	   -rpath "${libdir}" \
-	   -version-info "$(MAA_MAJOR):$(MAA_MINOR)" 
+	   -version-info 1:0
 
 $(LIBOBJS): $(HEADERS) # version.stamp # don't automatically bump version
 $(EXES):    $(HEADERS) $(MAALIB)
