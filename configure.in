@@ -23,7 +23,7 @@ dnl     CFLAGS and LDFLAGS should be settable on the make commandline
 dnl             for optimization and stripping.
 
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.48 $)
+AC_REVISION($Revision: 1.49 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
 AC_CONFIG_HEADER(config.h)
@@ -104,8 +104,6 @@ AC_CHECK_FUNCS(snprintf)
 AC_CHECK_FUNCS(gettimeofday strchr strerror memcpy atexit on_exit sysconf)
 AC_CHECK_FUNCS(strtol strtoul)
 AC_CHECK_FUNCS(vsyslog)
-
-AC_REPLACE_FUNCS(getopt)
 
 AC_REPLACE_FUNCS(strtol strtoul)
 AC_REPLACE_FUNCS(strlcpy)
