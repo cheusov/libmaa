@@ -152,7 +152,6 @@ cvsdist: ChangeLog
 	   -r libmaa-$${VERSION_CVS} dictd1/libmaa && \
 	cd libmaa-$${VERSION} && \
 	mv /tmp/libmaa.ChangeLog.$${VERSION} ChangeLog && \
-	$(MAKE) -f Makefile.conf && \
 	rm -rf autom4te.cache libmaa/autom4te.cache && \
 	chmod -R a+rX,g-w . && \
 	cd .. && \
