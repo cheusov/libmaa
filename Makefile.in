@@ -51,7 +51,10 @@ AWK=            @AWK@
 
 VERCFLAGS=       -DMAA_MAJOR=$(MAA_MAJOR) -DMAA_MINOR=$(MAA_MINOR) -DMAA_TEENY=$(MAA_TEENY)
 CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I. -I${srcdir}
-LDFLAGS=        @LDFLAGS@ @LIBS@ .libs/libmaa.a -lm
+LDFLAGS=        @LDFLAGS@
+LIBS=	        @LIBS@ -lm
+
+TESTLIBS=	.libs/libmaa.a $(LIBS)
 
 HEADERS= config.h maa.h maaP.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o xmalloc.o \
@@ -63,7 +66,7 @@ TESTS=	 settest hashtest stringtest debugtest \
 	 primetest listtest bittest argtest sltest prtest basetest
 EXES=    memtest prtest
 
-MAALIB=  libmaa.a
+MAALIB=  libmaa.la
 
 lib: $(MAALIB)
 
@@ -110,18 +113,19 @@ arggram.c: arggram.txt
 %.o: %.c
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) -o $@ -c $(CFLAGS) $<
 
-%: %.o
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $< $(LDFLAGS)
+#%: %.o
+#	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $< $(LDFLAGS) $(LIBS) $(TESTLIBS)
 
 %test: %test.c rnd.o
-	$(CC) $(CFLAGS) -o $@ $< rnd.o $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $< rnd.o $(LDFLAGS) $(LIBS) $(TESTLIBS)
 
 dmalloc/dmalloc.h:
 	echo making all in dmalloc
 	(cd dmalloc && $(MAKE) all) || exit 1
 
-libmaa.a: $(LIBOBJS)
+$(MAALIB): $(LIBOBJS)
 	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
+	   $(LDFLAGS) $(LIBS) \
 	   -rpath "${libdir}" \
 	   -version-info 1:0
 
