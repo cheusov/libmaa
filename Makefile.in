@@ -54,7 +54,7 @@ CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I. -I${srcdir}
 LDFLAGS=        @LDFLAGS@
 LIBS=	        @LIBS@ -lm
 
-TESTLIBS=	.libs/libmaa.a $(LIBS)
+TESTLIBS=	.libs/libmaa.a
 
 HEADERS= config.h maa.h maaP.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o xmalloc.o \
@@ -117,7 +117,7 @@ arggram.c: arggram.txt
 #	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $< $(LDFLAGS) $(LIBS) $(TESTLIBS)
 
 %test: %test.c rnd.o
-	$(CC) $(CFLAGS) -o $@ $< rnd.o $(LDFLAGS) $(LIBS) $(TESTLIBS)
+	$(CC) $(CFLAGS) -o $@ $< rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
 
 dmalloc/dmalloc.h:
 	echo making all in dmalloc
