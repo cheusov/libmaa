@@ -68,7 +68,7 @@ int main( int argc, char **argv )
    
    for (i = 1; i < count; i++) {
       printf( "adding %d\n", i );
-      sl_insert( sl, (void *) i );
+      sl_insert( sl, (void *) (intptr_t) i );
 #ifdef DUMP
       _sl_dump( sl );
 #endif
