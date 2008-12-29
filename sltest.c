@@ -24,11 +24,6 @@
 
 #undef DUMP
 
-typedef union {
-   int i;
-   const void *p;
-} int_cpvoid_t;
-
 static int compare( const void *datum1, const void *datum2 )
 {
    long a = (long)datum1;
@@ -41,10 +36,7 @@ static int compare( const void *datum1, const void *datum2 )
 
 static int print( const void *datum )
 {
-   int_cpvoid_t dat;
-   dat.i = 0;
-   dat.p = datum;
-   printf( "%d ", dat.i );
+   printf ("%li ", (long) datum);
    return 0;
 }
 
@@ -58,7 +50,6 @@ int main( int argc, char **argv )
    sl_List       sl;
    int           count;
    int           i;
-   int_cpvoid_t  dat;
 
    maa_init( argv[0] );
    
@@ -76,11 +67,8 @@ int main( int argc, char **argv )
    sl = sl_create( compare, key, NULL );
    
    for (i = 1; i < count; i++) {
-      dat.p = 0;
-      dat.i = i;
-
       printf( "adding %d\n", i );
-      sl_insert( sl, dat.p );
+      sl_insert( sl, (void *) i );
 #ifdef DUMP
       _sl_dump( sl );
 #endif
@@ -122,4 +110,3 @@ int main( int argc, char **argv )
 
    return 0;
 }
-
