@@ -1,3 +1,15 @@
+Version 1.1.1, by Aleksey Cheusov, Sat, 31 Jan 2009 21:42:36 +0200
+
+  Makefile and configure fixes and clean-ups:
+
+     LDFLAGS/LIBS passed to configure script are used to build library
+     and test utilities
+
+     Other minor clean-ups
+
+  fixed: sf.net bug #2473314, test utility sltest.c failed under
+  bigendian platforms.
+
 Version 1.1.0, by Aleksey Cheusov, Sun,  7 Dec 2008 16:14:32 +0200
 
    lots of code clean-ups
