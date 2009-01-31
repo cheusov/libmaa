@@ -113,15 +113,8 @@ arggram.c: arggram.txt
 %.o: %.c
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) -o $@ -c $(CFLAGS) $<
 
-#%: %.o
-#	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $< $(LDFLAGS) $(LIBS) $(TESTLIBS)
-
 %test: %test.c rnd.o
 	$(CC) $(CFLAGS) -o $@ $< rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
-
-dmalloc/dmalloc.h:
-	echo making all in dmalloc
-	(cd dmalloc && $(MAKE) all) || exit 1
 
 $(MAALIB): $(LIBOBJS)
 	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
@@ -225,4 +218,3 @@ Makefile: Makefile.in config.status
 
 config.status: configure
 	./config.status --recheck
-
