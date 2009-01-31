@@ -54,4 +54,4 @@ Version 1.1.0, by Aleksey Cheusov, Sun,  7 Dec 2008 16:14:32 +0200
    no '-g' hardcode for !gcc compilers
    no '-g -O' for gcc
 
-Previous version (1997-2008) was a part of dictd tarball
+Previous versions (1997-2008) was a part of dictd tarball
