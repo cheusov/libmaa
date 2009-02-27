@@ -63,14 +63,15 @@ LIBOBJS= @LIBOBJS@ obstack.o xmalloc.o \
 	 arg.o pr.o sl.o base64.o base26.o source.o parse-concrete.o \
 	 text.o log.o
 TESTS=	 settest hashtest stringtest debugtest \
-	 primetest listtest bittest argtest sltest prtest basetest
+	 primetest listtest bittest argtest sltest prtest basetest \
+         logtest.sh
 EXES=    memtest prtest
 
 MAALIB=  libmaa.la
 
 lib: $(MAALIB)
 
-all: $(MAALIB) $(EXES) $(TESTS)
+all: $(MAALIB) $(EXES) $(TESTS) logtest
 	echo making $@ in doc; \
 	(cd doc && $(MAKE) $@) || exit 1;
 
@@ -87,7 +88,9 @@ uninstall:
 .PHONY: test
 test: $(TESTS)
 	@ex=0; \
-	if test "${srcdir}" != .; then cp ${srcdir}/argtest.in .; fi; \
+	if test "${srcdir}" != .; then \
+		cp ${srcdir}/argtest.in ${srcdir}/logtest.sh .; \
+	fi; \
 	for i in $(TESTS); do \
 		./$$i | fgrep -v ' at ' > ./$$i.out.new; \
 		if cmp @srcdir@/$$i.out $$i.out.new; \
