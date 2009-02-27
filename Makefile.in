@@ -63,8 +63,8 @@ LIBOBJS= @LIBOBJS@ obstack.o xmalloc.o \
 	 arg.o pr.o sl.o base64.o base26.o source.o parse-concrete.o \
 	 text.o log.o
 TESTS=	 settest hashtest stringtest debugtest \
-	 primetest listtest bittest argtest sltest prtest basetest \
-         logtest.sh
+	 primetest listtest bittest argtest sltest prtest basetest
+TESTS_SH= logtest.sh
 EXES=    memtest prtest
 
 MAALIB=  libmaa.la
@@ -86,12 +86,12 @@ uninstall:
 	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(libdir)/libmaa.la
 
 .PHONY: test
-test: $(TESTS)
+test: $(TESTS) logtest
 	@ex=0; \
 	if test "${srcdir}" != .; then \
 		cp ${srcdir}/argtest.in ${srcdir}/logtest.sh .; \
 	fi; \
-	for i in $(TESTS); do \
+	for i in $(TESTS) $(TESTS_SH); do \
 		./$$i | fgrep -v ' at ' > ./$$i.out.new; \
 		if cmp @srcdir@/$$i.out $$i.out.new; \
 		then \
@@ -104,7 +104,7 @@ test: $(TESTS)
 
 .PHONY: test-update
 test-update: $(TESTS)
-	@for i in $(TESTS); do \
+	@for i in $(TESTS) $(TESTS_SH); do \
 		echo Writing $$i.out; \
 		./$$i | fgrep -v ' at ' > $$i.out; \
 	done
