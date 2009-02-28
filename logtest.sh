@@ -9,6 +9,7 @@ awk '
    sub(/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/, "Mth")
    sub(/\[[0-9]+\]/, "[NNNNN]")
    gsub(/[0-9][0-9]/, "NN")
+   $6 = "HOSTNAME"
    print
 }' _log_file.txt
 
