@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rm _log_file.txt
+rm -f _log_file.txt
 
 env LC_ALL=C ./logtest _log_file.txt
 awk '
@@ -11,3 +11,5 @@ awk '
    gsub(/[0-9][0-9]/, "NN")
    print
 }' _log_file.txt
+
+rm -f _log_file.txt
