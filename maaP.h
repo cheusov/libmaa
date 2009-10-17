@@ -40,6 +40,10 @@ int getopt (int argc, char * const *argv, const char *optstring);
 #include "config.h"
 #endif
 
+#if HAVE_STDINT_H
+#include <stdint.h>
+#endif
+
 #if HAVE_ALLOCA_H
 # include <alloca.h>
 #endif
