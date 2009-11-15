@@ -81,13 +81,12 @@ extern int        maa_version_minor( void );
 extern const char *maa_version( void );
 
 /* xmalloc.c */
-
 #ifndef DMALLOC_FUNC_CHECK
-extern __inline__ void *xmalloc( unsigned int size );
-extern __inline__ void *xcalloc( unsigned int num, unsigned int size );
-extern __inline__ void *xrealloc( void *pt, unsigned int size );
-extern __inline__ void xfree( void *pt );
-extern __inline__ char *xstrdup( const char *s );
+extern void *xmalloc( size_t size );
+extern void *xcalloc( size_t num, size_t size );
+extern void *xrealloc( void *pt, size_t size );
+extern void xfree( void *pt );
+extern char *xstrdup( const char *s );
 #endif
 
 

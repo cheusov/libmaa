@@ -32,7 +32,7 @@ void free();
 
 #ifndef DMALLOC_FUNC_CHECK
 
-__inline__ void *xmalloc( unsigned int size )
+void *xmalloc( size_t size )
 {
    void *pt = malloc( size );
 
@@ -42,7 +42,7 @@ __inline__ void *xmalloc( unsigned int size )
    return pt;
 }
 
-__inline__ void *xcalloc( unsigned int num, unsigned int size )
+void *xcalloc( size_t num, size_t size )
 {
    void *pt = calloc( num, size );
 
@@ -52,7 +52,7 @@ __inline__ void *xcalloc( unsigned int num, unsigned int size )
    return pt;
 }
 
-__inline__ void *xrealloc( void *pt, unsigned int size )
+void *xrealloc( void *pt, size_t size )
 {
    void *new = realloc( pt, size );
 
@@ -64,13 +64,13 @@ __inline__ void *xrealloc( void *pt, unsigned int size )
    return new;
 }
 
-__inline__ void xfree( void *pt )
+void xfree( void *pt )
 {
    if (pt) free( pt );
    else err_fatal( __func__, "Attempt to free null pointer\n" );
 }
 
-__inline__ char *xstrdup( const char *s )
+char *xstrdup( const char *s )
 {
    size_t len = strlen (s);
    char *pt = xmalloc (len + 1);

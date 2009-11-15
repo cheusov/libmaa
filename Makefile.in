@@ -139,7 +139,7 @@ $(MAALIB): $(LIBOBJS)
 	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
 	   $(LDFLAGS) $(LIBS) \
 	   -rpath "${libdir}" \
-	   -version-info 1:0
+	   -version-info 2:0
 
 $(LIBOBJS): $(HEADERS) # version.stamp # don't automatically bump version
 $(EXES):    $(HEADERS) $(MAALIB)
