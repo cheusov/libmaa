@@ -134,6 +134,8 @@ prtest     : prtest.c rnd.c $(MAALIB)
 	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
 basetest   : basetest.c rnd.c $(MAALIB)
 	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+logtest   : logtest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
 
 $(MAALIB): $(LIBOBJS)
 	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
