@@ -35,8 +35,6 @@ libdir=         @libdir@
 includedir=     @includedir@
 subdirs=        doc
 
-SHELL=		/bin/sh
-
 CC=		@CC@
 CPP=		@CPP@
 LIBTOOL=	@LIBTOOL@
@@ -106,36 +104,36 @@ test-update: $(TESTS)
 	done
 
 arg.o: arggram.c
-arggram.c: arggram.txt
-	@AWK@ -f ./arggram2c < arggram.txt > $@
+arggram.c: ${srcdir}/arggram.txt
+	@AWK@ -f ./arggram2c < ${srcdir}/arggram.txt > $@
 
 .c.o:
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) -o $@ -c $(CFLAGS) $<
 
-settest    : settest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-hashtest   : hashtest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-stringtest : stringtest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-debugtest  : debugtest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-primetest  : primetest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-listtest   : listtest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-bittest    : bittest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-argtest    : argtest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-sltest     : sltest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-prtest     : prtest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-basetest   : basetest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
-logtest   : logtest.c rnd.c $(MAALIB)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+settest    : settest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+hashtest   : hashtest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+stringtest : stringtest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+debugtest  : debugtest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+primetest  : primetest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+listtest   : listtest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+bittest    : bittest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+argtest    : argtest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+sltest     : sltest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+prtest     : prtest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+basetest   : basetest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+logtest   : logtest.o rnd.o $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.o rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
 
 $(MAALIB): $(LIBOBJS)
 	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
