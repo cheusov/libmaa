@@ -107,7 +107,7 @@ test-update: $(TESTS)
 
 arg.o: arggram.c
 arggram.c: arggram.txt
-	@AWK@ -f ./arggram2c < $< > $@
+	@AWK@ -f ./arggram2c < arggram.txt > $@
 
 .c.o:
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) -o $@ -c $(CFLAGS) $<
