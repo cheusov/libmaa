@@ -18,10 +18,6 @@
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
 
-ifneq (,)
-This makefile requires GNU Make.
-endif
-
 MAA_MAJOR=@MAA_MAJOR@
 MAA_MINOR=@MAA_MINOR@
 MAA_TEENY=@MAA_TEENY@
@@ -54,7 +50,7 @@ CFLAGS=		@DEFS@ @CPPFLAGS@ @CFLAGS@ $(VERCFLAGS) -I. -I${srcdir}
 LDFLAGS=        @LDFLAGS@
 LIBS=	        @LIBS@ -lm
 
-TESTLIBS=	.libs/libmaa.a
+TESTLIBS=	-L.libs -lmaa
 
 HEADERS= config.h maa.h maaP.h obstack.h
 LIBOBJS= @LIBOBJS@ obstack.o xmalloc.o \
@@ -113,11 +109,31 @@ arg.o: arggram.c
 arggram.c: arggram.txt
 	@AWK@ -f ./arggram2c < $< > $@
 
-%.o: %.c
+.c.o:
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) -o $@ -c $(CFLAGS) $<
 
-%test: %test.c rnd.o
-	$(CC) $(CFLAGS) -o $@ $< rnd.o $(LDFLAGS) $(TESTLIBS) $(LIBS)
+settest    : settest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+hashtest   : hashtest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+stringtest : stringtest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+debugtest  : debugtest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+primetest  : primetest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+listtest   : listtest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+bittest    : bittest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+argtest    : argtest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+sltest     : sltest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+prtest     : prtest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
+basetest   : basetest.c rnd.c $(MAALIB)
+	$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $@.c rnd.c $(CFLAGS) $(LDFLAGS) $(TESTLIBS) $(LIBS)
 
 $(MAALIB): $(LIBOBJS)
 	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
@@ -128,8 +144,6 @@ $(MAALIB): $(LIBOBJS)
 $(LIBOBJS): $(HEADERS) # version.stamp # don't automatically bump version
 $(EXES):    $(HEADERS) $(MAALIB)
 $(TESTS):   $(HEADERS) $(MAALIB) rnd.o
-
-date := $(shell date)
 
 .PHONY: ChangeLog
 ChangeLog:
