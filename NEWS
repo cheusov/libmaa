@@ -1,3 +1,15 @@
+Version 1.2.0, by Aleksey Cheusov, Wed, 18 Nov 2009 23:12:09 +0200
+
+  For better conformance with POSIX/SUS xmalloc, xrealloc and xcalloc
+  functions take 'size_t' args, not 'unsigned int'.
+  Due to change in API a major shared library number is bumped from 1 to 2
+
+  New trivial test for log.c
+
+  fix for sltest.c: on OpenBSD intptr_t is defined in stdint.h
+
+  Makefile.in: GNU make is not required anymore, bsd make is enough
+
 Version 1.1.1, by Aleksey Cheusov, Sat, 31 Jan 2009 21:42:36 +0200
 
   Makefile and configure fixes and clean-ups:
