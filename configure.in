@@ -23,7 +23,7 @@ dnl     CFLAGS and LDFLAGS should be settable on the make commandline
 dnl             for optimization and stripping.
 
 AC_PREREQ(2.53)
-AC_REVISION($Revision: 1.54 $)
+AC_REVISION($Revision: 1.55 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
 AC_CONFIG_HEADER(config.h)
@@ -66,7 +66,7 @@ echo Checking for header file support
 
 AC_HEADER_STDC
 AC_HEADER_TIME
-AC_CHECK_HEADERS(unistd.h strings.h limits.h stdint.h)
+AC_CHECK_HEADERS(unistd.h strings.h limits.h stdint.h inttypes.h)
 AC_CHECK_HEADERS(sys/resource.h sys/time.h sys/param.h sys/wait.h)
 
 AC_MSG_CHECKING(for SYSLOG_NAMES support in syslog.h)

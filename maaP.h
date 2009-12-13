@@ -44,6 +44,9 @@ int getopt (int argc, char * const *argv, const char *optstring);
 #include <stdint.h>
 #endif
 
+#if HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
 #if HAVE_ALLOCA_H
 # include <alloca.h>
 #endif
