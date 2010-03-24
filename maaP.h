@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <string.h>
 
 #if defined(__INTERIX) && !defined(_ALL_SOURCE)
 /* bug in Interix-3.5 header files? */
@@ -67,10 +68,6 @@ int getopt (int argc, char * const *argv, const char *optstring);
 #else
 # if HAVE_STRINGS_H
 #  include <strings.h>
-# endif
-# if !defined(HAVE_STRCHR)
-#  define strchr index
-#  define strrchr rindex
 # endif
 # if !defined(HAVE_MEMCPY)
 #  define memcpy(d, s, n) bcopy ((s), (d), (n))
