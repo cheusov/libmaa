@@ -67,12 +67,12 @@ extern const char *maa_revision_string;
 
 /* maa.c */
 
-#define MAA_MEMORY (3<<30|1<<29) /* Print memory usage statistics at exit */
-#define MAA_TIME   (3<<30|1<<28) /* Print timer information at exit       */
-#define MAA_PR     (3<<30|1<<27) /* Debug process routines                */
-#define MAA_SL     (3<<30|1<<26) /* Debug skip list routines              */
-#define MAA_PARSE  (3<<30|1<<25) /* Debug parsing                         */
-#define MAA_SRC    (3<<30|1<<24) /* Source library                        */
+#define MAA_MEMORY (3U<<30|1<<29) /* Print memory usage statistics at exit */
+#define MAA_TIME   (3U<<30|1<<28) /* Print timer information at exit       */
+#define MAA_PR     (3U<<30|1<<27) /* Debug process routines                */
+#define MAA_SL     (3U<<30|1<<26) /* Debug skip list routines              */
+#define MAA_PARSE  (3U<<30|1<<25) /* Debug parsing                         */
+#define MAA_SRC    (3U<<30|1<<24) /* Source library                        */
 
 extern void       maa_init( const char *programName );
 extern void       maa_shutdown( void );
