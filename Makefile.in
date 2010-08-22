@@ -73,7 +73,7 @@ install: $(MAALIB)
 	mkdir -p $(DESTDIR)$(libdir) && \
 	   $(LIBTOOL) --mode=install $(INSTALL) -c libmaa.la $(DESTDIR)$(libdir)
 	mkdir -p $(DESTDIR)$(includedir) && \
-	   $(INSTALL_DATA) -m 644 ${srcdir}/maa.h $(DESTDIR)$(includedir)
+	   $(INSTALL_DATA) -c -m 644 ${srcdir}/maa.h $(DESTDIR)$(includedir)
 
 uninstall:
 	rm -f $(DESTDIR)$(includedir)/maa.h
