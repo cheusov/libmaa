@@ -154,7 +154,7 @@ arg_add
 arg_addn
 arg_grow
 arg_finish
-*arg_get
+arg_get
 arg_count
 arg_get_vector
 arg_argify
