@@ -138,7 +138,7 @@ logtest   : logtest.o rnd.o $(MAALIB)
 $(MAALIB): $(LIBOBJS)
 	$(LIBTOOL) --tag=CC --mode=link ${CC} -o libmaa.la ${LIBOBJS:.o=.lo} \
 	   $(LDFLAGS) $(LIBS) \
-	   -rpath "${libdir}" \
+	   -rpath "${libdir}" -export-symbols export.sym \
 	   -version-info 2:0
 
 $(LIBOBJS): $(HEADERS) # version.stamp # don't automatically bump version
