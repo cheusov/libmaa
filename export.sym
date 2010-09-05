@@ -8,6 +8,10 @@ xcalloc
 xrealloc
 xfree
 xstrdup
+bit_set
+bit_clr
+bit_tst
+bit_cnt
 prm_is_prime
 prm_next_prime
 hsh_create
