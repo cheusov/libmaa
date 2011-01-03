@@ -22,10 +22,11 @@
 #ifndef _MAAP_H_
 #define _MAAP_H_
 
+#include <sys/types.h>
+#include <unistd.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <unistd.h>
 #include <string.h>
 
 #if defined(__INTERIX) && !defined(_ALL_SOURCE)
@@ -102,13 +103,6 @@ extern unsigned long int strtoul( const char *, char **, int );
 # else
 #  include <time.h>
 # endif
-#endif
-
-/* Include some standard header files. */
-#include <stdio.h>
-#if HAVE_UNISTD_H
-# include <sys/types.h>
-# include <unistd.h>
 #endif
 
 /* Handle getopt correctly */
