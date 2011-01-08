@@ -295,10 +295,13 @@ static void _log_base_va(
    int log_facility,
    const char *format, va_list ap )
 {
+   va_list ap_copy;
    time_t t;
    static char   buf [4096] = "";
    static char   buf_main [4096] = "";
    static char   buf_preamble [256] = "";
+
+   va_copy (ap_copy, ap);
 
    if (!logOpen) return;
 
@@ -348,7 +351,7 @@ static void _log_base_va(
 
 #if HAVE_VSYSLOG
    if (logSyslog) {
-      vsyslog( log_facility, format, ap );
+      vsyslog( log_facility, format, ap_copy );
    }
 #endif
 }
