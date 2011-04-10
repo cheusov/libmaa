@@ -1,3 +1,33 @@
+========================================================================
+Version 1.3.0, by Aleksey Cheusov, Sun,  Sun, 10 Apr 2011 17:44:10 +0300
+
+  Only maa's symbols are exported from libmaa shared
+  library (export.sym).
+  'libtool -export-symbols' is used for this to work.
+  |
+  DUE TO THIS IN ORDER TO AVOID POTENTIAL ABI INCOMPATIBILITIES, I'VE
+  INCREASED MAJOR VERSION OF THE SHARED LIBRARY.
+
+  FIXED: when both stream/file and syslog logging facilities are
+  enabled, log_info() and other logging functions segfault on
+  NetBSD-5.1/x86_64.  va_copy magic was needed to fix this problem.
+
+  It is assumed that strchr(3) is always available (no autoconf
+  check).  The same for unistd.h header file.
+
+  CFLAGS set by user may override default -Wall -Werror set for GCC.
+
+  Fix for warning messages produced by SunPro compiler (integer
+  overflow detected: op "<<")
+
+  -c flag was added to INSTALL_DATA invocation
+
+  FIXED: compilation error on CentOS-5.4
+
+  FIXED: "make test" failed on OpenBSD-3.8. This system defines intptr_t
+  in inttypes.h, not in stdint.h
+
+========================================================================
 Version 1.2.0, by Aleksey Cheusov, Wed, 18 Nov 2009 23:12:09 +0200
 
   For better conformance with POSIX/SUS xmalloc, xrealloc and xcalloc
@@ -10,6 +40,7 @@ Version 1.2.0, by Aleksey Cheusov, Wed, 18 Nov 2009 23:12:09 +0200
 
   Makefile.in: GNU make is not required anymore, bsd make is enough
 
+========================================================================
 Version 1.1.1, by Aleksey Cheusov, Sat, 31 Jan 2009 21:42:36 +0200
 
   Makefile and configure fixes and clean-ups:
@@ -22,6 +53,7 @@ Version 1.1.1, by Aleksey Cheusov, Sat, 31 Jan 2009 21:42:36 +0200
   fixed: sf.net bug #2473314, test utility sltest.c failed under
   bigendian platforms.
 
+========================================================================
 Version 1.1.0, by Aleksey Cheusov, Sun,  7 Dec 2008 16:14:32 +0200
 
    lots of code clean-ups
@@ -66,4 +98,5 @@ Version 1.1.0, by Aleksey Cheusov, Sun,  7 Dec 2008 16:14:32 +0200
    no '-g' hardcode for !gcc compilers
    no '-g -O' for gcc
 
+========================================================================
 Previous versions (1997-2008) were a part of dictd tarball
