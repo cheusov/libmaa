@@ -181,9 +181,9 @@ sl_List sl_create( int (*compare)( const void *key1, const void *key2 ),
    }
 
    if (!compare)
-      err_internal( __func__, "compare fuction is NULL\n" );
+      err_internal( __func__, "compare function is NULL\n" );
    if (!key)
-      err_internal( __func__, "key fuction is NULL\n" );
+      err_internal( __func__, "key function is NULL\n" );
 
    l          = mem_get_object( _sl_Memory );
 #if MAA_MAGIC
