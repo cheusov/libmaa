@@ -111,11 +111,10 @@ int str_pool_iterate(
    hsh_HashTable hash = p -> hash;
    hsh_Position  hash_pos;
    void *key;
-   void *datum;
 
 /*   printf ("inside str_pool_iterate\n"); */
 
-   HSH_ITERATE (hash, hash_pos, key, datum){
+   HSH_ITERATE_KEYS (hash, hash_pos, key){
       if ((*iterator) ((const char *) key))
 	 return 1;
    }

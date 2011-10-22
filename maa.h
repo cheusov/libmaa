@@ -154,11 +154,18 @@ extern int           hsh_readonly( hsh_HashTable table, int flag );
 #define HSH_POSITION_NEXT(P,T)  ((P)=hsh_next_position(T,P))
 #define HSH_POSITION_OK(P)      (P)
 #define HSH_POSITION_GET(P,K,D) ((D)=hsh_get_position(P,&K))
+#define HSH_POSITION_GETKEY(P,K) (hsh_get_position(P,&K))
 
 /* iterate over all (key, datum) pairs, (K,D), in hash table T */
 #define HSH_ITERATE(T,P,K,D)                                                 \
    for (HSH_POSITION_INIT((P),(T));                                          \
 	HSH_POSITION_OK(P) && (HSH_POSITION_GET((P),(K),(D)),1);             \
+	HSH_POSITION_NEXT((P),(T)))
+
+/* iterate over all keys K, in hash table T */
+#define HSH_ITERATE_KEYS(T,P,K)                                              \
+   for (HSH_POSITION_INIT((P),(T));                                          \
+	HSH_POSITION_OK(P) && (HSH_POSITION_GETKEY((P),(K)),1);              \
 	HSH_POSITION_NEXT((P),(T)))
 
 /* If the HSH_ITERATE loop is exited before all elements in the table are
