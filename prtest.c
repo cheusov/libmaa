@@ -28,7 +28,6 @@ int main( int argc, char **argv )
    char buf[BUFSIZ];
    int  c;
    int  i;
-   pid_t pid = 0;
    ssize_t cnt = 0;
 
    maa_init( argv[0] );
@@ -39,7 +38,7 @@ int main( int argc, char **argv )
       }
 
    if (argc-optind == 0) {
-      pid = pr_open( "echo foo", PR_USE_STDIN | PR_CREATE_STDOUT,
+      pr_open( "echo foo", PR_USE_STDIN | PR_CREATE_STDOUT,
 	       &fdin, &fdout, NULL );
    } else {
       for (i = optind; i < argc; i++) {
