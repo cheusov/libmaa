@@ -139,9 +139,8 @@ int str_pool_iterate_arg(
    hsh_HashTable hash = p -> hash;
    hsh_Position  hash_pos;
    void *key;
-   void *datum;
 
-   HSH_ITERATE (hash, hash_pos, key, datum){
+   HSH_ITERATE_KEYS (hash, hash_pos, key){
       if ((*iterator) (key, arg)){
 	 HSH_ITERATE_END (hash);
 	 return 1;

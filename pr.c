@@ -386,10 +386,9 @@ int pr_filter( const char *command,
 	       const char *inBuffer, int inLen,
 	       char *outBuffer, int outMaxLen )
 {
-   int  pid;
    int  in, out;
    
-   pid = pr_open( command, PR_CREATE_STDIN | PR_CREATE_STDOUT,
+   pr_open( command, PR_CREATE_STDIN | PR_CREATE_STDOUT,
 		  &in, &out, NULL );
    return pr_readwrite( in, out, inBuffer, inLen, outBuffer, outMaxLen );
 }
