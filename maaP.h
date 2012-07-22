@@ -111,9 +111,9 @@ extern unsigned long int strtoul( const char *, char **, int );
 #endif
 #if !defined(HAVE_GETOPT)
 extern int  getopt( int, char * const *, const char * );
-#endif
 extern int  optind;
 extern char *optarg;
+#endif
 
 /* We actually need a few non-ANSI C things... */
 #if defined(__STRICT_ANSI__)
