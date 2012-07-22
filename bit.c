@@ -28,14 +28,14 @@
 
 /* \doc Set |bit| in |flags|. */
 
-__inline__ void bit_set( unsigned long *flags, int bit )
+void bit_set( unsigned long *flags, int bit )
 {
    *flags |= (1UL << bit);
 }
 
 /* \doc Clear |bit| in |flags|. */
 
-__inline__ void bit_clr( unsigned long *flags, int bit )
+void bit_clr( unsigned long *flags, int bit )
 {
    *flags &= ~(1UL << bit);
 }
@@ -43,14 +43,14 @@ __inline__ void bit_clr( unsigned long *flags, int bit )
 /* \doc Test |bit| in |flags|, returning non-zero if the bit is set and
    zero if the bit is clear. */
 
-__inline__ int bit_tst( unsigned long *flags, int bit )
+int bit_tst( unsigned long *flags, int bit )
 {
    return (*flags & (1UL << bit));
 }
 
 /* \doc Return a count of the number of bits set in |flags|. */
 
-__inline__ int bit_cnt( unsigned long *flags )
+int bit_cnt( unsigned long *flags )
 {
    unsigned long x = *flags;
 

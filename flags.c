@@ -139,10 +139,10 @@ void flg_set( const char *name )
    }
 }
 
-/* \doc This inlined function tests the |flag|, returning non-zero if the
+/* \doc This function tests the |flag|, returning non-zero if the
    |flag| is set, and zero otherwise. */
 
-__inline__ int flg_test( flg_Type flag )
+int flg_test( flg_Type flag )
 {
    return TEST( flag, setFlags );
 }

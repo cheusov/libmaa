@@ -25,7 +25,6 @@
 #include <stdarg.h>
 
 #ifndef __GNUC__
-#define __inline__
 #define __attribute__(x)
 #endif
 
@@ -91,10 +90,10 @@ extern char *xstrdup( const char *s );
 
 
 /* bit.c */
-extern __inline__ void bit_set( unsigned long *flags, int bit );
-extern __inline__ void bit_clr( unsigned long *flags, int bit );
-extern __inline__ int  bit_tst( unsigned long *flags, int bit );
-extern __inline__ int  bit_cnt( unsigned long *flags );
+extern void bit_set( unsigned long *flags, int bit );
+extern void bit_clr( unsigned long *flags, int bit );
+extern int  bit_tst( unsigned long *flags, int bit );
+extern int  bit_cnt( unsigned long *flags );
 
 /* prime.c */
 
@@ -438,7 +437,7 @@ extern void           dbg_destroy( void );
 extern void           dbg_set( const char *name );
 extern void           dbg_set_flag( dbg_Type flag );
 extern void           dbg_unset_flag( dbg_Type flag );
-extern __inline__ int dbg_test( dbg_Type flag );
+extern int            dbg_test( dbg_Type flag );
 extern void           dbg_list( FILE *stream );
 
 #define PRINTF(flag,arg)  if (dbg_test(flag)) { log_info arg; }
@@ -450,7 +449,7 @@ typedef unsigned long int flg_Type;
 extern void           flg_register( flg_Type flag, const char *name );
 extern void           flg_destroy( void );
 extern void           flg_set( const char *name );
-extern __inline__ int flg_test( flg_Type flag );
+extern int            flg_test( flg_Type flag );
 extern void           flg_list( FILE *stream );
 extern const          char *flg_name( flg_Type flag );
 

@@ -170,10 +170,10 @@ void dbg_unset_flag( dbg_Type flag )
    setFlags[ flag >> 30 ] &= ~flag;
 }
 
-/* \doc This inlined function tests the |flag|, returning non-zero if the
+/* \doc This function tests the |flag|, returning non-zero if the
    |flag| is set, and zero otherwise. */
 
-__inline__ int dbg_test( dbg_Type flag )
+int dbg_test( dbg_Type flag )
 {
    return TEST( flag, setFlags );
 }
