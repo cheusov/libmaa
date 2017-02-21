@@ -1,7 +1,7 @@
 # Makefile.in -- Makefile for libmaa
 # Created: Sun Nov 19 13:32:41 1995 by faith@dict.org
 # Copyright 1995-1998, 2002 Rickard E. Faith (faith@dict.org)
-# Copyright 2002-2010 Aleksey Cheusov (vle@gmx.net)
+# Copyright 2002-2017 Aleksey Cheusov (vle@gmx.net)
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -221,12 +221,12 @@ tags:
 # The following is based on the "Automatic Remaking" node in the GNU
 # Autoconf documentation:
 
-$(srcdir)/configure: configure.in
+$(srcdir)/configure: configure.ac
 	cd $(srcdir) && autoconf
 
 # autoheader might not change config.h.in, so touch a stamp file.
 ${srcdir}/config.h.in: stamp-h.in
-${srcdir}/stamp-h.in: configure.in
+${srcdir}/stamp-h.in: configure.ac
 	cd ${srcdir} && autoheader
 	touch ${srcdir}/stamp-h.in
 
