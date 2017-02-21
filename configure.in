@@ -27,7 +27,7 @@ dnl Flag conventions:
 dnl     CFLAGS and LDFLAGS should be settable on the make commandline
 dnl             for optimization and stripping.
 
-AC_PREREQ(2.53)
+AC_PREREQ([2.69])
 AC_REVISION($Revision: 1.61 $)
 AC_INIT
 AC_CONFIG_SRCDIR([maa.h])
@@ -44,7 +44,7 @@ AC_CANONICAL_HOST
 AC_PROG_AWK
 AC_PROG_CC
 #AC_PROG_LIBTOOL
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 
 if test "$CC" = gcc; then
     CFLAGS="-Wall -Werror $CFLAGS"
@@ -73,21 +73,30 @@ AC_CHECK_HEADERS(strings.h limits.h stdint.h inttypes.h)
 AC_CHECK_HEADERS(sys/resource.h sys/time.h sys/param.h sys/wait.h)
 
 AC_MSG_CHECKING(for SYSLOG_NAMES support in syslog.h)
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #define SYSLOG_NAMES
 #include <stdio.h>
 #include <syslog.h>
-], [
+]], [[
 if (facilitynames [0].c_name && facilitynames [0].c_val) return 0;
-],
-AC_DEFINE([HAVE_SYSLOG_NAMES], [], 1. [Description]) AC_MSG_RESULT(yes),
-AC_MSG_RESULT(no))
+]])],[AC_DEFINE(HAVE_SYSLOG_NAMES, , 1. Description) AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
 
 echo .
 echo Checking for system constants
 
 AC_TYPE_SIZE_T
-AC_TYPE_SIGNAL
+AC_DIAGNOSE([obsolete],[your code may safely assume C89 semantics that RETSIGTYPE is void.
+Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
+[AC_LANG_PROGRAM([#include <sys/types.h>
+#include <signal.h>
+],
+		 [return *(signal (0, 0)) (0) == 1;])],
+		   [ac_cv_type_signal=int],
+		   [ac_cv_type_signal=void])])
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+		    (`int' or `void').])
+
 AC_C_INLINE
 AC_C_BIGENDIAN
 AC_CHECK_SIZEOF(int)
