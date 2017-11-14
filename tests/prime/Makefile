@@ -1,5 +1,5 @@
 PROG =	primetest
 SRCS =	primetest.c
 
-.include "../../test.mk"
+.include "../../mk/test.mk"
 .include <mkc.prog.mk>

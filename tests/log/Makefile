@@ -3,5 +3,5 @@ SRCS =	logtest.c
 
 TEST_PROG =	logtest.sh
 
-.include "../../test.mk"
+.include "../../mk/test.mk"
 .include <mkc.prog.mk>

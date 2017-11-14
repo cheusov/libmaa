@@ -1,5 +1,5 @@
 PROG =	memtest
 SRCS =	memtest.c
 
-.include "../../test.mk"
+.include "../../mk/test.mk"
 .include <mkc.prog.mk>

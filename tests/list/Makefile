@@ -1,5 +1,5 @@
 PROG =	listtest
 SRCS =	listtest.c
 
-.include "../../test.mk"
+.include "../../mk/test.mk"
 .include <mkc.prog.mk>

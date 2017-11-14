@@ -5,5 +5,5 @@ SRCS =	settest.c rnd.c
 
 MKC_FEATURES =	libm
 
-.include "../../test.mk"
+.include "../../mk/test.mk"
 .include <mkc.prog.mk>

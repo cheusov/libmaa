@@ -1,5 +1,5 @@
 PROG =	prtest
 SRCS =	prtest.c
 
-.include "../../test.mk"
+.include "../../mk/test.mk"
 .include <mkc.prog.mk>
