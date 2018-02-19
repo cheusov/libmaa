@@ -1,7 +1,7 @@
 PROG =	hashtest
 SRCS =	hashtest.c rnd.c
 
-.PATH: ../../maa
+.PATH: ${.CURDIR}/../../maa
 
 MKC_FEATURES =	libm
 
