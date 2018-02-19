@@ -6,7 +6,7 @@ test_output:
 	@set -e; \
 	LD_LIBRARY_PATH=${OBJDIR_maa}; \
 	export LD_LIBRARY_PATH; \
-	${.OBJDIR}/${TEST_PROG:U${PROG}}
+	${TEST_PROG:U${.OBJDIR}/${PROG}} ${TEST_PROG_ARGS}
 
 CLEANFILES +=	check_mkc_err_msg
 
