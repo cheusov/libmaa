@@ -37,14 +37,14 @@ static int iterator( const void *key, const void *datum )
 
 static int freer( const void *key, const void *datum )
 {
-   xfree( (void *)datum );
-   xfree( (void *)key );
+   xfree( __UNCONST(datum) );
+   xfree( __UNCONST(key) );
    return 0;
 }
 
 static int free_data( const void *key, const void *datum )
 {
-   xfree( (void *)datum );
+   xfree( __UNCONST(datum) );
    return 0;
 }
 

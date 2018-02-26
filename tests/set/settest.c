@@ -31,13 +31,13 @@ extern int get_rand( int ll, int ul );
 
 static int iterator( const void *key )
 {
-   printf( "%s\n", (const char *)key );
+   printf( "%s\n", (char *) __UNCONST(key) );
    return 0;
 }
 
 static int freer( const void *key )
 {
-   xfree( (void *)key );
+   xfree( __UNCONST(key) );
    return 0;
 }
 

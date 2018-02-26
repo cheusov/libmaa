@@ -22,7 +22,7 @@
  *
  */
 
-#include "maa.h"
+#include "maaP.h"
 
 #include <stdio.h>
 
@@ -38,11 +38,11 @@ int main( int argc, char **argv )
 
 	printf("isempty=%d\n", stk_isempty(stack));
 
-	stk_push(stack, "10");
-	stk_push(stack, "20");
-	stk_push(stack, "30");
-	stk_push(stack, "40");
-	stk_push(stack, "50");
+	stk_push(stack, __UNCONST("10"));
+	stk_push(stack, __UNCONST("20"));
+	stk_push(stack, __UNCONST("30"));
+	stk_push(stack, __UNCONST("40"));
+	stk_push(stack, __UNCONST("50"));
 
 	printf("isempty=%d\n", stk_isempty(stack));
 
@@ -52,8 +52,8 @@ int main( int argc, char **argv )
 
 	printf("isempty=%d\n", stk_isempty(stack));
 
-	stk_push(stack, "10");
-	stk_push(stack, "20");
+	stk_push(stack, __UNCONST("10"));
+	stk_push(stack, __UNCONST("20"));
 	printf("top=%s\n", (char *) stk_top(stack));
 	printf("top=%s\n", (char *) stk_top(stack));
 

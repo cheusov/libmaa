@@ -28,7 +28,7 @@
 
 static int print( const void *datum )
 {
-   printf( "%s ", (char *)datum );
+   printf( "%s ", (char*) __UNCONST(datum) );
    return 0;
 }
 
