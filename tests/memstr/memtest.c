@@ -26,26 +26,37 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int main( void )
+#include "maa.h"
+
+static char const *names [] = {
+	"Peter Hammill",
+	"King Crimson",
+	"Van ",
+	"Der ",
+	"Graaf ",
+	"Generator"
+};
+
+int main(int argc, char** argv)
 {
-   char *buf;
-   int  i;
+	mem_String strings = NULL;
 
-#ifdef KH_GNU_MALLOC
-   mcheck(0);
-#endif
+	maa_init(argv[0]);
 
-   buf = malloc( 6 );
+	strings = mem_create_strings();
 
-   for (i = 0; i < 7; i++) {
-      printf( "i = %d\n", i );
-      buf[i] = i;
-   }
+	printf("str1=%s\n", mem_strcpy(strings, names[0]));
+	printf("str2=%s\n", mem_strcpy(strings, names[1]));
+	mem_grow(strings, names[2], strlen(names[2]));
+	mem_grow(strings, names[3], strlen(names[3]));
+	mem_grow(strings, names[4], strlen(names[4]));
+	mem_grow(strings, names[5], strlen(names[5]));
+	printf("str3=%s\n", mem_finish(strings));
 
-   for (i = -1; i < 7; i++) printf( "buf[%d] = %d\n", i, buf[i] );
+	mem_destroy_strings(strings);
 
-   free( buf );
-
-   return 0;
+	maa_shutdown();
+	return 0;
 }
