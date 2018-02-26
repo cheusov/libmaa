@@ -55,7 +55,7 @@ typedef struct objectInfo {
    int            reused;
    int            size;
    stk_Stack      stack;	/* for free list */
-   struct obstack *obstack;
+   stk_Stack      allocated;
 } *objectInfo;
 
 
@@ -241,9 +241,8 @@ mem_Object mem_create_objects( int size )
    info->used    = 0;
    info->reused  = 0;
    info->size    = size;
-   info->stack   = stk_create();
-   info->obstack = xmalloc( sizeof( struct obstack ) );
-   obstack_init( info->obstack );
+   info->stack     = stk_create();
+   info->allocated = stk_create();
 
    return info;
 }
@@ -261,10 +260,13 @@ void mem_destroy_objects( mem_Object info )
 #if MAA_MAGIC
    i->magic = MEM_OBJECTS_MAGIC_FREED;
 #endif
-   
+
+   while (!stk_isempty(i->allocated)){
+      xfree(stk_pop(i->allocated));
+   }
+
+   stk_destroy( i->allocated );
    stk_destroy( i->stack );
-   obstack_free( i->obstack, NULL );
-   xfree( i->obstack );		/* terminal */
    xfree( i );			/* terminal */
 }
 
@@ -282,9 +284,12 @@ void *mem_get_object( mem_Object info )
    _mem_magic_objects( i, __func__ );
 
    if (!obj) {
-      obj = obstack_alloc( i->obstack, i->size );
+      obj = xmalloc(i->size);
+      stk_push(i->allocated, obj);
       ++i->total;
-   } else ++i->reused;
+   } else {
+	   ++i->reused;
+   }
 
    ++i->used;
    
