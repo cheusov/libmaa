@@ -11,7 +11,7 @@ WARNS   ?=	4
 LIB  =		maa
 INCS =		maa.h
 
-SRCS =		xmalloc.c obstack.c \
+SRCS =		xmalloc.c \
 	 hash.c set.c stack.c list.c error.c memory.c string.c \
 	 debug.c flags.c maa.c prime.c bit.c timer.c \
 	 arg.c pr.c sl.c base64.c base26.c source.c parse-concrete.c \
