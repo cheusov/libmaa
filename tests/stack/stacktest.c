@@ -29,6 +29,7 @@
 int main( int argc, char **argv )
 {
 	stk_Stack     stack = NULL;
+	stk_Stack     stack2 = NULL;
 	void *        datum;
 
 	maa_init( argv[0] );
@@ -58,7 +59,10 @@ int main( int argc, char **argv )
 
 	printf("isempty=%d\n", stk_isempty(stack));
 
+	stack2 = stk_create();
+
 	stk_destroy(stack);
+	stk_destroy(stack2);
 	maa_shutdown();
 
 	return 0;
