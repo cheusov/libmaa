@@ -61,7 +61,7 @@ stk_Stack stk_create( void )
 void stk_destroy( stk_Stack stack )
 {
    stackType s = (stackType)stack;
-   while (stk_isempty( stack )){
+   while (!stk_isempty( stack )){
 	   stk_pop( stack );
    }
    xfree( stack );		/* terminal */
