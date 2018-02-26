@@ -1,5 +1,5 @@
-PROG =	memtest
-SRCS =	memtest.c
+PROG =	memstrtest
+SRCS =	memstrtest.c
 
 WARNS   =	4
 WARNERR =	yes
