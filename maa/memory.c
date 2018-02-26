@@ -32,10 +32,6 @@
  */
 
 #include "maaP.h"
-#include "obstack.h"
-
-#define obstack_chunk_alloc xmalloc
-#define obstack_chunk_free  xfree
 
 typedef struct stringInfo {
 #if MAA_MAGIC
@@ -43,7 +39,8 @@ typedef struct stringInfo {
 #endif   
    int            count;
    int            bytes;
-   struct obstack *obstack;
+   int            growing_size;
+   stk_Stack      allocated;
 } *stringInfo;
 
 typedef struct objectInfo {
@@ -88,10 +85,8 @@ mem_String mem_create_strings( void )
 #endif
    info->count   = 0;
    info->bytes   = 0;
-   info->obstack = xmalloc( sizeof( struct obstack ) );
-   obstack_init( info->obstack );
-
-   obstack_alignment_mask( info->obstack ) = 0; /* no alignment for chars */
+   info->allocated = stk_create();
+   info->growing_size = 0;
 
    return info;
 }
@@ -109,9 +104,12 @@ void mem_destroy_strings( mem_String info )
 #if MAA_MAGIC
    i->magic = MEM_STRINGS_MAGIC_FREED;
 #endif
-   
-   obstack_free( i->obstack, NULL );
-   xfree( i->obstack );		/* terminal */
+
+   while (!stk_isempty(i->allocated)){
+      xfree(stk_pop(i->allocated));
+   }
+
+   stk_destroy(i->allocated);
    xfree( i );			/* terminal */
 }
 
@@ -122,13 +120,18 @@ const char *mem_strcpy( mem_String info, const char *string )
 {
    stringInfo i   = (stringInfo)info;
    int        len = strlen( string );
+   char *     str;
 
    _mem_magic_strings( i, __func__ );
    
    ++i->count;
    i->bytes += len + 1;
+   i->growing_size = 0;
    
-   return obstack_copy0( i->obstack, string, len );
+   str = xstrdup(string);
+   stk_push(i->allocated, str);
+
+   return str;
 }
 
 /* \doc |mem_strncpy| copies |len| bytes of |string| into the memory object
@@ -139,13 +142,19 @@ const char *mem_strncpy( mem_String info,
 			 const char *string, int len )
 {
    stringInfo i = (stringInfo)info;
+   char *     str;
 
    _mem_magic_strings( i, __func__ );
    
    ++i->count;
    i->bytes += len + 1;
-   
-   return obstack_copy0( i->obstack, string, len );
+   i->growing_size = 0;
+
+   str = xmalloc(len + 1);
+   memcpy(str, string, len + 1);
+   stk_push(i->allocated, str);
+
+   return str;
 }
 
 /* \doc |mem_grow| copies |len| of |string| onto the top of the memory
@@ -156,11 +165,23 @@ const char *mem_strncpy( mem_String info,
 void mem_grow( mem_String info, const char *string, int len )
 {
    stringInfo i = (stringInfo)info;
-   
+   void *p;
+
    _mem_magic_strings( i, __func__ );
-   
+
    i->bytes += len;
-   obstack_grow( i->obstack, string, len );
+
+   if (i->growing_size){
+	   p = stk_pop(i->allocated);
+	   p = xrealloc(p, i->growing_size + len);
+   }else{
+	   p = xmalloc(len);
+   }
+
+   memcpy((char *)p + i->growing_size, string, len);
+   i->growing_size += len;
+
+   stk_push(i->allocated, p);
 }
 
 /* \doc |mem_finish| finishes the growth of the object performed by
@@ -171,11 +192,14 @@ const char *mem_finish( mem_String info )
    stringInfo i = (stringInfo)info;
    
    _mem_magic_strings( i, __func__ );
-   
+
+   mem_grow(i, "", 1);
+
    ++i->count;
-   i->bytes += 1;
-   obstack_grow0( i->obstack, "", 0 );
-   return obstack_finish( i->obstack );
+
+   i->growing_size = 0;
+
+   return (char *) stk_top(i->allocated);
 }
 
 /* \doc |mem_get_string_stats| returns statistics about the memory object
