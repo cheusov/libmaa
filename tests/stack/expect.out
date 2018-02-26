@@ -1,5 +1,11 @@
-50
-40
-30
-20
-10
+isempty=1
+isempty=0
+pop=50
+pop=40
+pop=30
+pop=20
+pop=10
+isempty=1
+top=20
+top=20
+isempty=0

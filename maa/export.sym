@@ -59,6 +59,7 @@ stk_destroy
 stk_push
 stk_pop
 stk_top
+stk_isempty
 lst_create
 lst_destroy
 lst_append

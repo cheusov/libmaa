@@ -32,10 +32,6 @@
  */
 
 #include "maaP.h"
-#include "obstack.h"
-
-#define obstack_chunk_alloc xmalloc
-#define obstack_chunk_free  xfree
 
 typedef struct data {
    const void  *datum;
@@ -44,7 +40,6 @@ typedef struct data {
 
 typedef struct stack {
    struct data    *data;
-   struct obstack *obstack;
 } *stackType;
 
 /* \doc |stk_create| initializes a stack object. */
@@ -55,9 +50,6 @@ stk_Stack stk_create( void )
 
    s          = xmalloc( sizeof( struct stack ) );
    s->data    = NULL;
-   s->obstack = xmalloc( sizeof( struct obstack ) );
-   
-   obstack_init( s->obstack );
 
    return s;
 }
@@ -69,9 +61,9 @@ stk_Stack stk_create( void )
 void stk_destroy( stk_Stack stack )
 {
    stackType s = (stackType)stack;
-
-   obstack_free( s->obstack, NULL );
-   xfree( s->obstack );
+   while (stk_isempty( stack )){
+	   stk_pop( stack );
+   }
    xfree( stack );		/* terminal */
 }
 
@@ -80,7 +72,7 @@ void stk_destroy( stk_Stack stack )
 void stk_push( stk_Stack stack, void *datum )
 {
    stackType s = (stackType)stack;
-   dataType  d = (dataType)obstack_alloc( s->obstack, sizeof( struct data ) );
+   dataType  d = (dataType)malloc( sizeof( struct data ) );
 
    d->datum = datum;
    d->prev  = s->data;
@@ -100,10 +92,26 @@ void *stk_pop( stk_Stack stack )
 
       datum = __UNCONST(old->datum); /* Discard const */
       s->data = s->data->prev;
-      obstack_free( s->obstack, old );
+
+      free( old );
    }
-   
+
    return datum;
+}
+
+/* \doc |stk_isempty| return 1 if |stack| is empty, or 0 otherwise.
+*/
+
+int stk_isempty( stk_Stack stack )
+{
+   stackType  s     = (stackType)stack;
+   void      *datum = NULL;
+
+   if (s->data) {
+	  return 0;
+   }else{
+	  return 1;
+   }
 }
 
 /* \doc |stk_top| returns a pointer to the datum on the top of the |stack|,
@@ -116,6 +124,6 @@ void *stk_top( stk_Stack stack )
 
    if (s->data)
       return __UNCONST(s->data->datum);	/* Discard const */
-   
+
    return NULL;
 }

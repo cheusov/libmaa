@@ -251,6 +251,7 @@ extern void      stk_destroy( stk_Stack stack );
 extern void      stk_push( stk_Stack stack, void *datum );
 extern void      *stk_pop( stk_Stack stack );
 extern void      *stk_top( stk_Stack stack );
+extern int       stk_isempty( stk_Stack stack );
 
 /* list.c */
 

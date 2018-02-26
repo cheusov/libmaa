@@ -35,17 +35,31 @@ int main( int argc, char **argv )
    
 	stack = stk_create();
 
+	printf("isempty=%d\n", stk_isempty(stack));
+
 	stk_push(stack, "10");
 	stk_push(stack, "20");
 	stk_push(stack, "30");
 	stk_push(stack, "40");
 	stk_push(stack, "50");
 
+	printf("isempty=%d\n", stk_isempty(stack));
+
 	while ((datum = stk_pop(stack)) != NULL){
-		puts((char *) datum);
+		printf("pop=%s\n", (char *) datum);
 	}
-	
+
+	printf("isempty=%d\n", stk_isempty(stack));
+
+	stk_push(stack, "10");
+	stk_push(stack, "20");
+	printf("top=%s\n", (char *) stk_top(stack));
+	printf("top=%s\n", (char *) stk_top(stack));
+
+	printf("isempty=%d\n", stk_isempty(stack));
+
 	stk_destroy(stack);
+	maa_shutdown();
 
 	return 0;
 }
