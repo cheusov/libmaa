@@ -36,7 +36,8 @@ static char const *names [] = {
 	"Van ",
 	"Der ",
 	"Graaf ",
-	"Generator"
+	"Generator",
+	"Led Zeppelin"
 };
 
 int main(int argc, char** argv)
@@ -47,13 +48,19 @@ int main(int argc, char** argv)
 
 	strings = mem_create_strings();
 
+	mem_print_string_stats(strings, stdout);
 	printf("str1=%s\n", mem_strcpy(strings, names[0]));
+	mem_print_string_stats(strings, stdout);
 	printf("str2=%s\n", mem_strcpy(strings, names[1]));
+	mem_print_string_stats(strings, stdout);
 	mem_grow(strings, names[2], strlen(names[2]));
 	mem_grow(strings, names[3], strlen(names[3]));
 	mem_grow(strings, names[4], strlen(names[4]));
 	mem_grow(strings, names[5], strlen(names[5]));
 	printf("str3=%s\n", mem_finish(strings));
+	mem_print_string_stats(strings, stdout);
+	printf("str4=%s\n", mem_strncpy(strings, names[6], strlen(names[6])));
+	mem_print_string_stats(strings, stdout);
 
 	mem_destroy_strings(strings);
 

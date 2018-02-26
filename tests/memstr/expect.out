@@ -1,3 +1,14 @@
+Statistics for string memory manager at 0xF00DBEAF
+   0 strings, using 0 bytes
 str1=Peter Hammill
+Statistics for string memory manager at 0xF00DBEAF
+   1 strings, using 14 bytes
 str2=King Crimson
+Statistics for string memory manager at 0xF00DBEAF
+   2 strings, using 27 bytes
 str3=Van Der Graaf Generator
+Statistics for string memory manager at 0xF00DBEAF
+   3 strings, using 51 bytes
+str4=Led Zeppelin
+Statistics for string memory manager at 0xF00DBEAF
+   4 strings, using 64 bytes
