@@ -1,4 +1,12 @@
-Development of this software at the University of North Carolina, Chapel
-Hill was supported by ARPA via ONR contract N00014-92-C-0182, by Rome Labs
-contract F30602-94-C-0037, and by a Cray Fellowship from Cray Research,
-Inc. and NCSC (North Carolina Supercomputing Center).
+This library implements some basic data structures and algorithms such
+as command line arguments handling, base26 and base64 routines, bits
+manipulation, debugging and error reporting routines, hash tables,
+sets, lists, stacks, skip lists, string pool routines, memory
+management routines, parsing routines, process management routines,
+source code management routines and timer support.
+
+
+Development of this software at the University of North Carolina,
+Chapel Hill was supported by ARPA via ONR contract N00014-92-C-0182,
+by Rome Labs contract F30602-94-C-0037, and by a Cray Fellowship from
+Cray Research, Inc. and NCSC (North Carolina Supercomputing Center).
