@@ -6,7 +6,8 @@ test_output:
 	@set -e; \
 	LD_LIBRARY_PATH=${OBJDIR_maa}; \
 	export LD_LIBRARY_PATH; \
-	${TEST_PROG:U${.OBJDIR}/${PROG}} ${TEST_PROG_ARGS}
+	${TEST_PROG:U${.OBJDIR}/${PROG}} ${TEST_PROG_ARGS} |\
+	awk '{sub(/ at [^ ]+$$/, " at 0xF00DBEAF"); print}'
 
 CLEANFILES +=	check_mkc_err_msg
 
