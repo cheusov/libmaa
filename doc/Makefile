@@ -33,24 +33,21 @@ DVIPS ?=	dvips
 REFBIBTEX ?=	refbibtex
 BIBTEX ?=	bibtex
 
-libmaa_sources = \
-	maa.h maa.c arg.c base26.c base64.c \
-	bit.c debug.c error.c flags.c hash.c list.c \
-	memory.c parse-concrete.c pr.c prime.c \
-	set.c sl.c source.c stack.c string.c text.c \
-	timer.c
-LIBMAA_SOURCES =	${libmaa_sources:S|^|../maa/|g}
+LIBMAA_SOURCES !=	echo ../maa/*.c ../maa/*.h
 
 FIGS =
 SLIDEFIGS =
 
 TEMPORARIES =	general.tex
 
+FILES    =	libmaa.600dpi.ps
+FILESDIR =	${DOCDIR}
+
 libmaa.dvi: libmaa.tex ${TEMPORARIES} ${FIGS}
 
-all: libmaa.dvi
+#all: libmaa.dvi
 
-libmaa.bib:
+libmaa.bib: libmaa.tex
 	if ${REFBIBTEX} -j libmaa.tex ${TEMPORARIES} > $@.tmp; then \
 		touch $@; \
 	fi
@@ -79,3 +76,5 @@ libmaa.dvi: libmaa.bbl libmaa.tex
 
 .bib.bbl:
 	${BIBTEX} $<
+
+.include <mkc.mk>

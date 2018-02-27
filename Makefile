@@ -8,6 +8,8 @@ SUBPRJ    +=	tests/${d}:test
 test-tests/${d}: all-tests/${d}
 .endfor
 
+SUBPRJ    +=	doc
+
 NODEPS     =	install-tests/*:*
 
 ##################################################
