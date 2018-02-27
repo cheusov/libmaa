@@ -1,4 +1,23 @@
 ========================================================================
+Version 1.4.0, by Aleksey Cheusov, Tue, 27 Feb 2018 19:27:41 +0300
+
+  License has been changed from LGPL to MIT, permitted by Rik Faith,
+  original author of this library.
+
+  Build system changed from autoshit to mk-configure.
+
+  Library version/soname was bumped from 1.3 to 1.4. I cannot
+  guarantee that mk-configure and libtool build shared library the
+  same way.
+
+  Tests were added for stk_*, mem_* and prm_* functions.
+
+  stk_isempty function was added.
+
+  stk_* and other was reimplemented without obstack functions (glibc
+  extension).
+
+========================================================================
 Version 1.3.2, by Aleksey Cheusov, Sun, 22 Jul 2012 17:44:37 +0300
 
   Build failure on cygwin was fixed (sf.net bug #3398121)
