@@ -3,7 +3,7 @@
 MKC_REQUIRE_PROGS +=	awk
 
 ##################################################
-.PATH: ${OBJDIR}
+.PATH: ${.OBJDIR}
 
 WARNS   ?=	4
 #WARNERR ?=	yes
