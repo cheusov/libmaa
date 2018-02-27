@@ -59,6 +59,14 @@ int main( int argc, char **argv )
    bit_set( &t, 27 );
    printf( "0x%08lx has %d bits set\n", t, bit_cnt( &t ) );
 
+   printf( "0x%08lx has %d bit set: %s\n", t, 7, bit_tst( &t, 7 ) ? "yes" : "no" );
+   printf( "0x%08lx has %d bit set: %s\n", t, 8, bit_tst( &t, 8 ) ? "yes" : "no" );
+   printf( "0x%08lx has %d bit set: %s\n", t, 9, bit_tst( &t, 9 ) ? "yes" : "no" );
+
+   printf( "0x%08lx has %d bit set: %s\n", t, 27, bit_tst( &t, 27 ) ? "yes" : "no" );
+   printf( "0x%08lx has %d bit set: %s\n", t, 28, bit_tst( &t, 28 ) ? "yes" : "no" );
+   printf( "0x%08lx has %d bit set: %s\n", t, 29, bit_tst( &t, 29 ) ? "yes" : "no" );
+
    printf( "\n" );
    bit_clr( &t, 0 );
    printf( "0x%08lx has %d bits set\n", t, bit_cnt( &t ) );
@@ -74,6 +82,10 @@ int main( int argc, char **argv )
    printf( "\n" );
    bit_clr( &t, 16 );
    printf( "0x%08lx has %d bits set\n", t, bit_cnt( &t ) );
+
+   printf( "0x%08lx has %d bit set: %s\n", t, 14, bit_tst( &t, 14 ) ? "yes" : "no" );
+   printf( "0x%08lx has %d bit set: %s\n", t, 15, bit_tst( &t, 15 ) ? "yes" : "no" );
+   printf( "0x%08lx has %d bit set: %s\n", t, 16, bit_tst( &t, 16 ) ? "yes" : "no" );
 
    return 0;
 }
