@@ -1,7 +1,7 @@
 ##################################################
 
 tests     =	arg base bit debug hash list log memstr memobj \
-		prime pr set sl string stack
+		prime pr prm set sl string stack
 .for d in ${tests}
 LIBDEPS   +=	maa:tests/${d}
 SUBPRJ    +=	tests/${d}:test
