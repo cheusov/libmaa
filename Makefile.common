@@ -1,5 +1,5 @@
-MAA_MAJOR =	1
-MAA_MINOR =	4
+MAA_MAJOR =	4
+MAA_MINOR =	0
 MAA_TEENY =	0
 
 DOCDIR     ?=   ${DATADIR}/doc/libmaa
