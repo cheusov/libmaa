@@ -2,6 +2,7 @@ maa_init
 maa_shutdown
 maa_version_major
 maa_version_minor
+maa_version_teeny
 maa_version
 xmalloc
 xcalloc
