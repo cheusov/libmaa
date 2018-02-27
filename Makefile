@@ -17,4 +17,5 @@ NODEPS     =	install-tests/*:*
 MKC_REQD  =	0.29.1
 
 ##################################################
+.include "Makefile.common"
 .include <mkc.subprj.mk>
