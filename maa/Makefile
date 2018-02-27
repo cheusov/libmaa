@@ -29,7 +29,7 @@ CFLAGS +=	-DMAA_MINOR=${MAA_MINOR}
 CFLAGS +=	-DMAA_TEENY=${MAA_TEENY}
 CFLAGS +=	-Wno-error=strict-prototypes
 
-CPPFLAGS +=	-I. -I${OBJDIR}
+CPPFLAGS +=	-I. -I${.OBJDIR}
 
 #MAN =		maa.1
 

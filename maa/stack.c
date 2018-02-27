@@ -60,7 +60,6 @@ stk_Stack stk_create( void )
 
 void stk_destroy( stk_Stack stack )
 {
-   stackType s = (stackType)stack;
    while (!stk_isempty( stack )){
 	   stk_pop( stack );
    }
@@ -105,7 +104,6 @@ void *stk_pop( stk_Stack stack )
 int stk_isempty( stk_Stack stack )
 {
    stackType  s     = (stackType)stack;
-   void      *datum = NULL;
 
    if (s->data) {
 	  return 0;

@@ -170,7 +170,7 @@ static int _flg_user( const void *key, const void *datum, void *arg )
 {
    FILE     *stream = (FILE *)arg;
    
-   fprintf( stream, "  %s\n", __UNCONST(key) );
+   fprintf( stream, "  %s\n", (char*) __UNCONST(key) );
    return 0;
 }
 

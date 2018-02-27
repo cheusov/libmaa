@@ -203,7 +203,7 @@ static int _dbg_user( const void *key, const void *datum, void *arg )
    dbg_Type flag    = (dbg_Type)datum;
    
    if ((flag & 0xc0000000) != 0xc0000000)
-      fprintf( stream, "  %s\n", __UNCONST(key) );
+	   fprintf( stream, "  %s\n", (char*) __UNCONST(key) );
    return 0;
 }
 
@@ -213,7 +213,7 @@ static int _dbg_builtin( const void *key, const void *datum, void *arg )
    dbg_Type flag    = (dbg_Type)datum;
    
    if ((flag & 0xc0000000) == 0xc0000000)
-      fprintf( stream, "  %s (builtin)\n", __UNCONST(key) );
+      fprintf( stream, "  %s (builtin)\n", (char*) __UNCONST(key) );
    return 0;
 }
    
