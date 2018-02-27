@@ -12,6 +12,12 @@
 0xe00000ff has 11 bits set
 0xf00000ff has 12 bits set
 0xf80000ff has 13 bits set
+0xf80000ff has 7 bit set: yes
+0xf80000ff has 8 bit set: no
+0xf80000ff has 9 bit set: no
+0xf80000ff has 27 bit set: yes
+0xf80000ff has 28 bit set: yes
+0xf80000ff has 29 bit set: yes
 
 0xf80000fe has 12 bits set
 0x780000fe has 11 bits set
@@ -20,3 +26,6 @@
 0x7800006c has 8 bits set
 
 0x7800006c has 8 bits set
+0x7800006c has 14 bit set: no
+0x7800006c has 15 bit set: no
+0x7800006c has 16 bit set: no

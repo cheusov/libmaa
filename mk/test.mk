@@ -7,7 +7,10 @@ test_output:
 	LD_LIBRARY_PATH=${OBJDIR_maa}; \
 	export LD_LIBRARY_PATH; \
 	${TEST_PROG:U${.OBJDIR}/${PROG}} ${TEST_PROG_ARGS} |\
-	awk '{sub(/ at [^ ]+$$/, " at 0xF00DBEAF"); print}'
+	awk ' \
+	/^version: / { gsub(/[0-9]+/, "999") } \
+	{ sub(/ at [^ ]+$$/, " at 0xF00DBEAF") } \
+	{ print }'
 
 CLEANFILES +=	check_mkc_err_msg
 
