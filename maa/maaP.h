@@ -43,9 +43,9 @@
 
 #define __UNCONST(a)   ((void *)(unsigned long)(const void *)(a))
 
-//#if HAVE_HEADER_ALLOCA_H
-//# include <alloca.h>
-//#endif
+#if HAVE_HEADER_ALLOCA_H
+# include <alloca.h>
+#endif
 
 #if !defined(SIZEOF_VOID_P)
 # define SIZEOF_VOID_P sizeof (void *)

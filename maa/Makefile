@@ -18,7 +18,7 @@ SRCS =		xmalloc.c \
 	 text.c log.c
 
 MKC_CHECK_SIZEOF  =	long
-MKC_CHECK_HEADERS =	sys/resource.h
+MKC_CHECK_HEADERS =	sys/resource.h alloca.h
 
 arg.o: arggram.c
 arggram.c: arggram.txt
