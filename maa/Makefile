@@ -3,8 +3,6 @@
 MKC_REQUIRE_PROGS +=	awk
 
 ##################################################
-.PATH: ${.OBJDIR}
-
 WARNS   ?=	4
 #WARNERR ?=	yes
 
@@ -20,8 +18,8 @@ SRCS =		xmalloc.c \
 MKC_CHECK_SIZEOF  =	long
 MKC_CHECK_HEADERS =	sys/resource.h alloca.h
 
-arg.o: arggram.c
-arggram.c: arggram.txt
+arg.o arg.os: ${.OBJDIR}/arggram.c arg.c
+${.OBJDIR}/arggram.c: arggram.txt
 	awk -f ${SRCDIR_maa}/arggram2c < ${SRCDIR_maa}/arggram.txt > $@
 
 CFLAGS +=	-DMAA_MAJOR=${MAA_MAJOR}
