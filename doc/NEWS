@@ -1,4 +1,9 @@
 ========================================================================
+Version 1.4.2, by Aleksey Cheusov, Wed,  7 Mar 2018 1:10:37 +0300
+
+  Fix build failure on SunOS-5.11 (alloca)
+
+========================================================================
 Version 1.4.1, by Aleksey Cheusov, Tue, 27 Feb 2018 20:47:19 +0300
 
   License has been changed from LGPL to MIT, permitted by Rik Faith,
