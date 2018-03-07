@@ -4,7 +4,7 @@ MKC_REQUIRE_PROGS +=	awk
 
 ##################################################
 WARNS   ?=	4
-#WARNERR ?=	yes
+WARNERR ?=	yes
 
 LIB  =		maa
 INCS =		maa.h
@@ -25,7 +25,6 @@ ${.OBJDIR}/arggram.c: arggram.txt
 CFLAGS +=	-DMAA_MAJOR=${MAA_MAJOR}
 CFLAGS +=	-DMAA_MINOR=${MAA_MINOR}
 CFLAGS +=	-DMAA_TEENY=${MAA_TEENY}
-CFLAGS +=	-Wno-error=strict-prototypes
 
 CPPFLAGS +=	-I. -I${.OBJDIR}
 
