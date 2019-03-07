@@ -297,7 +297,7 @@ static void _log_base_va(
 {
    va_list ap_copy;
    time_t t;
-   static char   buf [4096] = "";
+   static char   buf [8192] = "";
    static char   buf_main [4096] = "";
    static char   buf_preamble [256] = "";
 
