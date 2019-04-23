@@ -1,4 +1,10 @@
 ========================================================================
+Version 1.4.4, by Aleksey Cheusov, Tue, 23 Apr 2019 21:50:34 +0300
+
+  Fix compilation failure using gcc-8.
+  Thanks to Robert Luberda!
+
+========================================================================
 Version 1.4.3, by Aleksey Cheusov, Fri, 15 Feb 2019 21:09:58 +0300
 
   Fix parallel build
