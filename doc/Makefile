@@ -40,7 +40,7 @@ SLIDEFIGS =
 
 TEMPORARIES =	general.tex
 
-FILES    =	libmaa.600dpi.ps ../README NEWS LICENSE
+FILES    =	libmaa.600dpi.ps ../README TODO NEWS LICENSE
 FILESDIR =	${DOCDIR}
 
 libmaa.dvi: libmaa.tex ${TEMPORARIES} ${FIGS}
