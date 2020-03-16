@@ -65,6 +65,18 @@ static int iterator( const void *key, const void *datum )
    return 0;
 }
 
+static int iterator_arg( const void *key, const void *datum, void *arg )
+{
+   if (arg) {
+      printf( "%s: %s (%u)\n", (const char *)key, (const char *)datum,
+	      (unsigned)((char *)arg - (char *)NULL));
+      return strchr((const char *)datum, '5') != NULL;
+   } else {
+      printf( "%s: %s\n", (const char *)key, (const char *)datum);
+      return 0;
+   }
+}
+
 static int freer( const void *key, const void *datum )
 {
    xfree( __UNCONST(datum) );
@@ -78,23 +90,11 @@ static int free_data( const void *key, const void *datum )
    return 0;
 }
 
-int main( int argc, char **argv )
+static void test_hsh_strings(int count)
 {
    hsh_HashTable t;
    int           i;
    int           j;
-   int           count;
-
-   if (argc == 1) {
-      count = 100;
-   } else if (argc != 2 ) {
-      fprintf( stderr, "usage: hashtest count\n" );
-      return 1;
-   } else {
-      count = atoi( argv[1] );
-   }
-
-   printf( "Running test for count of %d\n", count );
 
 				/* Test sequential keys */
    t = hsh_create( NULL, NULL );
@@ -130,8 +130,17 @@ int main( int argc, char **argv )
 
    /* Iterating */
    printf( "Iteration 2\n");
-   if (count <= 200)
-      hsh_iterate( t, iterator );
+   if (count <= 200) {
+      int ret = hsh_iterate_arg( t, iterator_arg, NULL);
+      printf("hsh_iterate_arg returned %d\n", ret);
+   }
+
+   /* Partial iterating */
+   printf( "Iteration 3\n");
+   if (count <= 200) {
+      int ret = hsh_iterate_arg( t, iterator_arg, (char *)NULL + 7 );
+      printf("hsh_iterate_arg returned %d\n", ret);
+   }
 
    /*   hsh_print_stats( t, stdout );*/
 
@@ -177,10 +186,13 @@ int main( int argc, char **argv )
 
    hsh_iterate( t, freer );
    hsh_destroy( t );
+}
 
+static void test_hsh_integers(int count)
+{
+   hsh_HashTable t;
+   int           i;
 
-
-				/* Test (random) integer keys */
    t = hsh_create( hsh_pointer_hash, hsh_pointer_compare );
 
    init_rand();
@@ -210,6 +222,37 @@ int main( int argc, char **argv )
 
    hsh_iterate( t, free_data );
    hsh_destroy( t );
+}
+
+static void test_hsh_pointer_compare(void)
+{
+   /* hsh_pointer_compare */
+   void *p1 = (void *)((char*)NULL + 10);
+   void *p2 = (void *)((char*)NULL + 20);
+   printf("=== hsh_pointer_compare ===\n");
+   printf("p1 vs. p2: %d\n", hsh_pointer_compare(p1, p2));
+   printf("p2 vs. p1: %d\n", hsh_pointer_compare(p2, p1));
+   printf("p1 vs. p1: %d\n", hsh_pointer_compare(p1, p1));
+}
+
+int main( int argc, char **argv )
+{
+   int           count;
+
+   if (argc == 1) {
+      count = 100;
+   } else if (argc != 2 ) {
+      fprintf( stderr, "usage: hashtest count\n" );
+      return 1;
+   } else {
+      count = atoi( argv[1] );
+   }
+
+   printf( "Running test for count of %d\n", count );
+
+   test_hsh_strings(count);
+   test_hsh_integers(count);
+   test_hsh_pointer_compare();
 
    return 0;
 }

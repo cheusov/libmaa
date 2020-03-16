@@ -194,3 +194,13 @@ key29: datum29
 key98: datum98
 key89: datum89
 key1: datum1
+hsh_iterate_arg returned 0
+Iteration 3
+key80: datum80 (7)
+key71: datum71 (7)
+key53: datum53 (7)
+hsh_iterate_arg returned 1
+=== hsh_pointer_compare ===
+p1 vs. p2: 1
+p2 vs. p1: 1
+p1 vs. p1: 0
