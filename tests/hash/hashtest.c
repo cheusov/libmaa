@@ -148,6 +148,25 @@ static void test_hsh_strings(int count)
       printf("hsh_iterate_arg returned %d\n", ret);
    }
 
+   /* Iterating */
+   printf( "Iteration 4\n");
+   hsh_Position hsh_pos;
+   void * hsh_key;
+   void * hsh_data;
+   HSH_ITERATE(t, hsh_pos, hsh_key, hsh_data){
+      printf("%s: %s\n", (const char*) hsh_key, (const char*) hsh_data);
+      if (strchr((const char*) hsh_key, '6') != NULL)
+	 break;
+   }
+   HSH_ITERATE_END(t);
+
+   HSH_ITERATE_KEYS(t, hsh_pos, hsh_key){
+      printf("%s\n", (const char*) hsh_key);
+      if (strchr((const char*) hsh_key, '6') != NULL)
+	 break;
+   }
+   HSH_ITERATE_END(t);
+
    /*   hsh_print_stats( t, stdout );*/
 
    /* Deleting everything */

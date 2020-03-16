@@ -200,6 +200,21 @@ key80: datum80 (7)
 key71: datum71 (7)
 key53: datum53 (7)
 hsh_iterate_arg returned 1
+Iteration 4
+key80: datum80
+key71: datum71
+key53: datum53
+key44: datum44
+key9: datum9
+key35: datum35
+key26: datum26
+key80
+key71
+key53
+key44
+key9
+key35
+key26
 === hsh_pointer_compare ===
 p1 vs. p2: 1
 p2 vs. p1: 1
