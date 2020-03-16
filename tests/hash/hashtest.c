@@ -24,10 +24,40 @@
  * 
  */
 
-#include "maaP.h"
+#include <stdlib.h>
+#include <string.h>
+#include <maa.h>
 
 extern void init_rand( void );
 extern int get_rand( int ll, int ul );
+
+static char *get_static_key(int key)
+{
+   static char ret[20];
+   snprintf(ret, sizeof(ret), "key%d", key);
+   return xstrdup(ret);
+}
+
+static char *get_static_datum(int key)
+{
+   static char ret[20];
+   snprintf(ret, sizeof(ret), "datum%d", key);
+   return xstrdup(ret);
+}
+
+static char *get_key(int key)
+{
+   char ret[20];
+   snprintf(ret, sizeof(ret), "key%d", key);
+   return xstrdup(ret);
+}
+
+static char *get_datum(int datum)
+{
+   char ret[20];
+   snprintf(ret, sizeof(ret), "datum%d", datum);
+   return xstrdup(ret);
+}
 
 static int iterator( const void *key, const void *datum )
 {
@@ -70,21 +100,17 @@ int main( int argc, char **argv )
    t = hsh_create( NULL, NULL );
    
    for (i = 0; i < count; i++) {
-      char *key   = xmalloc( 20 );
-      char *datum = xmalloc( 20 );
+      char *key   = get_key(i);
+      char *datum = get_datum(i);
 
-      sprintf( key, "key%d", i );
-      sprintf( datum, "datum%d", i );
       hsh_insert( t, key, datum );
    }
 
-   for (i = count; i >= 0; i--) {
-      char        key[100];
-      char        datum[100];
+   for (i = count + 1; i >= -2; i--) {
+      char *key = get_static_key(i);
+      char *datum = get_static_datum(i);
       const char *pt;
 
-      sprintf( key, "key%d", i );
-      sprintf( datum, "datum%d", i );
       pt = hsh_retrieve( t, key );
 
       if (!pt || strcmp( pt, datum )) {
@@ -92,14 +118,26 @@ int main( int argc, char **argv )
       }
    }
 
-   if (count <= 200) hsh_iterate( t, iterator );
-   
-/*   hsh_print_stats( t, stdout );*/
+   /* Iterating */
+   printf( "Iteration 1\n");
+   if (count <= 200)
+      hsh_iterate( t, iterator );
 
+   /* Delete items 60-70 */
+   for (i = 60; i <= 70; ++i) {
+      hsh_delete( t, get_static_key(i));
+   }
+
+   /* Iterating */
+   printf( "Iteration 2\n");
+   if (count <= 200)
+      hsh_iterate( t, iterator );
+
+   /*   hsh_print_stats( t, stdout );*/
+
+   /* Deleting everything */
    hsh_iterate( t, freer );
    hsh_destroy( t );
-
-
 
 				/* Test random keys */
    t = hsh_create( NULL, NULL );
@@ -108,24 +146,24 @@ int main( int argc, char **argv )
    for (i = 0; i < count; i++) {
       int  len = get_rand( 2, 32 );
       char *key   = xmalloc( len + 1 );
-      char *datum = xmalloc( 20 );
+      char *datum = get_datum(i);
 
       for (j = 0; j < len; j++) key[j] = get_rand( 32, 128 );
       key[ len ] = '\0';
-      sprintf( datum, "datum%d", i );
       hsh_insert( t, key, datum );
    }
-   
+
    init_rand();
    for (i = 0; i < count; i++) {
       int         len = get_rand( 2, 32 );
       char       *key = xmalloc( len + 1 );
-      char        datum[100];
+      char       *datum = get_static_datum(i);
       const char *pt;
 
-      for (j = 0; j < len; j++) key[j] = get_rand( 32, 128 );
+      for (j = 0; j < len; j++)
+	 key[j] = get_rand( 32, 128 );
+
       key[ len ] = '\0';
-      sprintf( datum, "datum%d", i );
       pt = hsh_retrieve( t, key );
 
       if (!pt || strcmp( pt, datum ))
