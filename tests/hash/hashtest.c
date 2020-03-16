@@ -28,6 +28,12 @@
 #include <string.h>
 #include <maa.h>
 
+#if 1
+#  define INT2PTR(x) ((void *)x)
+#else
+#  define INT2PTR(x) ((void *)((char *)0 + x))
+#endif
+
 extern void init_rand( void );
 extern int get_rand( int ll, int ul );
 
@@ -198,20 +204,18 @@ static void test_hsh_integers(int count)
    init_rand();
    for (i = 0; i < count; i++) {
       long key    = get_rand( 1, 16777216 );
-      char *datum = xmalloc( 20 );
+      char *datum = get_datum(i);
 
-      sprintf( datum, "datum%d", i );
-      hsh_insert( t, (void *)key, datum );
+      hsh_insert( t, INT2PTR(key), datum );
    }
 
    init_rand();
    for (i = 0; i < count; i++) {
       long        key = get_rand( 1, 16777216 );
-      char        datum[100];
+      char       *datum = get_static_datum(i);
       const char *pt;
 
-      sprintf( datum, "datum%d", i );
-      pt = hsh_retrieve( t, (void *)key );
+      pt = hsh_retrieve( t, INT2PTR(key) );
 
       if (!pt || strcmp( pt, datum ))
 	    printf( "Expected \"%s\", got \"%s\" for key %ld\n",
