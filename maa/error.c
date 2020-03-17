@@ -41,6 +41,11 @@ const char *_err_programName;
 
 void err_set_program_name( const char *programName )
 {
+   if (!programName){
+      _err_programName = programName;
+      return;
+   }
+
    const char *pt =strrchr( programName, '/' );
 
    if (pt)
