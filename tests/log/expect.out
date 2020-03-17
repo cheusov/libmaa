@@ -1,1 +1,3 @@
 Day Mth NN NN:NN:NN NNNN HOSTNAME logtest[NNNNN]: (main) Error??? No-o-o-o... :-)
+Day Mth NN NN:NN:NN NNNN HOSTNAME logtest[NNNNN]: (main) log_facility: syslog
+Day Mth NN NN:NN:NN NNNN HOSTNAME logtest[NNNNN]: five: NN

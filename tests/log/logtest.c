@@ -42,6 +42,15 @@ int main( int argc, char **argv )
 
    log_error ("main", "Error??? No-o-o-o... :-)");
 
+   log_set_facility("syslog");
+   log_error ("main", "log_facility: %s", log_get_facility());
+   log_info ("five: %d", 5);
+
+   log_syslog("ident");
+   log_syslog(NULL);
+
+   log_close();
+
    maa_shutdown ();
 
    return 0;
