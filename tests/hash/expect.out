@@ -216,6 +216,6 @@ key9
 key35
 key26
 === hsh_pointer_compare ===
-p1 vs. p2: 1
+p1 vs. p2: -1
 p2 vs. p1: 1
 p1 vs. p1: 0

@@ -1,5 +1,3 @@
-fix hsh_pointer_compare (0/1 vs. -1/0/1)
-
 err_fatal -- segfault on NetBSD/9.0/amd64
 
 Split pdf documentation into man pages

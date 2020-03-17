@@ -534,12 +534,15 @@ int hsh_string_compare( const void *key1, const void *key2 )
 
 int hsh_pointer_compare( const void *key1, const void *key2 )
 {
-   const char *p1 = (const char *)&key1;
-   const char *p2 = (const char *)&key2;
-   int  i;
+   intptr_t v1 = (const char *)key1 - (const char *)0;
+   intptr_t v2 = (const char *)key2 - (const char *)0;
 
-   for (i = 0; i < SIZEOF_VOID_P; i++) if (*p1++ != *p2++) return 1;
-   return 0;
+   if (v1 < v2)
+      return -1;
+   else if (v1 > v2)
+      return 1;
+   else
+      return 0;
 }
 
 /* \doc |hsh_init_position| returns a position marker for some arbitary
