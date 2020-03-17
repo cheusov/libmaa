@@ -24,9 +24,7 @@
  * 
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <maa.h>
+#include "maaP.h"
 
 #if 1
 #  define INT2PTR(x) ((void *)x)
