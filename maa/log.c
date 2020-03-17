@@ -184,10 +184,9 @@ void log_syslog( const char *ident )
 
 static void log_mkpath(const char *filename)
 {
-    char *tmp = alloca(strlen(filename) + 1);
+    char *tmp = xstrdup(filename);
     char *pt;
 
-    strcpy(tmp, filename);
     for (pt = tmp; *pt; pt++) {
         if (*pt == '/' && pt != tmp) {
             *pt = '\0';
@@ -195,6 +194,8 @@ static void log_mkpath(const char *filename)
             *pt = '/';
         }
     }
+
+    xfree(tmp);
 }
 
 static void _log_check_filename(void)
