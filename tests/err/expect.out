@@ -1,2 +1,20 @@
-errtest (main): qqq
+errtest (main): fatal error #56
 $?=1
+errtest: fatal error #711
+$?=1
+fatal error #75
+$?=1
+errtest (main): fatal error #17
+main: Bad file descriptor
+errtest (main): warning #11
+$?=0
+errtest: warning #11
+$?=0
+errtest: Internal error
+     internal error #71
+Aborting errtest...
+$?=134
+errtest: Internal error
+     internal error #71
+Aborting errtest...
+$?=134
