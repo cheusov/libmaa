@@ -10,9 +10,9 @@ test_output:
 	${.OBJDIR}/errtest 5 2>&1; echo '$$?='$$?; \
 	${.OBJDIR}/errtest 6 2>&1; echo '$$?='$$?; \
 	ulimit -c 0; ${.OBJDIR}/errtest 7 >${.OBJDIR}/err.log 2>&1; ex=$$?; \
-	  grep -v '^Aborted' ${tmp_file}; echo '$$?='$$ex; \
+	  grep -vE '^(Aborted|Abort trap)' ${tmp_file}; echo '$$?='$$ex; \
 	ulimit -c 0; ${.OBJDIR}/errtest 8 >${.OBJDIR}/err.log 2>&1; ex=$$?; \
-	  grep -v '^Aborted' ${tmp_file}; echo '$$?='$$ex; \
+	  grep -vE '^(Aborted|Abort trap)' ${tmp_file}; echo '$$?='$$ex; \
 	true
 
 CLEANFILES +=	${tmp_file}
