@@ -3,6 +3,7 @@
 int main(int argc, char **argv)
 {
    int num;
+   int n;
 
    if (argc == 1){
       fprintf(stderr, "argument is expected\n");
@@ -25,8 +26,9 @@ int main(int argc, char **argv)
       err_fatal(NULL, "fatal error #%d\n", 75);
       break;
    case 4:
-      read(100, NULL, 0);
-      err_fatal_errno(__func__, "fatal error #%d\n", 17);
+      n = read(100, NULL, 0);
+      if (n == -1)
+	 err_fatal_errno(__func__, "fatal error #%d\n", 17);
       break;
    case 5:
       err_warning(__func__, "warning #%d\n", 11);
