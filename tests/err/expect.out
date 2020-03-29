@@ -26,12 +26,12 @@ errtest: Internal error
 Aborting errtest...
 $?=134
 ==================== log file ====================
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: (main) fatal error #56
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: fatal error #711
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: fatal error #75
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: (main) fatal error #17
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: (main) main: Bad file descriptor
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: (main) warning #11
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: warning #11
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: internal error #71
-ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: internal error #71
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: (main) fatal error #56
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: fatal error #711
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: fatal error #75
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: (main) fatal error #17
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: (main) main: Bad file descriptor
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: (main) warning #11
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: warning #11
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: internal error #71
+ddd mmm DD hh:mm:ss YYYY hostname errtest[nnnn]: internal error #71

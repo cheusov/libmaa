@@ -15,7 +15,8 @@ test_output:
 	  grep -vE '^(Aborted|Abort trap)' ${tmp_file}; echo '$$?='$$ex; \
 	echo ==================== log file ====================; \
 	awk 'NF > 0 {$$1="ddd"; $$2="mmm"; $$3="DD"; $$4="hh:mm:ss"; \
-		$$5="YYYY"; sub(/errtest[^ ]+/, "errtest[nnnn]:")} \
+		$$5="YYYY"; $$6="hostname"; \
+		sub(/errtest[^ ]+/, "errtest[nnnn]:")} \
 		{print $$0}' ${LOGFILE}; \
 	\
 	${MAKE} ${MAKEFLAGS} cleandir >/dev/null 2>&1; \
