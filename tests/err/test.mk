@@ -9,6 +9,14 @@ test_output:
 	${.OBJDIR}/errtest 6 2>&1; echo '$$?='$$?; \
 	ulimit -c 0; ${.OBJDIR}/errtest 7 2>&1; echo '$$?='$$?; \
 	ulimit -c 0; ${.OBJDIR}/errtest 8 2>&1; echo '$$?='$$?; \
+	echo ==================== log file ====================; \
+	awk 'NF > 0 {$$1="ddd"; $$2="mmm"; $$3="DD"; $$4="hh:mm:ss"; \
+		$$5="YYYY"; sub(/errtest[^ ]+/, "errtest[nnnn]:")} \
+		{print $$0}' ${LOGFILE}; \
+	\
+	${MAKE} ${MAKEFLAGS} cleandir >/dev/null 2>&1; \
 	true
+
+CLEANFILES +=	${LOGFILE}
 
 .include <mkc.minitest.mk>

@@ -1,20 +1,37 @@
+=== errtest 1
 errtest (main): fatal error #56
 $?=1
+=== errtest 2
 errtest: fatal error #711
 $?=1
+=== errtest 3
 fatal error #75
 $?=1
-errtest (main): fatal error #17
-main: Bad file descriptor
+=== errtest 4
+errtest (main): fatal error #17 main: Bad file descriptor
+=== errtest 5
 errtest (main): warning #11
 $?=0
+=== errtest 6
 errtest: warning #11
 $?=0
+=== errtest 7
 errtest: Internal error
      internal error #71
 Aborting errtest...
 $?=134
+=== errtest 8
 errtest: Internal error
      internal error #71
 Aborting errtest...
 $?=134
+==================== log file ====================
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: (main) fatal error #56
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: fatal error #711
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: fatal error #75
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: (main) fatal error #17
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: (main) main: Bad file descriptor
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: (main) warning #11
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: warning #11
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: internal error #71
+ddd mmm DD hh:mm:ss YYYY asrock errtest[nnnn]: internal error #71
