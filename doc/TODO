@@ -1,4 +1,10 @@
-err_fatal -- segfault on NetBSD/9.0/amd64
+Avoid __FUNCTION__
+
+Change coding style
+
+Avoid trailing \n for err_* functions
+
+More tests for erorr checking (err_internal, err_fatal etc.)
 
 Split pdf documentation into man pages
 
