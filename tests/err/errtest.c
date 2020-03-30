@@ -31,7 +31,7 @@ int main(int argc, char **argv)
    case 4:
       n = read(100, NULL, 0);
       if (n == -1)
-	 err_fatal_errno(__func__, "fatal error #%d\n", 17);
+	 err_fatal_errno(__func__, "fatal error #%d", 17);
       break;
    case 5:
       err_warning(__func__, "warning #%d", 11);
