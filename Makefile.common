@@ -4,4 +4,4 @@ MAA_TEENY =	0
 
 DOCDIR     ?=   ${DATADIR}/doc/libmaa
 
-VERSION =	1.4.5
+VERSION =	1.4.6
