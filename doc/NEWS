@@ -1,4 +1,21 @@
 ========================================================================
+Version 1.4.5, by Aleksey Cheusov, Sun, 29 Mar 2020 20:23:42 +0300
+
+  err_* functions:
+    Fix segfault caused by "ap" is used twice.  Solution is to va_copy
+    it and use copied "ap" for printing to stderr.
+
+    Improve formatting (no empty lines in log files)
+
+  err_set_program_name: handle correctly NULL argument
+
+  log_mkpath function: avoid use of alloca(3)
+
+  hsh_pointer_compare function now follows -1/0/1 logic
+
+  Add more tests for log_*, err_*, hsh_* and set_* function
+
+========================================================================
 Version 1.4.4, by Aleksey Cheusov, Tue, 23 Apr 2019 21:50:34 +0300
 
   Fix compilation failure using gcc-8.

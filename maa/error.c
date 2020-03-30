@@ -71,6 +71,7 @@ const char *err_program_name( void )
 void err_fatal( const char *routine, const char *format, ... )
 {
    va_list ap;
+   va_list ap_copy;
 
    fflush( stdout );
    if (_err_programName) {
@@ -83,8 +84,12 @@ void err_fatal( const char *routine, const char *format, ... )
    }
    
    va_start( ap, format );
+   va_copy( ap_copy, ap );
+
    vfprintf( stderr, format, ap );
-   log_error_va( routine, format, ap );
+   fprintf( stderr, "\n" );
+   log_error_va( routine, format, ap_copy );
+
    va_end( ap );
    
    fflush( stderr );
@@ -100,6 +105,7 @@ void err_fatal( const char *routine, const char *format, ... )
 void err_fatal_errno( const char *routine, const char *format, ... )
 {
    va_list ap;
+   va_list ap_copy;
    int     errorno = errno;
 
    fflush( stdout );
@@ -113,12 +119,15 @@ void err_fatal_errno( const char *routine, const char *format, ... )
    }
    
    va_start( ap, format );
+   va_copy( ap_copy, ap );
+
    vfprintf( stderr, format, ap );
-   log_error_va( routine, format, ap );
+   log_error_va( routine, format, ap_copy );
+
    va_end( ap );
 
-   fprintf( stderr, "%s: %s\n", routine, strerror( errorno ) );
-   log_error( routine, "%s: %s\n", routine, strerror( errorno ) );
+   fprintf( stderr, " %s: %s\n", routine, strerror( errorno ) );
+   log_error( routine, "%s: %s", routine, strerror( errorno ) );
    
    fflush( stderr );
    fflush( stdout );
@@ -132,6 +141,7 @@ void err_fatal_errno( const char *routine, const char *format, ... )
 void err_warning( const char *routine, const char *format, ... )
 {
    va_list ap;
+   va_list ap_copy;
 
    fflush( stdout );
    fflush( stderr );
@@ -145,8 +155,12 @@ void err_warning( const char *routine, const char *format, ... )
    }
    
    va_start( ap, format );
+   va_copy( ap_copy, ap );
+
    vfprintf( stderr, format, ap );
-   log_error_va( routine, format, ap );
+   fprintf( stderr, "\n" );
+   log_error_va( routine, format, ap_copy );
+
    va_end( ap );
 }
 
@@ -157,6 +171,10 @@ void err_warning( const char *routine, const char *format, ... )
 void err_internal( const char *routine, const char *format, ... )
 {
    va_list ap;
+   va_list ap_copy;
+
+   va_start( ap, format );
+   va_copy( ap_copy, ap );
 
    fflush( stdout );
    if (_err_programName) {
@@ -170,9 +188,10 @@ void err_internal( const char *routine, const char *format, ... )
       else         fprintf( stderr, "Internal error\n     " );
    }
    
-   va_start( ap, format );
    vfprintf( stderr, format, ap );
-   log_error( routine, format, ap );
+   fprintf( stderr, "\n" );
+   log_error_va( routine, format, ap_copy );
+
    va_end( ap );
 
    if (_err_programName)
