@@ -4,6 +4,7 @@ replace_cmd =	sed -e 's/Bad.*$$/Bad file descriptor/'
 .PHONY : test_output
 test_output:
 	@LD_LIBRARY_PATH=${OBJDIR_maa}; export LD_LIBRARY_PATH; \
+	rm -f ${LOGFILE}; \
 	${.OBJDIR}/errtest 1 2>&1; echo '$$?='$$?; \
 	${.OBJDIR}/errtest 2 2>&1; echo '$$?='$$?; \
 	${.OBJDIR}/errtest 3 2>&1; echo '$$?='$$?; \
@@ -19,10 +20,7 @@ test_output:
 		$$5="YYYY"; $$6="hostname"; \
 		sub(/errtest[^ ]+/, "errtest[nnnn]:")} \
 		{print $$0}' ${LOGFILE} | \
-	  ${replace_cmd}; \
-	\
-	${MAKE} ${MAKEFLAGS} cleandir >/dev/null 2>&1; \
-	true
+	  ${replace_cmd}
 
 CLEANFILES +=	${LOGFILE} ${tmp_file}
 .include <mkc.minitest.mk>
