@@ -89,6 +89,6 @@ const char *maa_version(void)
 	static char buffer[80];
 
 	sprintf(buffer, "Libmaa %d.%d.%d", MAA_MAJOR, MAA_MINOR, MAA_TEENY);
-      
+	  
 	return buffer;
 }

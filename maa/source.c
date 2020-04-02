@@ -267,7 +267,7 @@ src_Stats src_get_stats(void)
 	if (Lines) {
 		mem_StringStats ms = mem_get_string_stats(StringHeap);
 		mem_ObjectStats mo = mem_get_object_stats(InfoHeap);
-      
+	  
 		s->lines_used      = Used;
 		s->lines_allocated = Count;
 		s->lines_bytes     = ms->bytes;

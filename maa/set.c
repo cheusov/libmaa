@@ -259,7 +259,7 @@ int set_insert(set_Set set, const void *elem)
 
 	if (t->buckets[h]) {		/* Assert uniqueness */
 		bucketType pt;
-      
+	  
 		for (pt = t->buckets[h]; pt; pt = pt->next)
 			if (!t->compare(pt->elem, elem)) return 1;
 	}
@@ -283,7 +283,7 @@ int set_delete(set_Set set, const void *elem)
 	if (t->buckets[h]) {
 		bucketType pt;
 		bucketType prev;
-      
+	  
 		for (prev = NULL, pt = t->buckets[h]; pt; prev = pt, pt = pt->next)
 			if (!t->compare(pt->elem, elem)) {
 				--t->entries;
@@ -313,7 +313,7 @@ int set_member(set_Set set, const void *elem)
 	if (t->buckets[h]) {
 		bucketType pt;
 		bucketType prev;
-      
+	  
 		for (prev = NULL, pt = t->buckets[h]; pt; prev = pt, pt = pt->next)
 			if (!t->compare(pt->elem, elem)) {
 				if (!prev) {

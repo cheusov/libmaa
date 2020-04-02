@@ -139,22 +139,22 @@ void log_set_facility(const char *facility)
 {
 	CODE *pt;
 
-    for (pt = facilitynames; pt->c_name; pt++) {
-        if (!strcmp(pt->c_name, facility)) {
-            logFacility = pt->c_val;
-            return;
-        }
-    }
-    err_fatal(__func__, "%s is not a valid facility name\n", facility);
+	for (pt = facilitynames; pt->c_name; pt++) {
+	    if (!strcmp(pt->c_name, facility)) {
+	        logFacility = pt->c_val;
+	        return;
+	    }
+	}
+	err_fatal(__func__, "%s is not a valid facility name\n", facility);
 }
 
 const char *log_get_facility(void)
 {
 	CODE *pt;
 
-    for (pt = facilitynames; pt->c_name; pt++)
-        if (pt->c_val == logFacility) return pt->c_name;
-    return NULL;
+	for (pt = facilitynames; pt->c_name; pt++)
+	    if (pt->c_val == logFacility) return pt->c_name;
+	return NULL;
 }
 
 void log_option(int option)
@@ -187,15 +187,15 @@ static void log_mkpath(const char *filename)
 	char *tmp = xstrdup(filename);
 	char *pt;
 
-    for (pt = tmp; *pt; pt++) {
-        if (*pt == '/' && pt != tmp) {
-            *pt = '\0';
-            mkdir(tmp, 0755);
-            *pt = '/';
-        }
-    }
+	for (pt = tmp; *pt; pt++) {
+	    if (*pt == '/' && pt != tmp) {
+	        *pt = '\0';
+	        mkdir(tmp, 0755);
+	        *pt = '/';
+	    }
+	}
 
-    xfree(tmp);
+	xfree(tmp);
 }
 
 static void _log_check_filename(void)

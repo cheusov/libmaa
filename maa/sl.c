@@ -465,7 +465,7 @@ void _sl_dump(sl_List list)
 	for (pt = l->head; pt; pt = pt->forward[0]) {
 #if SL_DEBUG
 		int       i;
-      
+	  
 		printf("  Entry %p (%d/%p/0x%p=%lu) has 0x%x levels:\n",
 			   pt, count++, pt->datum,
 			   pt->datum ? l->key(pt->datum) : 0,

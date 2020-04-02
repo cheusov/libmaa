@@ -39,28 +39,28 @@ const char *_err_programName;
    calling program.  If this value is not "NULL", then it will be used when
    printing errors and warnings. */
 
-void err_set_program_name( const char *programName )
+void err_set_program_name(const char *programName)
 {
-   if (!programName){
-      _err_programName = programName;
-      return;
-   }
+	if (!programName){
+		_err_programName = programName;
+		return;
+	}
 
-   const char *pt =strrchr( programName, '/' );
+	const char *pt =strrchr(programName, '/');
 
-   if (pt)
-      _err_programName = pt + 1;
-   else
-      _err_programName = programName;
+	if (pt)
+		_err_programName = pt + 1;
+	else
+		_err_programName = programName;
 }
 
 /* \doc |err_program_name| returns the value of |programName| that was
    previously set with |err_set_program_name|.  This value may be
    "NULL". */
 
-const char *err_program_name( void )
+const char *err_program_name(void)
 {
-   return _err_programName;
+	return _err_programName;
 }
 
 
@@ -68,33 +68,33 @@ const char *err_program_name( void )
    "stderr", flushes "stderr" and "stdout", and calls |exit|.  |routine| is
    the name of the routine in which the error took place. */
 
-void err_fatal( const char *routine, const char *format, ... )
+void err_fatal(const char *routine, const char *format, ...)
 {
-   va_list ap;
-   va_list ap_copy;
+	va_list ap;
+	va_list ap_copy;
 
-   fflush( stdout );
-   if (_err_programName) {
-      if (routine)
-	 fprintf( stderr, "%s (%s): ", _err_programName, routine );
-      else
-	 fprintf( stderr, "%s: ", _err_programName );
-   } else {
-      if (routine) fprintf( stderr, "%s: ", routine );
-   }
+	fflush(stdout);
+	if (_err_programName) {
+		if (routine)
+			fprintf(stderr, "%s (%s): ", _err_programName, routine);
+		else
+			fprintf(stderr, "%s: ", _err_programName);
+	} else {
+		if (routine) fprintf(stderr, "%s: ", routine);
+	}
    
-   va_start( ap, format );
-   va_copy( ap_copy, ap );
+	va_start(ap, format);
+	va_copy(ap_copy, ap);
 
-   vfprintf( stderr, format, ap );
-   fprintf( stderr, "\n" );
-   log_error_va( routine, format, ap_copy );
+	vfprintf(stderr, format, ap);
+	fprintf(stderr, "\n");
+	log_error_va(routine, format, ap_copy);
 
-   va_end( ap );
+	va_end(ap);
    
-   fflush( stderr );
-   fflush( stdout );
-   exit ( 1 );
+	fflush(stderr);
+	fflush(stdout);
+	exit (1);
 }
 
 /* \doc |err_fatal_errno| flushes "stdout", prints a fatal error report on
@@ -102,103 +102,103 @@ void err_fatal( const char *routine, const char *format, ... )
    "stderr" and "stdout", and calls |exit|.  |routine| is the name of the
    routine in which the error took place. */
 
-void err_fatal_errno( const char *routine, const char *format, ... )
+void err_fatal_errno(const char *routine, const char *format, ...)
 {
-   va_list ap;
-   va_list ap_copy;
-   int     errorno = errno;
+	va_list ap;
+	va_list ap_copy;
+	int     errorno = errno;
 
-   fflush( stdout );
-   if (_err_programName) {
-      if (routine)
-	 fprintf( stderr, "%s (%s): ", _err_programName, routine );
-      else
-	 fprintf( stderr, "%s: ", _err_programName );
-   } else {
-      if (routine) fprintf( stderr, "%s: ", routine );
-   }
+	fflush(stdout);
+	if (_err_programName) {
+		if (routine)
+			fprintf(stderr, "%s (%s): ", _err_programName, routine);
+		else
+			fprintf(stderr, "%s: ", _err_programName);
+	} else {
+		if (routine) fprintf(stderr, "%s: ", routine);
+	}
    
-   va_start( ap, format );
-   va_copy( ap_copy, ap );
+	va_start(ap, format);
+	va_copy(ap_copy, ap);
 
-   vfprintf( stderr, format, ap );
-   log_error_va( routine, format, ap_copy );
+	vfprintf(stderr, format, ap);
+	log_error_va(routine, format, ap_copy);
 
-   va_end( ap );
+	va_end(ap);
 
-   fprintf( stderr, " %s: %s\n", routine, strerror( errorno ) );
-   log_error( routine, "%s: %s", routine, strerror( errorno ) );
+	fprintf(stderr, " %s: %s\n", routine, strerror(errorno));
+	log_error(routine, "%s: %s", routine, strerror(errorno));
    
-   fflush( stderr );
-   fflush( stdout );
-   exit( 1 );
+	fflush(stderr);
+	fflush(stdout);
+	exit(1);
 }
 
 /* \doc |err_warning| flushes "stdout", prints a non-fatal warning on
    "stderr", and returns to the caller.  |routine| is the name of the
    calling routine. */
 
-void err_warning( const char *routine, const char *format, ... )
+void err_warning(const char *routine, const char *format, ...)
 {
-   va_list ap;
-   va_list ap_copy;
+	va_list ap;
+	va_list ap_copy;
 
-   fflush( stdout );
-   fflush( stderr );
-   if (_err_programName) {
-      if (routine)
-	 fprintf( stderr, "%s (%s): ", _err_programName, routine );
-      else
-	 fprintf( stderr, "%s: ", _err_programName );
-   } else {
-      if (routine) fprintf( stderr, "%s: ", routine );
-   }
+	fflush(stdout);
+	fflush(stderr);
+	if (_err_programName) {
+		if (routine)
+			fprintf(stderr, "%s (%s): ", _err_programName, routine);
+		else
+			fprintf(stderr, "%s: ", _err_programName);
+	} else {
+		if (routine) fprintf(stderr, "%s: ", routine);
+	}
    
-   va_start( ap, format );
-   va_copy( ap_copy, ap );
+	va_start(ap, format);
+	va_copy(ap_copy, ap);
 
-   vfprintf( stderr, format, ap );
-   fprintf( stderr, "\n" );
-   log_error_va( routine, format, ap_copy );
+	vfprintf(stderr, format, ap);
+	fprintf(stderr, "\n");
+	log_error_va(routine, format, ap_copy);
 
-   va_end( ap );
+	va_end(ap);
 }
 
 /* \doc |err_internal| flushes "stdout", prints the fatal error message,
    flushes "stderr" and "stdout", and calls |abort| so that a core dump is
    generated. */
 
-void err_internal( const char *routine, const char *format, ... )
+void err_internal(const char *routine, const char *format, ...)
 {
-   va_list ap;
-   va_list ap_copy;
+	va_list ap;
+	va_list ap_copy;
 
-   va_start( ap, format );
-   va_copy( ap_copy, ap );
+	va_start(ap, format);
+	va_copy(ap_copy, ap);
 
-   fflush( stdout );
-   if (_err_programName) {
-      if (routine)
-	 fprintf( stderr, "%s (%s): Internal error\n     ",
-		  _err_programName, routine );
-      else
-	 fprintf( stderr, "%s: Internal error\n     ", _err_programName );
-   } else {
-      if (routine) fprintf( stderr, "%s: Internal error\n     ", routine );
-      else         fprintf( stderr, "Internal error\n     " );
-   }
+	fflush(stdout);
+	if (_err_programName) {
+		if (routine)
+			fprintf(stderr, "%s (%s): Internal error\n     ",
+					 _err_programName, routine);
+		else
+			fprintf(stderr, "%s: Internal error\n     ", _err_programName);
+	} else {
+		if (routine) fprintf(stderr, "%s: Internal error\n     ", routine);
+		else         fprintf(stderr, "Internal error\n     ");
+	}
    
-   vfprintf( stderr, format, ap );
-   fprintf( stderr, "\n" );
-   log_error_va( routine, format, ap_copy );
+	vfprintf(stderr, format, ap);
+	fprintf(stderr, "\n");
+	log_error_va(routine, format, ap_copy);
 
-   va_end( ap );
+	va_end(ap);
 
-   if (_err_programName)
-      fprintf( stderr, "Aborting %s...\n", _err_programName );
-   else
-      fprintf( stderr, "Aborting...\n" );
-   fflush( stderr );
-   fflush( stdout );
-   abort();
+	if (_err_programName)
+		fprintf(stderr, "Aborting %s...\n", _err_programName);
+	else
+		fprintf(stderr, "Aborting...\n");
+	fflush(stderr);
+	fflush(stdout);
+	abort();
 }

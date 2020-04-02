@@ -240,13 +240,13 @@ str_Stats str_pool_get_stats( str_Pool pool )
 	if (p) {
 		mem_StringStats m = mem_get_string_stats( p->string );
 		hsh_Stats       h = hsh_get_stats( p->hash );
-      
+	  
 		s->count      = m->count;
 		s->bytes      = m->bytes;
 		s->retrievals = h->retrievals;
 		s->hits       = h->hits;
 		s->misses     = h->misses;
-      
+	  
 		xfree( h );		/* rare */
 		xfree( m );		/* rare */
 	} else {

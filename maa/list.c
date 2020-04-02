@@ -331,7 +331,7 @@ void lst_truncate_position(lst_List list, lst_Position position)
 	} else {
 		d = position;		/* New end of list */
 		next = d->next;		/* Start of remainder of list */
-      
+	  
 		/* Truncate */
 		d->next = NULL;
 		l->tail = d;

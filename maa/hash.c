@@ -252,7 +252,7 @@ int hsh_insert(
 
 	if (t->buckets[h]) {		/* Assert uniqueness */
 		bucketType pt;
-      
+	  
 		for (pt = t->buckets[h]; pt; pt = pt->next)
 			if (!t->compare(pt->key, key)) return 1;
 	}
@@ -273,11 +273,11 @@ int hsh_delete(hsh_HashTable table, const void *key)
 	_hsh_check(t, __func__);
 	if (t->readonly)
 		err_internal(__func__, "Attempt to delete from readonly table\n");
-   
+
 	if (t->buckets[h]) {
 		bucketType pt;
 		bucketType prev;
-      
+  
 		for (prev = NULL, pt = t->buckets[h]; pt; prev = pt, pt = pt->next)
 			if (!t->compare(pt->key, key)) {
 				--t->entries;
