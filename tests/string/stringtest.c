@@ -29,47 +29,47 @@
 
 int main( int argc, char **argv )
 {
-   int           i;
-   int           count;
-   const char    **orig;
-   char          buf[100];
+	int           i;
+	int           count;
+	const char    **orig;
+	char          buf[100];
 
-   maa_init( argv[0] );
+	maa_init( argv[0] );
 
-   if (argc == 1) {
-      count = 100;
-   } else if (argc != 2 ) {
-      fprintf( stderr, "usage: stringtest count\n" );
-      return 1;
-   } else {
-      count = atoi( argv[1] );
-   }
+	if (argc == 1) {
+		count = 100;
+	} else if (argc != 2 ) {
+		fprintf( stderr, "usage: stringtest count\n" );
+		return 1;
+	} else {
+		count = atoi( argv[1] );
+	}
 
-   orig = xmalloc( count * sizeof( const char ** ) );
+	orig = xmalloc( count * sizeof( const char ** ) );
 
-   printf( "Running test for count of %d\n", count );
+	printf( "Running test for count of %d\n", count );
 
-   for (i = 0; i < count; i++) {
-      sprintf( buf, "key%d", i );
-      orig[i] = str_find( buf );
-   }
+	for (i = 0; i < count; i++) {
+		sprintf( buf, "key%d", i );
+		orig[i] = str_find( buf );
+	}
 
-   for (i = 0; i < count; i++) {
-      const char *this;
+	for (i = 0; i < count; i++) {
+		const char *this;
 
-      sprintf( buf, "key%d", i );
-      this = str_find( buf );
-      if (orig[i] != this)
-	    printf( "Pointers are different for \"%s\" (\"%s\"): %p and %p\n",
-		     buf,
-		     this,
-		     orig[i],
-		     this );
-   }
+		sprintf( buf, "key%d", i );
+		this = str_find( buf );
+		if (orig[i] != this)
+			printf( "Pointers are different for \"%s\" (\"%s\"): %p and %p\n",
+					buf,
+					this,
+					orig[i],
+					this );
+	}
 
-   xfree( orig );
+	xfree( orig );
 
-   printf( "Done.\n" );
+	printf( "Done.\n" );
 
-   return 0;
+	return 0;
 }

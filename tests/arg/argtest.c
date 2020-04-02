@@ -28,75 +28,76 @@
 
 int main( int argc, char **argv )
 {
-   arg_List   a;
-   int        c;
-   char       **v;
-   int        i;
-   FILE *f;
-   char buffer [2000];
-   char *first_bq, *last_bq;
-   maa_init( argv[0] );
+	arg_List   a;
+	int        c;
+	char       **v;
+	int        i;
+	FILE *f;
+	char buffer [2000];
+	char *first_bq, *last_bq;
 
-   --argc; ++argv;
+	maa_init( argv[0] );
 
-   if (argc)
-      f = fopen (argv [0], "r");
-   else
-      f = fopen ("argtest.in", "r");
+	--argc; ++argv;
 
-   if (!f)
-      exit (10);
+	if (argc)
+		f = fopen (argv [0], "r");
+	else
+		f = fopen ("argtest.in", "r");
 
-   while (fgets (buffer, sizeof(buffer), f)){
-      first_bq = strchr (buffer, '`');
-      last_bq  = strrchr (buffer, '`');
-      if (!first_bq || !last_bq)
-	 return 11;
+	if (!f)
+		exit (10);
 
-      *first_bq++ = '\0';
-      *last_bq    = '\0';
+	while (fgets (buffer, sizeof(buffer), f)){
+		first_bq = strchr (buffer, '`');
+		last_bq  = strrchr (buffer, '`');
+		if (!first_bq || !last_bq)
+			return 11;
 
-      printf ("---------------------\nInput = \"%s\"\n\n", first_bq);
-      /* 0 */
-      a = arg_argify (first_bq, 0);
-      arg_get_vector (a, &c, &v);
-      for (i = 0; i < c; i++){
-	 printf ("Arg %d = \"%s\"\n", i, v[i]);
-      }
-      arg_destroy( a );
+		*first_bq++ = '\0';
+		*last_bq    = '\0';
 
-      printf ("\n");
+		printf ("---------------------\nInput = \"%s\"\n\n", first_bq);
+		/* 0 */
+		a = arg_argify (first_bq, 0);
+		arg_get_vector (a, &c, &v);
+		for (i = 0; i < c; i++){
+			printf ("Arg %d = \"%s\"\n", i, v[i]);
+		}
+		arg_destroy( a );
 
-      /* no escape */
-      a = arg_argify (first_bq, ARG_NO_ESCAPE);
-      arg_get_vector (a, &c, &v);
-      for (i = 0; i < c; i++){
-	 printf ("Arg %d = \"%s\"\n", i, v[i]);
-      }
-      arg_destroy( a );
+		printf ("\n");
 
-      printf ("\n");
+		/* no escape */
+		a = arg_argify (first_bq, ARG_NO_ESCAPE);
+		arg_get_vector (a, &c, &v);
+		for (i = 0; i < c; i++){
+			printf ("Arg %d = \"%s\"\n", i, v[i]);
+		}
+		arg_destroy( a );
 
-      /* no quote */
-      a = arg_argify (first_bq, ARG_NO_QUOTE);
-      arg_get_vector (a, &c, &v);
-      for (i = 0; i < c; i++){
-	 printf ("Arg %d = \"%s\"\n", i, v[i]);
-      }
-      arg_destroy( a );
+		printf ("\n");
 
-      printf ("\n");
+		/* no quote */
+		a = arg_argify (first_bq, ARG_NO_QUOTE);
+		arg_get_vector (a, &c, &v);
+		for (i = 0; i < c; i++){
+			printf ("Arg %d = \"%s\"\n", i, v[i]);
+		}
+		arg_destroy( a );
 
-      /* no quote and no escape */
-      a = arg_argify (first_bq, ARG_NO_QUOTE | ARG_NO_ESCAPE);
-      arg_get_vector (a, &c, &v);
-      for (i = 0; i < c; i++){
-	 printf ("Arg %d = \"%s\"\n", i, v[i]);
-      }
-      arg_destroy( a );
+		printf ("\n");
 
-      printf ("\n");
-   }
+		/* no quote and no escape */
+		a = arg_argify (first_bq, ARG_NO_QUOTE | ARG_NO_ESCAPE);
+		arg_get_vector (a, &c, &v);
+		for (i = 0; i < c; i++){
+			printf ("Arg %d = \"%s\"\n", i, v[i]);
+		}
+		arg_destroy( a );
 
-   return 0;
+		printf ("\n");
+	}
+
+	return 0;
 }

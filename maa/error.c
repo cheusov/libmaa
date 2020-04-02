@@ -180,7 +180,7 @@ void err_internal(const char *routine, const char *format, ...)
 	if (_err_programName) {
 		if (routine)
 			fprintf(stderr, "%s (%s): Internal error\n     ",
-					 _err_programName, routine);
+					_err_programName, routine);
 		else
 			fprintf(stderr, "%s: Internal error\n     ", _err_programName);
 	} else {

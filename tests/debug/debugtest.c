@@ -32,28 +32,28 @@
 
 int main( int argc, char **argv )
 {
-   int c;
+	int c;
 
-   maa_init( argv[0] );
+	maa_init( argv[0] );
 
-   dbg_register( DBG_VERBOSE, "verbose" );
-   dbg_register( DBG_TEST, "test" );
+	dbg_register( DBG_VERBOSE, "verbose" );
+	dbg_register( DBG_TEST, "test" );
 
-   while ((c = getopt( argc, argv, "d:" )) != -1) {
-      switch (c) {
-      case 'd':
-	 dbg_set( optarg );
-	 break;
-      default:
-	 fprintf( stderr, "Usage: debugtest [-dverbose] [-dtest]\n" );
-	 break;
-      }
-   }
+	while ((c = getopt( argc, argv, "d:" )) != -1) {
+		switch (c) {
+			case 'd':
+				dbg_set( optarg );
+				break;
+			default:
+				fprintf( stderr, "Usage: debugtest [-dverbose] [-dtest]\n" );
+				break;
+		}
+	}
 
-   if (dbg_test( DBG_VERBOSE )) printf( "Verbose set\n" );
-   else                         printf( "Verbose not set\n" );
-   if (dbg_test( DBG_TEST )) printf( "Test set\n" );
-   else                      printf( "Test not set\n" );
+	if (dbg_test( DBG_VERBOSE )) printf( "Verbose set\n" );
+	else                         printf( "Verbose not set\n" );
+	if (dbg_test( DBG_TEST )) printf( "Test set\n" );
+	else                      printf( "Test not set\n" );
 
-   return 0;
+	return 0;
 }

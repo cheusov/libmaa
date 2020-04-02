@@ -31,87 +31,87 @@
 
 static int compare( const void *datum1, const void *datum2 )
 {
-   long a = (long)datum1;
-   long b = (long)datum2;
+	long a = (long)datum1;
+	long b = (long)datum2;
 
-   if (a < b) return -1;
-   if (a > b) return 1;
-   return 0;
+	if (a < b) return -1;
+	if (a > b) return 1;
+	return 0;
 }
 
 static int print( const void *datum )
 {
-   printf ("%li ", (long) datum);
-   return 0;
+	printf ("%li ", (long) datum);
+	return 0;
 }
 
 static const void *key( const void *datum )
 {
-   return datum;
+	return datum;
 }
 
 int main( int argc, char **argv )
 {
-   sl_List       sl;
-   int           count;
-   int           i;
+	sl_List       sl;
+	int           count;
+	int           i;
 
-   maa_init( argv[0] );
+	maa_init( argv[0] );
    
-   if (argc == 1) {
-      count = 10;
-   } else if (argc != 2 ) {
-      fprintf( stderr, "usage: sltest count\n" );
-      return 1;
-   } else {
-      count = atoi( argv[1] );
-   }
+	if (argc == 1) {
+		count = 10;
+	} else if (argc != 2 ) {
+		fprintf( stderr, "usage: sltest count\n" );
+		return 1;
+	} else {
+		count = atoi( argv[1] );
+	}
 
-   printf( "Running test for count of %d\n", count );
+	printf( "Running test for count of %d\n", count );
 
-   sl = sl_create( compare, key, NULL );
+	sl = sl_create( compare, key, NULL );
    
-   for (i = 1; i < count; i++) {
-      printf( "adding %d\n", i );
-      sl_insert( sl, (void *) (intptr_t) i );
+	for (i = 1; i < count; i++) {
+		printf( "adding %d\n", i );
+		sl_insert( sl, (void *) (intptr_t) i );
 #ifdef DUMP
-      _sl_dump( sl );
+		_sl_dump( sl );
 #endif
-   }
+	}
 
-   sl_iterate( sl, print );
-   printf( "\n" );
+	sl_iterate( sl, print );
+	printf( "\n" );
 
-   sl_delete( sl, (void *)5 );
-   sl_iterate( sl, print );
-   printf( "\n" );
+	sl_delete( sl, (void *)5 );
+	sl_iterate( sl, print );
+	printf( "\n" );
 
-   sl_insert( sl, (void *)0 );
-   sl_iterate( sl, print );
-   printf( "\n" );
-   sl_insert( sl, (void *)66 );
-   sl_iterate( sl, print );
-   printf( "\n" );
-   sl_insert( sl, (void *)100 );
-   sl_iterate( sl, print );
-   printf( "\n" );
-   sl_insert( sl, (void *)-1 );
-   sl_iterate( sl, print );
-   printf( "\n" );
-   sl_insert( sl, (void *)5 );
-   sl_iterate( sl, print );
-   printf( "\n" );
-   sl_insert( sl, (void *)67 );
-   sl_iterate( sl, print );
-   printf( "\n" );
-   sl_insert( sl, (void *)68 );
-   sl_iterate( sl,print );
-   printf( "\n" );
-   sl_insert( sl, (void *)65 );
-   sl_iterate( sl, print );
-   printf( "\n" );
+	sl_insert( sl, (void *)0 );
+	sl_iterate( sl, print );
+	printf( "\n" );
+	sl_insert( sl, (void *)66 );
+	sl_iterate( sl, print );
+	printf( "\n" );
+	sl_insert( sl, (void *)100 );
+	sl_iterate( sl, print );
+	printf( "\n" );
+	sl_insert( sl, (void *)-1 );
+	sl_iterate( sl, print );
+	printf( "\n" );
+	sl_insert( sl, (void *)5 );
+	sl_iterate( sl, print );
+	printf( "\n" );
+	sl_insert( sl, (void *)67 );
+	sl_iterate( sl, print );
+	printf( "\n" );
+	sl_insert( sl, (void *)68 );
+	sl_iterate( sl,print );
+	printf( "\n" );
+	sl_insert( sl, (void *)65 );
+	sl_iterate( sl, print );
+	printf( "\n" );
    
-   sl_destroy( sl );
+	sl_destroy( sl );
 
-   return 0;
+	return 0;
 }
