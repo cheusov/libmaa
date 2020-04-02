@@ -129,7 +129,7 @@ void dbg_set(const char *name)
 {
 	dbg_Type flag;
 
-	if (!name) err_internal(__func__, "name is NULL\n");
+	if (!name) err_internal(__func__, "name is NULL");
 	if (!hash) err_fatal(__func__, "No debugging names registered\n");
 	if (!strcmp(name, "none")) {
 		setFlags[0] = setFlags[1] = setFlags[2] = setFlags[3] = 0;

@@ -90,7 +90,7 @@ unsigned long b26_decode(const char *val)
 
 		if (tmp == XX)
 			err_internal(__func__,
-						 "Illegal character in base26 value: `%c' (%d)\n",
+						 "Illegal character in base26 value: `%c' (%d)",
 						 val[i], val[i]);
 
 		v += tmp * offset;

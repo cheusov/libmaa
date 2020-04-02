@@ -167,7 +167,7 @@ void log_syslog(const char *ident)
 {
 	if (ident){
 		if (logSyslog)
-			err_internal(__func__, "Syslog facility already open\n");
+			err_internal(__func__, "Syslog facility already open");
 
 		openlog(ident, LOG_PID|LOG_NOWAIT, logFacility);
 		++logOpen;
@@ -224,7 +224,7 @@ void log_file(const char *ident, const char *filename)
 	if (ident && filename){
 		if (logFd >= 0)
 			err_internal(__func__,
-						  "Log file \"%s\" open when trying to open \"%s\"\n",
+						  "Log file \"%s\" open when trying to open \"%s\"",
 						  logFilename, filename);
 
 		logIdent        = str_find(ident);
@@ -261,7 +261,7 @@ void log_stream(const char *ident, FILE *stream)
 {
 	if (ident && stream){
 		if (logUserStream)
-			err_internal(__func__, "User stream already open\n");
+			err_internal(__func__, "User stream already open");
 
 		logUserStream = stream;
 		logIdent      = str_find(ident);

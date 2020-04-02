@@ -77,11 +77,11 @@ static mem_Object _sl_Memory;
 
 static void _sl_check_list(_sl_List l, const char *function)
 {
-	if (!l) err_internal(function, "skip list is null\n");
+	if (!l) err_internal(function, "skip list is null");
 #if MAA_MAGIC
 	if (l->magic != SL_LIST_MAGIC)
 		err_internal(function,
-					 "Bad magic: 0x%08x (should be 0x%08x)\n",
+					 "Bad magic: 0x%08x (should be 0x%08x)",
 					 l->magic,
 					 SL_LIST_MAGIC);
 #endif
@@ -92,7 +92,7 @@ static void _sl_check_list(_sl_List l, const char *function)
 #else
 static int _sl_check_entry(_sl_Entry e, const char *function)
 {
-	if (!e) err_internal(function, "entry is null\n");
+	if (!e) err_internal(function, "entry is null");
 #if MAA_MAGIC
 	if (e->magic != SL_ENTRY_MAGIC) {
 		err_warning(function,
@@ -123,7 +123,7 @@ static void _sl_check(sl_List list)
 						  l->key(pt->forward[0]->datum)) >= 0) {
 			_sl_dump(list);
 			err_internal(__func__,
-						 "Datum 0x%p=%lu >= 0x%p=%lu\n",
+						 "Datum 0x%p=%lu >= 0x%p=%lu",
 						 l->key(pt->datum),
 						 (unsigned long)l->key(pt->datum),
 						 l->key(pt->forward[0]->datum),
@@ -132,7 +132,7 @@ static void _sl_check(sl_List list)
 	}
 	if (count != l->count) {
 		err_internal(__func__,
-					 "Count should be %d instead of %d\n", count, l->count);
+					 "Count should be %d instead of %d", count, l->count);
 	}
 }
 #endif
@@ -143,7 +143,7 @@ static _sl_Entry _sl_create_entry(int maxLevel, const void *datum)
 
 	if (maxLevel > _sl_MaxLevel)
 		err_internal(__func__,
-					 "level %d > %d\n", maxLevel, _sl_MaxLevel);
+					 "level %d > %d", maxLevel, _sl_MaxLevel);
 
 	e = xmalloc(sizeof(struct _sl_Entry)
 				+ (maxLevel + 1) * sizeof(_sl_Entry));
@@ -181,9 +181,9 @@ sl_List sl_create(int (*compare)(const void *key1, const void *key2),
 	}
 
 	if (!compare)
-		err_internal(__func__, "compare function is NULL\n");
+		err_internal(__func__, "compare function is NULL");
 	if (!key)
-		err_internal(__func__, "key function is NULL\n");
+		err_internal(__func__, "key function is NULL");
 
 	l          = mem_get_object(_sl_Memory);
 #if MAA_MAGIC
@@ -304,7 +304,7 @@ void sl_insert(sl_List list, const void *datum)
 
 	if (pt && !l->compare(l->key(pt->datum), key))
 		err_internal(__func__,
-					 "Datum \"%s\" is already in list\n", PRINT(l,datum));
+					 "Datum \"%s\" is already in list", PRINT(l,datum));
 
 	if (level > l->level) {
 		level = ++l->level;
@@ -342,7 +342,7 @@ void sl_delete(sl_List list, const void *datum)
 	if (!pt || l->compare(l->key(pt->datum), key)) {
 		_sl_dump(list);
 		err_internal(__func__,
-					 "Datum \"%s\" is not in list\n", PRINT(l,datum));
+					 "Datum \"%s\" is not in list", PRINT(l,datum));
 	}
 
 	/* Fixup forward pointers */

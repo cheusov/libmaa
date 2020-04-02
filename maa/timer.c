@@ -88,7 +88,7 @@ void tim_stop(const char *name)
 	gettimeofday(&real, NULL);
    
 	if (!(entry = (tim_Entry)__UNCONST(hsh_retrieve(_tim_Hash, name))))
-		err_internal (__func__, "No timer: %s\n",
+		err_internal (__func__, "No timer: %s",
 					  (name ? name : "<null>"));
    
 	entry->real   = DIFFTIME(real, entry->real_mark);
@@ -112,7 +112,7 @@ void tim_reset(const char *name)
    
 	_tim_check();
 	if (!(entry = (tim_Entry)__UNCONST(hsh_retrieve(_tim_Hash, name))))
-		err_internal (__func__, "No timer: %s\n",
+		err_internal (__func__, "No timer: %s",
 					  (name ? name : "<null>"));
 
 	entry->real            = 0.0;
@@ -132,7 +132,7 @@ double tim_get_real(const char *name)
    
 	_tim_check();
 	if (!(entry = (tim_Entry)__UNCONST(hsh_retrieve(_tim_Hash, name))))
-		err_internal (__func__, "No timer: %s\n",
+		err_internal (__func__, "No timer: %s",
 					  (name ? name : "<null>"));
 
 	return entry->real;
@@ -146,7 +146,7 @@ double tim_get_user(const char *name)
    
 	_tim_check();
 	if (!(entry = (tim_Entry)__UNCONST(hsh_retrieve(_tim_Hash, name))))
-		err_internal (__func__, "No timer: %s\n",
+		err_internal (__func__, "No timer: %s",
 					  (name ? name : "<null>"));
 
 #if 0
@@ -197,7 +197,7 @@ double tim_get_system(const char *name)
    
 	_tim_check();
 	if (!(entry = (tim_Entry)__UNCONST(hsh_retrieve(_tim_Hash, name))))
-		err_internal (__func__, "No timer: %s\n",
+		err_internal (__func__, "No timer: %s",
 					  (name ? name : "<null>"));
 
 	return (entry->self_system + entry->children_system);

@@ -54,11 +54,11 @@ static long int   _lst_allocated;
 
 static void _lst_check(listType l, const char *function)
 {
-	if (!l) err_internal(function, "list is null\n");
+	if (!l) err_internal(function, "list is null");
 #if MAA_MAGIC
 	if (l->magic != LST_MAGIC)
 		err_internal(function,
-					  "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+					  "Incorrect magic: 0x%08x (should be 0x%08x)",
 					  l->magic,
 					  LST_MAGIC);
 #endif
@@ -214,7 +214,7 @@ void *lst_nth_get(lst_List list, unsigned int n)
 	if (n < 1 || n > l->count) return NULL;
 	for (i = 1, d = l->head; i < n && d; i++, d = d->next);
 	if (i != n)
-		err_internal(__func__, "Can't find element %d of %d\n",
+		err_internal(__func__, "Can't find element %d of %d",
 					  n, l->count);
 	return __UNCONST(d->datum);	/* Discard const. */
 }
@@ -237,7 +237,7 @@ void lst_nth_set(lst_List list, unsigned int n, const void *datum)
 				   n, l->count);
 	for (i = 1, d = l->head; i < n && d; i++, d = d->next);
 	if (i != n)
-		err_internal(__func__, "Can't find element %d of %d\n",
+		err_internal(__func__, "Can't find element %d of %d",
 					  n, l->count);
    
 	d->datum = datum;
@@ -430,7 +430,7 @@ lst_Position lst_nth_position(lst_List list, unsigned int n)
 	if (n < 1 || n > l->count) return NULL;
 	for (i = 1, d = l->head; i < n && d; i++, d = d->next);
 	if (i != n)
-		err_internal(__func__, "Can't find element %d of %d\n",
+		err_internal(__func__, "Can't find element %d of %d",
 					  n, l->count);
 	return d;
 }

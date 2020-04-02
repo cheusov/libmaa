@@ -75,7 +75,7 @@ int bit_cnt(unsigned long *flags)
 	return (x + (x >> 32)) & 0xff;
 #else
 	err_internal(__func__,
-				 "Implemented for 32-bit and 64-bit longs, not %d-bit longs\n",
+				 "Implemented for 32-bit and 64-bit longs, not %d-bit longs",
 				 SIZEOF_LONG * 8);
 #endif
 #endif

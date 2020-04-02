@@ -59,16 +59,16 @@ typedef struct table {
 
 static void _hsh_check(tableType t, const char *function)
 {
-	if (!t) err_internal(function, "table is null\n");
+	if (!t) err_internal(function, "table is null");
 #if MAA_MAGIC
 	if (t->magic != HSH_MAGIC)
 		err_internal(function,
-					 "Magic match failed: 0x%08x (should be 0x%08x)\n",
+					 "Magic match failed: 0x%08x (should be 0x%08x)",
 					 t->magic,
 					 HSH_MAGIC);
 #endif
 	if (!t->buckets)
-		err_internal(function, "no buckets\n");
+		err_internal(function, "no buckets");
 }
 
 static hsh_HashTable _hsh_create(
@@ -175,7 +175,7 @@ void hsh_destroy(hsh_HashTable table)
 {
 	_hsh_check(table, __func__);
 	if (((tableType)table)->readonly)
-		err_internal(__func__, "Attempt to destroy readonly table\n");
+		err_internal(__func__, "Attempt to destroy readonly table");
 	_hsh_destroy_buckets(table);
 	_hsh_destroy_table(table);
 }
@@ -224,7 +224,7 @@ int hsh_insert(
 
 	_hsh_check(t, __func__);
 	if (t->readonly)
-		err_internal(__func__, "Attempt to insert into readonly table\n");
+		err_internal(__func__, "Attempt to insert into readonly table");
    
 	/* Keep table less than half full */
 	if (t->entries * 2 > t->prime) {
@@ -272,7 +272,7 @@ int hsh_delete(hsh_HashTable table, const void *key)
 
 	_hsh_check(t, __func__);
 	if (t->readonly)
-		err_internal(__func__, "Attempt to delete from readonly table\n");
+		err_internal(__func__, "Attempt to delete from readonly table");
 
 	if (t->buckets[h]) {
 		bucketType pt;
@@ -445,7 +445,7 @@ hsh_Stats hsh_get_stats(hsh_HashTable table)
 	}
 	if (t->entries != s->entries)
 		err_internal(__func__,
-					 "Incorrect count for entries: %lu vs. %lu\n",
+					 "Incorrect count for entries: %lu vs. %lu",
 					 t->entries,
 					 s->entries);
 
@@ -485,7 +485,7 @@ unsigned long hsh_string_hash(const void *key)
 	unsigned long        h  = 0;
 
 	if (!pt)
-		err_internal(__func__, "String-valued keys may not be NULL\n");
+		err_internal(__func__, "String-valued keys may not be NULL");
 
 	while (*pt) {
 		h += *pt++;
@@ -531,7 +531,7 @@ int hsh_string_compare(const void *key1, const void *key2)
 {
 	if (!key1 || !key2)
 		err_internal(__func__,
-					 "String-valued keys may not be NULL: key1=%p, key2=%p\n",
+					 "String-valued keys may not be NULL: key1=%p, key2=%p",
 					 key1, key2);
 	return strcmp((const char *)key1, (const char *)key2);
 }

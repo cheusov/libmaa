@@ -59,16 +59,16 @@ typedef struct objectInfo {
 #if !MAA_MAGIC
 #define _mem_magic_strings(i,function)                                  \
 	do {																\
-		if (!i) err_internal(function, "mem_String is null\n");		\
+		if (!i) err_internal(function, "mem_String is null");		\
 	} while (0);
 #else
 static void _mem_magic_strings(stringInfo i, const char *function)
 {
-	if (!i) err_internal(function, "mem_String is null\n");
+	if (!i) err_internal(function, "mem_String is null");
    
 	if (i->magic != MEM_STRINGS_MAGIC)
 		err_internal(function,
-					  "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+					  "Incorrect magic: 0x%08x (should be 0x%08x)",
 					  i->magic,
 					  MEM_STRINGS_MAGIC);
 }
@@ -241,11 +241,11 @@ void mem_print_string_stats(mem_String info, FILE *stream)
 #else
 static void _mem_magic_objects(objectInfo i, const char *function)
 {
-	if (!i) err_internal(function, "mem_Object is null\n");
+	if (!i) err_internal(function, "mem_Object is null");
    
 	if (i->magic != MEM_OBJECTS_MAGIC)
 		err_internal(function,
-					  "Incorrect magic: 0x%08x (should be 0x%08x)\n",
+					  "Incorrect magic: 0x%08x (should be 0x%08x)",
 					  i->magic,
 					  MEM_OBJECTS_MAGIC);
 }

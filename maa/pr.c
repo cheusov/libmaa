@@ -49,11 +49,11 @@ static void _pr_check(pr_Object object, const char *function)
 {
 	Obj o = (Obj)object;
 
-	if (!o) err_internal(function, "object is null\n");
+	if (!o) err_internal(function, "object is null");
 #if MAA_MAGIC
 	if (o->magic != PR_MAGIC)
 		err_internal(function,
-					 "Magic match failed: 0x%08x (should be 0x%08x)\n",
+					 "Magic match failed: 0x%08x (should be 0x%08x)",
 					 o->magic,
 					 PR_MAGIC);
 #endif
@@ -124,17 +124,17 @@ int pr_open(const char *command, int flags, int *infd, int *outfd, int *errfd)
 	if (flags & ~(PR_USE_STDIN | PR_USE_STDOUT | PR_USE_STDERR
 				  | PR_CREATE_STDIN | PR_CREATE_STDOUT | PR_CREATE_STDERR
 				  | PR_STDERR_TO_STDOUT))
-		err_internal(__func__, "Illegal flags: 0x%08x\n", flags);
+		err_internal(__func__, "Illegal flags: 0x%08x", flags);
 	if ((flags & PR_USE_STDIN) && (flags & PR_CREATE_STDIN))
-		err_internal(__func__, "Cannot both use and create stdin\n");
+		err_internal(__func__, "Cannot both use and create stdin");
 	if ((flags & PR_USE_STDOUT) && (flags & PR_CREATE_STDOUT))
-		err_internal(__func__, "Cannot both use and create stdout\n");
+		err_internal(__func__, "Cannot both use and create stdout");
 	if ((flags & PR_USE_STDERR) && (flags & PR_CREATE_STDERR))
-		err_internal(__func__, "Cannot both use and create stderr\n");
+		err_internal(__func__, "Cannot both use and create stderr");
 	if ((flags & PR_STDERR_TO_STDOUT)
 		&& ((flags & PR_USE_STDERR) || (flags & PR_CREATE_STDERR)))
 		err_internal(__func__,
-					 "Cannot use/create stderr when duping to stdout\n");
+					 "Cannot use/create stderr when duping to stdout");
    
 	list = arg_argify(command, 0);
 	arg_get_vector(list, &argc, &argv);
@@ -254,9 +254,9 @@ int pr_close_nowait(int fd)
 	int pid;
 
 	if (!_pr_objects)
-		err_internal(__func__, "No previous call to pr_open()\n");
+		err_internal(__func__, "No previous call to pr_open()");
 	if (!(pid = _pr_objects[ fd ].pid))
-		err_internal(__func__, "File (%d) not created by pr_open()\n", fd);
+		err_internal(__func__, "File (%d) not created by pr_open()", fd);
 
 	_pr_objects[ fd ].pid = 0;
 

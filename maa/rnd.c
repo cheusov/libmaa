@@ -766,13 +766,13 @@ int get_rand(int ll, int ul)
 
 	if (randpt >= MAXRND)
 		err_internal(__func__,
-					  "Ran out of random numbers (only %d available)\n",
+					  "Ran out of random numbers (only %d available)",
 					  MAXRND);
 
 	val = floor(ll + r * (ul - ll));
 	if (val > ul)
-		err_internal(__func__, "%d > %d\n", val, ul);
+		err_internal(__func__, "%d > %d", val, ul);
 	if (val < ll)
-		err_internal(__func__, "%d < %d\n", val, ll);
+		err_internal(__func__, "%d < %d", val, ll);
 	return val;
 }

@@ -63,11 +63,11 @@ typedef struct set {
 
 static void _set_check(setType t, const char *function)
 {
-	if (!t) err_internal(function, "set is null\n");
+	if (!t) err_internal(function, "set is null");
 #if MAA_MAGIC
 	if (t->magic != SET_MAGIC)
 		err_internal(function,
-					 "Bad magic: 0x%08x (should be 0x%08x)\n",
+					 "Bad magic: 0x%08x (should be 0x%08x)",
 					 t->magic,
 					 SET_MAGIC);
 #endif
@@ -191,7 +191,7 @@ void set_destroy(set_Set set)
 
 	_set_check(t, __func__);
 	if (t->readonly)
-		err_internal(__func__, "Attempt to destroy readonly set\n");
+		err_internal(__func__, "Attempt to destroy readonly set");
 	_set_destroy_buckets(set);
 	_set_destroy_table(set);
 }
@@ -231,7 +231,7 @@ int set_insert(set_Set set, const void *elem)
 
 	_set_check(t, __func__);
 	if (t->readonly)
-		err_internal(__func__, "Attempt to insert into readonly set\n");
+		err_internal(__func__, "Attempt to insert into readonly set");
    
 	/* Keep table less than half full */
 	if (t->entries * 2 > t->prime) {
@@ -278,7 +278,7 @@ int set_delete(set_Set set, const void *elem)
 
 	_set_check(t, __func__);
 	if (t->readonly)
-		err_internal(__func__, "Attempt to delete from readonly set\n");
+		err_internal(__func__, "Attempt to delete from readonly set");
    
 	if (t->buckets[h]) {
 		bucketType pt;
@@ -764,7 +764,7 @@ set_Stats set_get_stats(set_Set set)
 
 	if (t->entries != s->entries)
 		err_internal(__func__,
-					 "Incorrect count for entries: %lu vs. %lu\n",
+					 "Incorrect count for entries: %lu vs. %lu",
 					 t->entries,
 					 s->entries);
 

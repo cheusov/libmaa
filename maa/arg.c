@@ -46,11 +46,11 @@ static void _arg_check(arg_List arg, const char *function)
 {
 	Arg a = (Arg)arg;
    
-	if (!a) err_internal(function, "arg is null\n");
+	if (!a) err_internal(function, "arg is null");
 #if MAA_MAGIC
 	if (a->magic != ARG_MAGIC)
 		err_internal(function,
-					  "Magic match failed: 0x%08x (should be 0x%08x)\n",
+					  "Magic match failed: 0x%08x (should be 0x%08x)",
 					  a->magic,
 					  ARG_MAGIC);
 #endif
@@ -168,7 +168,7 @@ const char *arg_get(arg_List arg, int item) /* FIXME! inline? */
 	_arg_check(a, __func__);
 	if (item < 0 || item >= a->argc)
 		err_internal(__func__,
-					 "Request for item %d in list containing %d items\n",
+					 "Request for item %d in list containing %d items",
 					 item,
 					 a->argc);
 	return a->argv[ item ];
@@ -301,7 +301,7 @@ arg_List arg_argify(const char *string, int quoteStyle)
 			break;
 		default:
 			/* Oooops! */
-			err_internal(__func__, "arg.c:arg_argify is buggy!!!:\n");
+			err_internal(__func__, "arg.c:arg_argify is buggy!!!:");
 	}
 
 	return a;

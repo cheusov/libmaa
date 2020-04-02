@@ -107,7 +107,7 @@ unsigned long b64_decode_buf(const char *val, size_t len)
 
 		if (tmp == XX)
 			err_internal(__func__,
-						 "Illegal character in base64 value: `%c'\n", val[i]);
+						 "Illegal character in base64 value: `%c'", val[i]);
 
 		v |= tmp << offset;
 		offset += 6;
