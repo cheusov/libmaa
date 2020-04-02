@@ -62,7 +62,7 @@ static mem_Object InfoHeap;
 void src_create(void)
 {
 	if (Lines)
-		err_fatal(__func__, "Source manager already created\n");
+		err_fatal(__func__, "Source manager already created");
 
 	Lines      = xmalloc((Count = INCREMENT) * sizeof(char *));
 	StringHeap = mem_create_strings();
@@ -166,7 +166,7 @@ src_Type src_get(int length)
 	sourceType *new;
 
 	if (!Lines)
-		err_fatal(__func__, "Source manager does not exist\n");
+		err_fatal(__func__, "Source manager does not exist");
    
 	Info.length = length;
 	new = mem_get_object(InfoHeap);
@@ -199,7 +199,7 @@ const char *src_filename(src_Type source)
 	sourceType *s = (sourceType *)source;
 
 	if (!Lines)
-		err_fatal(__func__, "Source manager never created\n");
+		err_fatal(__func__, "Source manager never created");
 
 	return s ? s->file : "";
 }
@@ -212,7 +212,7 @@ int src_linenumber(src_Type source)
 	sourceType *s = (sourceType *)source;
 
 	if (!Lines)
-		err_fatal(__func__, "Source manager never created\n");
+		err_fatal(__func__, "Source manager never created");
 
 	return s ? s->line : 0;
 }
@@ -225,7 +225,7 @@ int src_offset(src_Type source)
 	sourceType *s = (sourceType *)source;
 
 	if (!Lines)
-		err_fatal(__func__, "Source manager never created\n");
+		err_fatal(__func__, "Source manager never created");
 
 	return s ? s->offset : 0;
 }
@@ -238,7 +238,7 @@ int src_length(src_Type source)
 	sourceType *s = (sourceType *)source;
 
 	if (!Lines)
-		err_fatal(__func__, "Source manager never created\n");
+		err_fatal(__func__, "Source manager never created");
 
 	return s ? s->length : 0;
 }
@@ -251,7 +251,7 @@ const char *src_source_line(src_Type source)
 	sourceType *s = (sourceType *)source;
 
 	if (!Lines)
-		err_fatal(__func__, "Source manager never created\n");
+		err_fatal(__func__, "Source manager never created");
 
 	return s ? Lines[ s->index ] : "";
 }

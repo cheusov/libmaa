@@ -32,7 +32,7 @@ void *xmalloc(size_t size)
 	void *pt = malloc(size);
 
 	if (!pt) err_fatal(__func__,
-					   "Out of memory while allocating %lu bytes\n",
+					   "Out of memory while allocating %lu bytes",
 					   (unsigned long)size);
 	return pt;
 }
@@ -42,7 +42,7 @@ void *xcalloc(size_t num, size_t size)
 	void *pt = calloc(num, size);
 
 	if (!pt) err_fatal(__func__,
-					   "Out of memory while allocating %lu X %lu byte block\n",
+					   "Out of memory while allocating %lu X %lu byte block",
 					   (unsigned long)num, (unsigned long)size);
 	return pt;
 }
@@ -53,7 +53,7 @@ void *xrealloc(void *pt, size_t size)
 
 	if (!new) err_fatal(__func__,
 						"Out of memory while reallocating block at %p to"
-						" %lu bytes\n",
+						" %lu bytes",
 						pt,
 						(unsigned long)size);
 	return new;
@@ -62,7 +62,7 @@ void *xrealloc(void *pt, size_t size)
 void xfree(void *pt)
 {
 	if (pt) free(pt);
-	else err_fatal(__func__, "Attempt to free null pointer\n");
+	else err_fatal(__func__, "Attempt to free null pointer");
 }
 
 char *xstrdup(const char *s)
@@ -71,7 +71,7 @@ char *xstrdup(const char *s)
 	char *pt = xmalloc (len + 1);
 
 	if (!pt) err_fatal(__func__,
-					   "Out of memory while duplicating string\n");
+					   "Out of memory while duplicating string");
 
 	memcpy (pt, s, len + 1);
 	return pt;

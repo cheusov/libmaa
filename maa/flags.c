@@ -87,7 +87,7 @@ void flg_register(flg_Type flag, const char *name)
 	if (!tmp || tmp >> 1)
 		err_fatal(__func__,
 				  "Malformed flag (%lx):"
-				  " a single low-order bit must be set\n",
+				  " a single low-order bit must be set",
 				  flag);
    
 	if (!hash) hash = hsh_create(NULL, NULL);
@@ -95,7 +95,7 @@ void flg_register(flg_Type flag, const char *name)
 	if (_flg_exists(flag))
 		err_fatal(__func__,
 				  "The flag %lx has been used for \"%s\""
-				  " and cannot be reused for \"%s\"\n",
+				  " and cannot be reused for \"%s\"",
 				  flag,
 				  flg_name(flag),
 				  name);
@@ -111,7 +111,7 @@ void flg_set(const char *name)
 	flg_Type flag;
 
 	if (!name) err_internal(__func__, "name is NULL");
-	if (!hash) err_fatal(__func__, "No flag names registered\n");
+	if (!hash) err_fatal(__func__, "No flag names registered");
 	if (!strcmp(name, "none")) {
 		setFlags[0] = setFlags[1] = setFlags[2] = setFlags[3] = 0;
 		return;
@@ -131,7 +131,7 @@ void flg_set(const char *name)
 			fprintf(stderr, "Valid flags are:\n");
 			flg_list(stderr);
 			err_fatal(__func__,
-					  "\"%s\" is not a valid flag\n",
+					  "\"%s\" is not a valid flag",
 					  name);
 		} else {
 			if (flag){

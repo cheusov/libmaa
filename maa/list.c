@@ -233,7 +233,7 @@ void lst_nth_set(lst_List list, unsigned int n, const void *datum)
 	_lst_check(l, __func__);
    
 	if (n < 1 || n > l->count)
-		err_fatal(__func__, "Attempt to change element %d of %d elements\n",
+		err_fatal(__func__, "Attempt to change element %d of %d elements",
 				   n, l->count);
 	for (i = 1, d = l->head; i < n && d; i++, d = d->next);
 	if (i != n)

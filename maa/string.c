@@ -63,7 +63,7 @@ void str_pool_destroy( str_Pool pool )
 	poolInfo p = (poolInfo)pool;
    
 	if (!p || !p->string || !p->hash)
-		err_fatal( __func__, "String pool improperly initialized\n" );
+		err_fatal( __func__, "String pool improperly initialized" );
 
 	mem_destroy_strings( p->string );
 	hsh_destroy( p->hash );

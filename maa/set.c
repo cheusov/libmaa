@@ -493,11 +493,11 @@ set_Set set_add(set_Set set1, set_Set set2)
    
 	if (t1->hash != t2->hash)
 		err_fatal(__func__,
-				  "Sets do not have identical hash functions\n");
+				  "Sets do not have identical hash functions");
 
 	if (t1->compare != t2->compare)
 		err_fatal(__func__,
-				  "Sets do not have identical comparison functions\n");
+				  "Sets do not have identical comparison functions");
 
 	for (i = 0; i < t2->prime; i++) {
 		if (t2->buckets[i]) {
@@ -528,11 +528,11 @@ set_Set set_del(set_Set set1, set_Set set2)
    
 	if (t1->hash != t2->hash)
 		err_fatal(__func__,
-				  "Sets do not have identical hash functions\n");
+				  "Sets do not have identical hash functions");
 
 	if (t1->compare != t2->compare)
 		err_fatal(__func__,
-				  "Sets do not have identical comparison functions\n");
+				  "Sets do not have identical comparison functions");
 
 	for (i = 0; i < t2->prime; i++) {
 		if (t2->buckets[i]) {
@@ -563,11 +563,11 @@ set_Set set_union(set_Set set1, set_Set set2)
    
 	if (t1->hash != t2->hash)
 		err_fatal(__func__,
-				  "Sets do not have identical hash functions\n");
+				  "Sets do not have identical hash functions");
 
 	if (t1->compare != t2->compare)
 		err_fatal(__func__,
-				  "Sets do not have identical comparison functions\n");
+				  "Sets do not have identical comparison functions");
 
 	set = set_create(t1->hash, t1->compare);
 
@@ -610,11 +610,11 @@ set_Set set_inter(set_Set set1, set_Set set2)
    
 	if (t1->hash != t2->hash)
 		err_fatal(__func__,
-				  "Sets do not have identical hash functions\n");
+				  "Sets do not have identical hash functions");
 
 	if (t1->compare != t2->compare)
 		err_fatal(__func__,
-				  "Sets do not have identical comparison functions\n");
+				  "Sets do not have identical comparison functions");
 
 	set = set_create(t1->hash, t1->compare);
 
@@ -653,11 +653,11 @@ set_Set set_diff(set_Set set1, set_Set set2)
    
 	if (t1->hash != t2->hash)
 		err_fatal(__func__,
-				  "Sets do not have identical hash functions\n");
+				  "Sets do not have identical hash functions");
 
 	if (t1->compare != t2->compare)
 		err_fatal(__func__,
-				  "Sets do not have identical comparison functions\n");
+				  "Sets do not have identical comparison functions");
 
 	set = set_create(t1->hash, t1->compare);
 
@@ -694,11 +694,11 @@ int set_equal(set_Set set1, set_Set set2)
    
 	if (t1->hash != t2->hash)
 		err_fatal(__func__,
-				  "Sets do not have identical hash functions\n");
+				  "Sets do not have identical hash functions");
 
 	if (t1->compare != t2->compare)
 		err_fatal(__func__,
-				  "Sets do not have identical comparison functions\n");
+				  "Sets do not have identical comparison functions");
 
 	if (t1->entries != t2->entries) return 0; /* not equal */
 

@@ -145,7 +145,7 @@ void log_set_facility(const char *facility)
 	        return;
 	    }
 	}
-	err_fatal(__func__, "%s is not a valid facility name\n", facility);
+	err_fatal(__func__, "%s is not a valid facility name", facility);
 }
 
 const char *log_get_facility(void)
@@ -215,7 +215,7 @@ static void _log_check_filename(void)
 		log_mkpath(logFilename);
 		if ((logFd = open(logFilename, O_WRONLY|O_CREAT|O_APPEND, 0644)) < 0)
 			err_fatal_errno(__func__,
-							 "Cannot open \"%s\" for append\n", logFilename);
+							 "Cannot open \"%s\" for append", logFilename);
 	}
 }
 

@@ -66,7 +66,7 @@ static const char *_dbg_name(dbg_Type flag)
 	void         *key;
 	void         *datum;
 
-	if (!hash) err_fatal(__func__, "No debugging names registered\n");
+	if (!hash) err_fatal(__func__, "No debugging names registered");
 	HSH_ITERATE(hash, position, key, datum) {
 		if (flag == (dbg_Type)datum) {
 			HSH_ITERATE_END(hash);
@@ -87,7 +87,7 @@ void _dbg_register(dbg_Type flag, const char *name)
 	if (!tmp || tmp >> 1)
 		err_fatal(__func__,
 				  "Malformed flag (%lx):"
-				  " a single low-order bit must be set\n",
+				  " a single low-order bit must be set",
 				  flag);
    
 	if (!hash) hash = hsh_create(NULL, NULL);
@@ -95,7 +95,7 @@ void _dbg_register(dbg_Type flag, const char *name)
 	if (_dbg_exists(flag))
 		err_fatal(__func__,
 				  "The debug flag %lx has been used for \"%s\""
-				  " and cannot be reused for \"%s\"\n",
+				  " and cannot be reused for \"%s\"",
 				  flag,
 				  _dbg_name(flag),
 				  name);
@@ -116,7 +116,7 @@ void dbg_register(dbg_Type flag, const char *name)
 				/* These values are reserved for Khepera */
    if ((flag & 0xc0000000) == 0xc0000000)
 	 err_fatal(__func__,
-		    "Flag (%lx) may not have both high-order bits set\n",
+		    "Flag (%lx) may not have both high-order bits set",
 		    flag);
 
    _dbg_register(flag, name);
@@ -130,7 +130,7 @@ void dbg_set(const char *name)
 	dbg_Type flag;
 
 	if (!name) err_internal(__func__, "name is NULL");
-	if (!hash) err_fatal(__func__, "No debugging names registered\n");
+	if (!hash) err_fatal(__func__, "No debugging names registered");
 	if (!strcmp(name, "none")) {
 		setFlags[0] = setFlags[1] = setFlags[2] = setFlags[3] = 0;
 		return;
@@ -148,7 +148,7 @@ void dbg_set(const char *name)
 			fprintf(stderr, "Valid debugging flags are:\n");
 			dbg_list(stderr);
 			err_fatal(__func__,
-					  "\"%s\" is not a valid debugging flag\n",
+					  "\"%s\" is not a valid debugging flag",
 					  name);
 		} else {
 			if (*name == '+') setFlags[ flag >> 30 ] |= flag;

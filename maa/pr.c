@@ -141,14 +141,14 @@ int pr_open(const char *command, int flags, int *infd, int *outfd, int *errfd)
 	PRINTF(MAA_PR,("Execing %s with \"%s\"\n", argv[0], command));
 
 	if ((flags & PR_CREATE_STDIN) && pipe(fdin) < 0)
-		err_fatal_errno(__func__, "Cannot create pipe for stdin\n");
+		err_fatal_errno(__func__, "Cannot create pipe for stdin");
 	if ((flags & PR_CREATE_STDOUT) && pipe(fdout) < 0)
-		err_fatal_errno(__func__, "Cannot create pipe for stdout\n");
+		err_fatal_errno(__func__, "Cannot create pipe for stdout");
 	if ((flags & PR_CREATE_STDERR) && pipe(fderr) < 0)
-		err_fatal_errno(__func__, "Cannot create pipe for stderr\n");
+		err_fatal_errno(__func__, "Cannot create pipe for stderr");
    
 	if ((pid = fork()) < 0)
-		err_fatal_errno(__func__, "Cannot fork\n");
+		err_fatal_errno(__func__, "Cannot fork");
 
 	if (pid == 0) {		/* child */
 		int        i;
@@ -287,7 +287,7 @@ int pr_readwrite(int in, int out,
 	int            status;
    
 	if ((flags = fcntl(in, F_GETFL)) < 0)
-		err_fatal_errno(__func__, "Can't get flags for output stream\n");
+		err_fatal_errno(__func__, "Can't get flags for output stream");
 #ifdef O_NONBLOCK
 	flags |= O_NONBLOCK;
 #else
@@ -296,7 +296,7 @@ int pr_readwrite(int in, int out,
 	fcntl(in, F_SETFL, flags);
 
 	if ((flags = fcntl(out, F_GETFL)) < 0)
-		err_fatal_errno(__func__, "Can't get flags for input stream\n");
+		err_fatal_errno(__func__, "Can't get flags for input stream");
 #ifdef O_NONBLOCK
 	flags |= O_NONBLOCK;
 #else
@@ -321,7 +321,7 @@ int pr_readwrite(int in, int out,
    
 		switch ((retval = select(n, &rfds, &wfds, &efds, &tv)))
 		{
-			case -1: err_fatal_errno(__func__, "Filter failed\n"); break;
+			case -1: err_fatal_errno(__func__, "Filter failed"); break;
 				/*       case 0:  err_fatal(__func__, "Filter hung\n");         break; */
 			default:
 				if (dbg_test(MAA_PR)) {
@@ -338,7 +338,7 @@ int pr_readwrite(int in, int out,
 				if (inLen) {
 					if ((count = write(in, inPt, inLen)) <= 0) {
 						if (errno != EAGAIN)
-							err_fatal_errno(__func__, "Error writing to filter\n");
+							err_fatal_errno(__func__, "Error writing to filter");
 					} else {
 						PRINTF(MAA_PR,("  wrote %d\n",count));
 						inLen -= count;
@@ -353,20 +353,20 @@ int pr_readwrite(int in, int out,
 					if (!count) {
 						if (inLen)
 							err_fatal(__func__,
-									  "End of output, but input not flushed\n");
+									  "End of output, but input not flushed");
 						if ((status = pr_close(out)))
 							err_warning(__func__,
 										"Filter had non-zero exit status: 0x%x\n",
 										status);
 						return outLen;
 					} else if (errno != EAGAIN)
-						err_fatal_errno(__func__, "Error reading from filter\n");
+						err_fatal_errno(__func__, "Error reading from filter");
 				} else {
 					PRINTF(MAA_PR,("  read %d\n",count));
 					outLen    += count;
 					outPt     += count;
 					if ((outMaxLen -= count) < 0)
-						err_fatal(__func__, "Output buffer overflow\n");
+						err_fatal(__func__, "Output buffer overflow");
 				}
 				break;
 		}
@@ -400,7 +400,7 @@ int pr_spawn(const char *command)
 	PRINTF(MAA_PR,("Execing %s with \"%s\"\n", argv[0], command));
    
 	if ((pid = fork()) < 0)
-		err_fatal_errno(__func__, "Cannot fork\n");
+		err_fatal_errno(__func__, "Cannot fork");
 
 	if (pid == 0) {		/* child */
 		execvp(argv[0], argv);
