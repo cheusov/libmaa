@@ -751,28 +751,28 @@ static double rnd[MAXRND] = {
 
 static int randpt;
 
-extern void init_rand( void );
-extern int get_rand( int ll, int ul );
+extern void init_rand(void);
+extern int get_rand(int ll, int ul);
 
-void init_rand( void )
+void init_rand(void)
 {
-   randpt = 1;
+	randpt = 1;
 }
 
-int get_rand( int ll, int ul )
+int get_rand(int ll, int ul)
 {
-   double r = rnd[randpt++];
-   int    val;
+	double r = rnd[randpt++];
+	int    val;
 
-   if (randpt >= MAXRND)
-      err_internal( __func__,
-		    "Ran out of random numbers (only %d available)\n",
-		    MAXRND );
+	if (randpt >= MAXRND)
+		err_internal(__func__,
+					  "Ran out of random numbers (only %d available)\n",
+					  MAXRND);
 
-   val = floor( ll + r * (ul - ll) );
-   if (val > ul)
-      err_internal( __func__, "%d > %d\n", val, ul );
-   if (val < ll)
-      err_internal( __func__, "%d < %d\n", val, ll );
-   return val;
+	val = floor(ll + r * (ul - ll));
+	if (val > ul)
+		err_internal(__func__, "%d > %d\n", val, ul);
+	if (val < ll)
+		err_internal(__func__, "%d < %d\n", val, ll);
+	return val;
 }

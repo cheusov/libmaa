@@ -35,69 +35,70 @@
 #include "maaP.h"
 
 typedef struct bucket {
-   const void    *key;
-   unsigned long hash;
-   const void    *datum;
-   struct bucket *next;
+	const void    *key;
+	unsigned long hash;
+	const void    *datum;
+	struct bucket *next;
 } *bucketType;
 
 typedef struct table {
 #if MAA_MAGIC
-   int           magic;
+	int           magic;
 #endif
-   unsigned long prime;
-   unsigned long entries;
-   bucketType    *buckets;
-   unsigned long resizings;
-   unsigned long retrievals;
-   unsigned long hits;
-   unsigned long misses;
-   unsigned long (*hash)( const void * );
-   int           (*compare)( const void *, const void * );
-   int           readonly;
+	unsigned long prime;
+	unsigned long entries;
+	bucketType    *buckets;
+	unsigned long resizings;
+	unsigned long retrievals;
+	unsigned long hits;
+	unsigned long misses;
+	unsigned long (*hash)(const void *);
+	int           (*compare)(const void *, const void *);
+	int           readonly;
 } *tableType;
-   
-static void _hsh_check( tableType t, const char *function )
+
+static void _hsh_check(tableType t, const char *function)
 {
-   if (!t) err_internal( function, "table is null\n" );
+	if (!t) err_internal(function, "table is null\n");
 #if MAA_MAGIC
-   if (t->magic != HSH_MAGIC)
-      err_internal( function,
-		    "Magic match failed: 0x%08x (should be 0x%08x)\n",
-		    t->magic,
-		    HSH_MAGIC );
+	if (t->magic != HSH_MAGIC)
+		err_internal(function,
+					 "Magic match failed: 0x%08x (should be 0x%08x)\n",
+					 t->magic,
+					 HSH_MAGIC);
 #endif
-   if (!t->buckets)
-      err_internal( function, "no buckets\n" );
+	if (!t->buckets)
+		err_internal(function, "no buckets\n");
 }
 
-static hsh_HashTable _hsh_create( unsigned long seed,
-				  unsigned long (*hash)( const void * ),
-				  int (*compare)( const void *,
-						  const void * ))
+static hsh_HashTable _hsh_create(
+	unsigned long seed,
+	unsigned long (*hash)(const void *),
+	int (*compare)(const void *,
+				   const void *))
 {
-   tableType     t;
-   unsigned long i;
-   unsigned long prime = prm_next_prime( seed );
+	tableType     t;
+	unsigned long i;
+	unsigned long prime = prm_next_prime(seed);
    
-   t             = xmalloc( sizeof( struct table ) );
+	t             = xmalloc(sizeof(struct table));
 #if MAA_MAGIC
-   t->magic      = HSH_MAGIC;
+	t->magic      = HSH_MAGIC;
 #endif
-   t->prime      = prime;
-   t->entries    = 0;
-   t->buckets    = xmalloc( prime * sizeof( struct bucket ) );
-   t->resizings  = 0;
-   t->retrievals = 0;
-   t->hits       = 0;
-   t->misses     = 0;
-   t->hash       = hash ? hash : hsh_string_hash;
-   t->compare    = compare ? compare : hsh_string_compare;
-   t->readonly   = 0;
+	t->prime      = prime;
+	t->entries    = 0;
+	t->buckets    = xmalloc(prime * sizeof(struct bucket));
+	t->resizings  = 0;
+	t->retrievals = 0;
+	t->hits       = 0;
+	t->misses     = 0;
+	t->hash       = hash ? hash : hsh_string_hash;
+	t->compare    = compare ? compare : hsh_string_compare;
+	t->readonly   = 0;
 
-   for (i = 0; i < prime; i++) t->buckets[i] = NULL;
+	for (i = 0; i < prime; i++) t->buckets[i] = NULL;
 
-   return t;
+	return t;
 }
 
 /* \doc The |hsh_create| function initilizes a generic hash table.  Keys
@@ -123,42 +124,43 @@ static hsh_HashTable _hsh_create( unsigned long seed,
    pointer as the key.  These functions are often useful for maintaining
    sets of objects. */
 
-hsh_HashTable hsh_create( unsigned long (*hash)( const void * ),
-			  int (*compare)( const void *,
-					  const void * ) )
+hsh_HashTable hsh_create(
+	unsigned long (*hash)(const void *),
+	int (*compare)(const void *,
+				   const void *))
 {
-   return _hsh_create( 0, hash, compare );
+	return _hsh_create(0, hash, compare);
 }
 
-static void _hsh_destroy_buckets( hsh_HashTable table )
+static void _hsh_destroy_buckets(hsh_HashTable table)
 {
-   unsigned long i;
-   tableType     t    = (tableType)table;
+	unsigned long i;
+	tableType     t    = (tableType)table;
 
-   _hsh_check( t, __func__ );
-   for (i = 0; i < t->prime; i++) {
-      bucketType b = t->buckets[i];
+	_hsh_check(t, __func__);
+	for (i = 0; i < t->prime; i++) {
+		bucketType b = t->buckets[i];
 
-      while (b) {
-	 bucketType next = b->next;
+		while (b) {
+			bucketType next = b->next;
 
-	 xfree( b );		/* terminal */
-	 b = next;
-      }
-   }
+			xfree(b);		/* terminal */
+			b = next;
+		}
+	}
 
-   xfree( t->buckets );		/* terminal */
-   t->buckets = NULL;
+	xfree(t->buckets);		/* terminal */
+	t->buckets = NULL;
 }
 
-static void _hsh_destroy_table( hsh_HashTable table )
+static void _hsh_destroy_table(hsh_HashTable table)
 {
-   tableType t = (tableType)table;
+	tableType t = (tableType)table;
    
 #if MAA_MAGIC
-   t->magic = HSH_MAGIC_FREED;
+	t->magic = HSH_MAGIC_FREED;
 #endif
-   xfree( t );			/* terminal */
+	xfree(t);			/* terminal */
 }
 
 /* \doc |hsh_destroy| frees all of the memory associated with the hash
@@ -169,35 +171,36 @@ static void _hsh_destroy_table( hsh_HashTable table )
    can be used to free this memory \emph{immediately} before a call to
    |hsh_destroy|. */
 
-void hsh_destroy( hsh_HashTable table )
+void hsh_destroy(hsh_HashTable table)
 {
-   _hsh_check( table, __func__ );
-   if (((tableType)table)->readonly)
-      err_internal( __func__, "Attempt to destroy readonly table\n" );
-   _hsh_destroy_buckets( table );
-   _hsh_destroy_table( table );
+	_hsh_check(table, __func__);
+	if (((tableType)table)->readonly)
+		err_internal(__func__, "Attempt to destroy readonly table\n");
+	_hsh_destroy_buckets(table);
+	_hsh_destroy_table(table);
 }
 
-static void _hsh_insert( hsh_HashTable table,
-			 unsigned long hash,
-			 const void *key,
-			 const void *datum )
+static void _hsh_insert(
+	hsh_HashTable table,
+	unsigned long hash,
+	const void *key,
+	const void *datum)
 {
-   tableType     t = (tableType)table;
-   unsigned long h = hash % t->prime;
-   bucketType    b;
+	tableType     t = (tableType)table;
+	unsigned long h = hash % t->prime;
+	bucketType    b;
 
-   _hsh_check( t, __func__ );
+	_hsh_check(t, __func__);
    
-   b        = xmalloc( sizeof( struct bucket ) );
-   b->key   = key;
-   b->hash  = hash;
-   b->datum = datum;
-   b->next  = NULL;
+	b        = xmalloc(sizeof(struct bucket));
+	b->key   = key;
+	b->hash  = hash;
+	b->datum = datum;
+	b->next  = NULL;
    
-   if (t->buckets[h]) b->next = t->buckets[h];
-   t->buckets[h] = b;
-   ++t->entries;
+	if (t->buckets[h]) b->next = t->buckets[h];
+	t->buckets[h] = b;
+	++t->entries;
 }
 
 /* \doc |hsh_insert| inserts a new |key| into the |table|.  If the
@@ -210,118 +213,119 @@ static void _hsh_insert( hsh_HashTable table,
    that all of the key pointers are copied into a new table.  Rehashing is
    not required, however, since the hash values are stored for each key. */
 
-int hsh_insert( hsh_HashTable table,
-		const void *key,
-		const void *datum )
+int hsh_insert(
+	hsh_HashTable table,
+	const void *key,
+	const void *datum)
 {
-   tableType     t         = (tableType)table;
-   unsigned long hashValue = t->hash( key );
-   unsigned long h;
+	tableType     t         = (tableType)table;
+	unsigned long hashValue = t->hash(key);
+	unsigned long h;
 
-   _hsh_check( t, __func__ );
-   if (t->readonly)
-      err_internal( __func__, "Attempt to insert into readonly table\n" );
+	_hsh_check(t, __func__);
+	if (t->readonly)
+		err_internal(__func__, "Attempt to insert into readonly table\n");
    
-				/* Keep table less than half full */
-   if (t->entries * 2 > t->prime) {
-      tableType     new = _hsh_create( t->prime * 3, t->hash, t->compare );
-      unsigned long i;
+	/* Keep table less than half full */
+	if (t->entries * 2 > t->prime) {
+		tableType     new = _hsh_create(t->prime * 3, t->hash, t->compare);
+		unsigned long i;
 
-      for (i = 0; i < t->prime; i++) {
-	 if (t->buckets[i]) {
-	    bucketType pt;
+		for (i = 0; i < t->prime; i++) {
+			if (t->buckets[i]) {
+				bucketType pt;
 
-	    for (pt = t->buckets[i]; pt; pt = pt->next)
-		  _hsh_insert( new, pt->hash, pt->key, pt->datum );
-	 }
-      }
+				for (pt = t->buckets[i]; pt; pt = pt->next)
+					_hsh_insert(new, pt->hash, pt->key, pt->datum);
+			}
+		}
 
-				/* fixup values */
-      _hsh_destroy_buckets( t );
-      t->prime   = new->prime;
-      t->buckets = new->buckets;
-      _hsh_destroy_table( new );
-      ++t->resizings;
-   }
+		/* fixup values */
+		_hsh_destroy_buckets(t);
+		t->prime   = new->prime;
+		t->buckets = new->buckets;
+		_hsh_destroy_table(new);
+		++t->resizings;
+	}
 
-   h = hashValue % t->prime;
+	h = hashValue % t->prime;
 
-   if (t->buckets[h]) {		/* Assert uniqueness */
-      bucketType pt;
+	if (t->buckets[h]) {		/* Assert uniqueness */
+		bucketType pt;
       
-      for (pt = t->buckets[h]; pt; pt = pt->next)
-	    if (!t->compare( pt->key, key )) return 1;
-   }
+		for (pt = t->buckets[h]; pt; pt = pt->next)
+			if (!t->compare(pt->key, key)) return 1;
+	}
 
-   _hsh_insert( t, hashValue, key, datum );
-   return 0;
+	_hsh_insert(t, hashValue, key, datum);
+	return 0;
 }
 
 /* \doc |hsh_delete| removes a |key| and the associated datum from the
    |table|.  Zero is returned if the |key| was present.  Otherwise, 1 is
    returned. */
 
-int hsh_delete( hsh_HashTable table, const void *key )
+int hsh_delete(hsh_HashTable table, const void *key)
 {
-   tableType     t = (tableType)table;
-   unsigned long h = t->hash( key ) % t->prime;
+	tableType     t = (tableType)table;
+	unsigned long h = t->hash(key) % t->prime;
 
-   _hsh_check( t, __func__ );
-   if (t->readonly)
-      err_internal( __func__, "Attempt to delete from readonly table\n" );
+	_hsh_check(t, __func__);
+	if (t->readonly)
+		err_internal(__func__, "Attempt to delete from readonly table\n");
    
-   if (t->buckets[h]) {
-      bucketType pt;
-      bucketType prev;
+	if (t->buckets[h]) {
+		bucketType pt;
+		bucketType prev;
       
-      for (prev = NULL, pt = t->buckets[h]; pt; prev = pt, pt = pt->next)
-	    if (!t->compare( pt->key, key )) {
-	       --t->entries;
+		for (prev = NULL, pt = t->buckets[h]; pt; prev = pt, pt = pt->next)
+			if (!t->compare(pt->key, key)) {
+				--t->entries;
 	       
-	       if (!prev) t->buckets[h] = pt->next;
-	       else       prev->next = pt->next;
+				if (!prev) t->buckets[h] = pt->next;
+				else       prev->next = pt->next;
 	       
-	       xfree( pt );
-	       return 0;
-	    }
-   }
+				xfree(pt);
+				return 0;
+			}
+	}
    
-   return 1;
+	return 1;
 }
 
 
 /* \doc |hsh_retrieve| retrieves the datum associated with a |key|.  If the
    |key| is not present in the |table|, then "NULL" is returned. */
 
-const void *hsh_retrieve( hsh_HashTable table,
-			  const void *key )
+const void *hsh_retrieve(hsh_HashTable table,
+						 const void *key)
 {
-   tableType     t = (tableType)table;
-   unsigned long h = t->hash( key ) % t->prime;
+	tableType     t = (tableType)table;
+	unsigned long h = t->hash(key) % t->prime;
 
-   _hsh_check( t, __func__ );
+	_hsh_check(t, __func__);
    
-   ++t->retrievals;
-   if (t->buckets[h]) {
-      bucketType pt;
-      bucketType prev;
-      
-      for (prev = NULL, pt = t->buckets[h]; pt; prev = pt, pt = pt->next)
-	    if (!t->compare( pt->key, key )) {
-	       if (!prev) {
-		  ++t->hits;
-	       } else if (!t->readonly) {
-				/* Self organize */
-		  prev->next    = pt->next;
-		  pt->next      = t->buckets[h];
-		  t->buckets[h] = pt;
-	       }
-	       return pt->datum;
-	    }
-   }
+	++t->retrievals;
+	if (t->buckets[h]) {
+		bucketType pt;
+		bucketType prev;
 
-   ++t->misses;
-   return NULL;
+		for (prev = NULL, pt = t->buckets[h]; pt; prev = pt, pt = pt->next)
+			if (!t->compare(pt->key, key)) {
+				if (!prev) {
+					++t->hits;
+				} else if (!t->readonly) {
+					/* Self organize */
+					prev->next    = pt->next;
+					pt->next      = t->buckets[h];
+					t->buckets[h] = pt;
+				}
+				return pt->datum;
+			}
+	}
+
+	++t->misses;
+	return NULL;
 }
 
 /* \doc |hsh_iterate| is used to iterate a function over every value in the
@@ -331,27 +335,27 @@ const void *hsh_retrieve( hsh_HashTable table,
    keys are in some arbitrary order, and that this order may change between
    two successive calls to |hsh_iterate|. */
 
-int hsh_iterate( hsh_HashTable table,
-		 int (*iterator)( const void *key,
-				  const void *datum ) )
+int hsh_iterate(hsh_HashTable table,
+				int (*iterator)(const void *key,
+								const void *datum))
 {
-   tableType     t = (tableType)table;
-   unsigned long i;
-   bucketType    pt;
-   bucketType    next;		/* Save, because pt might vanish. */
+	tableType     t = (tableType)table;
+	unsigned long i;
+	bucketType    pt;
+	bucketType    next;		/* Save, because pt might vanish. */
 
-   _hsh_check( t, __func__ );
+	_hsh_check(t, __func__);
    
-   for (i = 0; i < t->prime; i++) {
-      if (t->buckets[i]) {
-	 for (pt = t->buckets[i]; pt; pt = next) {
-	    next = pt->next;
-	    if (iterator( pt->key, pt->datum ))
-	       return 1;
-	 }
-      }
-   }
-   return 0;
+	for (i = 0; i < t->prime; i++) {
+		if (t->buckets[i]) {
+			for (pt = t->buckets[i]; pt; pt = next) {
+				next = pt->next;
+				if (iterator(pt->key, pt->datum))
+					return 1;
+			}
+		}
+	}
+	return 0;
 }
 
 /* \doc |hsh_iterate_arg| is used to iterate a function over every value in
@@ -361,247 +365,247 @@ int hsh_iterate( hsh_HashTable table,
    that the keys are in some arbitrary order, and that this order may
    change between two successive calls to |hsh_iterate|. */
 
-int hsh_iterate_arg( hsh_HashTable table,
-		     int (*iterator)( const void *key,
-				      const void *datum,
-				      void *arg ),
-		     void *arg )
+int hsh_iterate_arg(hsh_HashTable table,
+					int (*iterator)(const void *key,
+									const void *datum,
+									void *arg),
+					void *arg)
 {
-   tableType     t = (tableType)table;
-   unsigned long i;
-   bucketType    pt;
-   bucketType    next;		/* Save, because pt might vanish. */
+	tableType     t = (tableType)table;
+	unsigned long i;
+	bucketType    pt;
+	bucketType    next;		/* Save, because pt might vanish. */
 
-   _hsh_check( t, __func__ );
-   
-   for (i = 0; i < t->prime; i++) {
-      if (t->buckets[i]) {
-	 for (pt = t->buckets[i]; pt; pt = next) {
-	    next = pt->next;
-	    if (iterator( pt->key, pt->datum, arg ))
-	       return 1;
-	 }
-      }
-   }
-   return 0;
+	_hsh_check(t, __func__);
+
+	for (i = 0; i < t->prime; i++) {
+		if (t->buckets[i]) {
+			for (pt = t->buckets[i]; pt; pt = next) {
+				next = pt->next;
+				if (iterator(pt->key, pt->datum, arg))
+					return 1;
+			}
+		}
+	}
+	return 0;
 }
 
 /* a function callable from hsh_iterate() to print key values */
-static int _hsh_key_strings( const void *k, const void *d ) {
-   const char *s;
-   static int i = 0;
+static int _hsh_key_strings(const void *k, const void *d) {
+	const char *s;
+	static int i = 0;
    
-   if (k == NULL) { i=0; return 0; }
+	if (k == NULL) { i=0; return 0; }
    
-   s = k;
-   printf("%s  ",s);
-   if ((i += strlen(s)+2) >= 60) { i=0; printf("\n"); }
-   return 0;
+	s = k;
+	printf("%s  ",s);
+	if ((i += strlen(s)+2) >= 60) { i=0; printf("\n"); }
+	return 0;
 }
 
 /* print all keys in table t as strings */
 void hsh_key_strings(hsh_HashTable t) {
-   _hsh_key_strings(NULL,NULL);
-   hsh_iterate(t,_hsh_key_strings);
-   printf("\n");
+	_hsh_key_strings(NULL,NULL);
+	hsh_iterate(t,_hsh_key_strings);
+	printf("\n");
 }
 
 /* \doc |hsh_get_stats| returns statistics about the |table|.  The
    |hsh_Stats| structure is shown in \grind{hsh_Stats}. */
 
-hsh_Stats hsh_get_stats( hsh_HashTable table )
+hsh_Stats hsh_get_stats(hsh_HashTable table)
 {
-   tableType     t = (tableType)table;
-   hsh_Stats     s = xmalloc( sizeof( struct hsh_Stats ) );
-   unsigned long i;
-   unsigned      count;
+	tableType     t = (tableType)table;
+	hsh_Stats     s = xmalloc(sizeof(struct hsh_Stats));
+	unsigned long i;
+	unsigned      count;
 
-   _hsh_check( t, __func__ );
-   
-   s->size           = t->prime;
-   s->resizings      = t->resizings;
-   s->entries        = 0;
-   s->buckets_used   = 0;
-   s->singletons     = 0;
-   s->maximum_length = 0;
-   s->retrievals     = t->retrievals;
-   s->hits           = t->hits;
-   s->misses         = t->misses;
-   
-   for (i = 0; i < t->prime; i++) {
-      if (t->buckets[i]) {
-	 bucketType pt;
+	_hsh_check(t, __func__);
+
+	s->size           = t->prime;
+	s->resizings      = t->resizings;
+	s->entries        = 0;
+	s->buckets_used   = 0;
+	s->singletons     = 0;
+	s->maximum_length = 0;
+	s->retrievals     = t->retrievals;
+	s->hits           = t->hits;
+	s->misses         = t->misses;
+
+	for (i = 0; i < t->prime; i++) {
+		if (t->buckets[i]) {
+			bucketType pt;
 	 
-	 ++s->buckets_used;
-	 for (count = 0, pt = t->buckets[i]; pt; ++count, pt = pt->next);
-	 if (count == 1) ++s->singletons;
-	 s->maximum_length = max( s->maximum_length, count );
-	 s->entries += count;
-      }
-   }
-   if (t->entries != s->entries )
-	 err_internal( __func__,
-		       "Incorrect count for entries: %lu vs. %lu\n",
-		       t->entries,
-		       s->entries );
+			++s->buckets_used;
+			for (count = 0, pt = t->buckets[i]; pt; ++count, pt = pt->next);
+			if (count == 1) ++s->singletons;
+			s->maximum_length = max(s->maximum_length, count);
+			s->entries += count;
+		}
+	}
+	if (t->entries != s->entries)
+		err_internal(__func__,
+					 "Incorrect count for entries: %lu vs. %lu\n",
+					 t->entries,
+					 s->entries);
 
-   return s;
+	return s;
 }
 
 /* \doc |hsh_print_stats| prints the statistics for |table| on the
    specified |stream|.  If |stream| is "NULL", then "stdout" will be
    used. */
 
-void hsh_print_stats( hsh_HashTable table, FILE *stream )
+void hsh_print_stats(hsh_HashTable table, FILE *stream)
 {
-   FILE      *str = stream ? stream : stdout;
-   hsh_Stats s    = hsh_get_stats( table );
+	FILE      *str = stream ? stream : stdout;
+	hsh_Stats s    = hsh_get_stats(table);
 
-   _hsh_check( table, __func__ );
+	_hsh_check(table, __func__);
    
-   fprintf( str, "Statistics for hash table at %p:\n", table );
-   fprintf( str, "   %lu resizings to %lu total\n", s->resizings, s->size );
-   fprintf( str, "   %lu entries (%lu buckets used, %lu without overflow)\n",
-	    s->entries, s->buckets_used, s->singletons );
-   fprintf( str, "   maximum list length is %lu", s->maximum_length );
-   if (s->buckets_used)
-	 fprintf( str, " (optimal is %.1f)\n",
-		  (double)s->entries / (double)s->buckets_used );
-   else
-	 fprintf( str, "\n" );
-   fprintf( str, "   %lu retrievals (%lu from top, %lu failed)\n",
-	    s->retrievals, s->hits, s->misses );
+	fprintf(str, "Statistics for hash table at %p:\n", table);
+	fprintf(str, "   %lu resizings to %lu total\n", s->resizings, s->size);
+	fprintf(str, "   %lu entries (%lu buckets used, %lu without overflow)\n",
+			s->entries, s->buckets_used, s->singletons);
+	fprintf(str, "   maximum list length is %lu", s->maximum_length);
+	if (s->buckets_used)
+		fprintf(str, " (optimal is %.1f)\n",
+				(double)s->entries / (double)s->buckets_used);
+	else
+		fprintf(str, "\n");
+	fprintf(str, "   %lu retrievals (%lu from top, %lu failed)\n",
+			s->retrievals, s->hits, s->misses);
 
-   xfree( s );			/* rare */
+	xfree(s);			/* rare */
 }
 
-unsigned long hsh_string_hash( const void *key )
+unsigned long hsh_string_hash(const void *key)
 {
-   const char           *pt = (const char *)key;
-   unsigned long        h  = 0;
+	const char           *pt = (const char *)key;
+	unsigned long        h  = 0;
 
-   if (!pt)
-      err_internal( __func__, "String-valued keys may not be NULL\n" );
+	if (!pt)
+		err_internal(__func__, "String-valued keys may not be NULL\n");
 
-   while (*pt) {
-      h += *pt++;
+	while (*pt) {
+		h += *pt++;
 #if 0
-      h *= 65599L;		/* prime near %$2^{16}$% */
+		h *= 65599L;		/* prime near %$2^{16}$% */
 #else
-      h *= 2654435789U;		/* prime near %$\frac{\sqrt{5}-1}{2}2^{32}$% */
+		h *= 2654435789U;		/* prime near %$\frac{\sqrt{5}-1}{2}2^{32}$% */
 #endif
-   }
+	}
 
-   return h & 0xffffffff;
+	return h & 0xffffffff;
 }
 
-unsigned long hsh_pointer_hash( const void *key )
+unsigned long hsh_pointer_hash(const void *key)
 {
-   const char           *pt;
-   unsigned long        h   = 0;
-   int                  i;
+	const char           *pt;
+	unsigned long        h   = 0;
+	int                  i;
 
 #ifdef WORDS_BIGENDIAN
-   pt = ((const char *)&key) + SIZEOF_VOID_P - 1;
+	pt = ((const char *)&key) + SIZEOF_VOID_P - 1;
 #else
-   pt = (const char *)&key;
+	pt = (const char *)&key;
 #endif
    
-   for (i = 0; i < SIZEOF_VOID_P; i++) {
+	for (i = 0; i < SIZEOF_VOID_P; i++) {
 #ifdef WORDS_BIGENDIAN
-      h += *pt--;
+		h += *pt--;
 #else
-      h += *pt++;
+		h += *pt++;
 #endif
 #if 0
-      h *= 65599L;		/* prime near %$2^{16}$% */
+		h *= 65599L;		/* prime near %$2^{16}$% */
 #else
-      h *= 2654435789U;		/* prime near %$\frac{\sqrt{5}-1}{2}2^{32}$% */
+		h *= 2654435789U;		/* prime near %$\frac{\sqrt{5}-1}{2}2^{32}$% */
 #endif
-   }
+	}
 
-   return h & 0xffffffff;
+	return h & 0xffffffff;
 }
 
-int hsh_string_compare( const void *key1, const void *key2 )
+int hsh_string_compare(const void *key1, const void *key2)
 {
-   if (!key1 || !key2)
-      err_internal( __func__,
-		    "String-valued keys may not be NULL: key1=%p, key2=%p\n",
-		    key1, key2 );
-   return strcmp( (const char *)key1, (const char *)key2 );
+	if (!key1 || !key2)
+		err_internal(__func__,
+					 "String-valued keys may not be NULL: key1=%p, key2=%p\n",
+					 key1, key2);
+	return strcmp((const char *)key1, (const char *)key2);
 }
 
-int hsh_pointer_compare( const void *key1, const void *key2 )
+int hsh_pointer_compare(const void *key1, const void *key2)
 {
-   intptr_t v1 = (const char *)key1 - (const char *)0;
-   intptr_t v2 = (const char *)key2 - (const char *)0;
+	intptr_t v1 = (const char *)key1 - (const char *)0;
+	intptr_t v2 = (const char *)key2 - (const char *)0;
 
-   if (v1 < v2)
-      return -1;
-   else if (v1 > v2)
-      return 1;
-   else
-      return 0;
+	if (v1 < v2)
+		return -1;
+	else if (v1 > v2)
+		return 1;
+	else
+		return 0;
 }
 
 /* \doc |hsh_init_position| returns a position marker for some arbitary
    first element in the table.  This marker can be used with
    |hsh_next_position| and |hsh_get_position|. */
 
-hsh_Position hsh_init_position( hsh_HashTable table )
+hsh_Position hsh_init_position(hsh_HashTable table)
 {
-   tableType     t = (tableType)table;
-   unsigned long i;
+	tableType     t = (tableType)table;
+	unsigned long i;
 
-   _hsh_check( t, __func__ );
-   for (i = 0; i < t->prime; i++) if (t->buckets[i]) {
-      t->readonly = 1;
-      return t->buckets[i];
-   }
-   return NULL;
+	_hsh_check(t, __func__);
+	for (i = 0; i < t->prime; i++) if (t->buckets[i]) {
+			t->readonly = 1;
+			return t->buckets[i];
+		}
+	return NULL;
 }
 
 /* \doc |hsh_next_position| returns a position marker for the next element
    in the table.  Elements are in arbitrary order based on their positions
    in the hash table. */
 
-hsh_Position hsh_next_position( hsh_HashTable table, hsh_Position position )
+hsh_Position hsh_next_position(hsh_HashTable table, hsh_Position position)
 {
-   tableType     t = (tableType)table;
-   bucketType    b = (bucketType)position;
-   unsigned long i;
-   unsigned long h;
+	tableType     t = (tableType)table;
+	bucketType    b = (bucketType)position;
+	unsigned long i;
+	unsigned long h;
 
-   _hsh_check( t, __func__ );
+	_hsh_check(t, __func__);
    
-   if (!b) {
-      t->readonly = 0;
-      return NULL;
-   }
+	if (!b){
+		t->readonly = 0;
+		return NULL;
+	}
    
-   if (b->next) return b->next;
+	if (b->next) return b->next;
 
-   for (h = b->hash % t->prime, i = h + 1; i < t->prime; i++)
-      if (t->buckets[i]) return t->buckets[i];
+	for (h = b->hash % t->prime, i = h + 1; i < t->prime; i++)
+		if (t->buckets[i]) return t->buckets[i];
 
-   t->readonly = 0;
-   return NULL;
+	t->readonly = 0;
+	return NULL;
 }
 
 /* \doc |hsh_get_position| returns the datum associated with the |position|
    marker, or "NULL" if there is no such datum.  |key| is set to the key
    associated with this datum, or "NULL" is there is no such datum. */
 
-void *hsh_get_position( hsh_Position position, void **key )
+void *hsh_get_position(hsh_Position position, void **key)
 {
-   bucketType b = (bucketType)position;
+	bucketType b = (bucketType)position;
 
-   *key = NULL;
-   if (!b) return NULL;
+	*key = NULL;
+	if (!b) return NULL;
 
-   *key = __UNCONST(b->key);	/* Discard const */
-   return __UNCONST(b->datum);	/* Discard const */
+	*key = __UNCONST(b->key);	/* Discard const */
+	return __UNCONST(b->datum);	/* Discard const */
 }
 
 /* \doc |hsh_readonly| sets the |readonly| flag for the |table| to |flag|.
@@ -610,14 +614,14 @@ void *hsh_get_position( hsh_Position position, void **key )
    bucket-overflow lists will not take place, and any attempt to modify the
    list (e.g., insertion or deletion) will result in an error. */
 
-int hsh_readonly( hsh_HashTable table, int flag )
+int hsh_readonly(hsh_HashTable table, int flag)
 {
-   tableType t = (tableType)table;
-   int       current;
+	tableType t = (tableType)table;
+	int       current;
 
-   _hsh_check( t, __func__ );
+	_hsh_check(t, __func__);
 
-   current     = t->readonly;
-   t->readonly = flag;
-   return current;
+	current     = t->readonly;
+	t->readonly = flag;
+	return current;
 }

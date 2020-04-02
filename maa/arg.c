@@ -34,97 +34,97 @@
 
 typedef struct Arg {
 #if MAA_MAGIC
-   unsigned   magic;
+	unsigned   magic;
 #endif
-   int        argc;		/* Current count */
-   int        argm;		/* Maximum count */
-   char       **argv;		/* Vector */
-   mem_String object;
+	int        argc;		/* Current count */
+	int        argm;		/* Maximum count */
+	char       **argv;		/* Vector */
+	mem_String object;
 } *Arg;
 
-static void _arg_check( arg_List arg, const char *function )
+static void _arg_check(arg_List arg, const char *function)
 {
-   Arg a = (Arg)arg;
+	Arg a = (Arg)arg;
    
-   if (!a) err_internal( function, "arg is null\n" );
+	if (!a) err_internal(function, "arg is null\n");
 #if MAA_MAGIC
-   if (a->magic != ARG_MAGIC)
-      err_internal( function,
-		    "Magic match failed: 0x%08x (should be 0x%08x)\n",
-		    a->magic,
-		    ARG_MAGIC );
+	if (a->magic != ARG_MAGIC)
+		err_internal(function,
+					  "Magic match failed: 0x%08x (should be 0x%08x)\n",
+					  a->magic,
+					  ARG_MAGIC);
 #endif
 }   
 
 /* \doc Create an |arg_List| object. */
 
-arg_List arg_create( void )
+arg_List arg_create(void)
 {
-   Arg a = xmalloc( sizeof( struct Arg ) );
+	Arg a = xmalloc(sizeof(struct Arg));
 
 #if MAA_MAGIC
-   a->magic   = ARG_MAGIC;
+	a->magic   = ARG_MAGIC;
 #endif
-   a->argc    = 0;
-   a->argm    = 2;
-   a->argv    = xmalloc( a->argm * sizeof( char ** ) );
-   a->argv[0] = NULL;
-   a->object  = mem_create_strings();
+	a->argc    = 0;
+	a->argm    = 2;
+	a->argv    = xmalloc(a->argm * sizeof(char **));
+	a->argv[0] = NULL;
+	a->object  = mem_create_strings();
 
-   return a;
+	return a;
 }
 
 /* \doc Free all memory associated with |arg|, including the memory used
    for the strings. */
 
-void arg_destroy( arg_List arg )
+void arg_destroy(arg_List arg)
 {
-   Arg a = (Arg)arg;
+	Arg a = (Arg)arg;
    
-   _arg_check( a, __func__ );
-   mem_destroy_strings( a->object );
-   xfree( a->argv );
+	_arg_check(a, __func__);
+	mem_destroy_strings(a->object);
+	xfree(a->argv);
 #if MAA_MAGIC
-   a->magic = ARG_MAGIC_FREED;
+	a->magic = ARG_MAGIC_FREED;
 #endif
-   xfree( a );
+	xfree(a);
 }
 
 /* \doc Add |string| as the next item in |arg|. */
 
-arg_List arg_add( arg_List arg, const char *string )
+arg_List arg_add(arg_List arg, const char *string)
 {
-   Arg        a = (Arg)arg;
-   const char *new;
+	Arg        a = (Arg)arg;
+	const char *new;
    
-   _arg_check( a, __func__ );
-   new = mem_strcpy( a->object, string );
-   if (a->argm <= a->argc + 2 )
-      a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
-   
-   a->argv[a->argc++] = (char *)__UNCONST(new); /* discard const */
-   a->argv[a->argc]   = NULL;
+	_arg_check(a, __func__);
+	new = mem_strcpy(a->object, string);
+	if (a->argm <= a->argc + 2)
+		a->argv = xrealloc(a->argv, sizeof(char **) * (a->argm *= 2));
 
-   return a;
+	a->argv[a->argc++] = (char *)__UNCONST(new); /* discard const */
+	a->argv[a->argc]   = NULL;
+
+	return a;
 }
 
 /* \doc Add |length| characters of |string| as the next item in |arg|.  A
    terminating "NULL" is added to the copied |string|. */
 
-arg_List arg_addn( arg_List arg, const char *string, int length )
+arg_List arg_addn(arg_List arg, const char *string, int length)
 {
-   Arg        a = (Arg)arg;
-   const char *new;
+	Arg        a = (Arg)arg;
+	const char *new;
    
-   _arg_check( a, __func__ );
-   new = mem_strncpy( a->object, string, length );
-   if (a->argm <= a->argc + 2 )
-      a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
+	_arg_check(a, __func__);
+	new = mem_strncpy(a->object, string, length);
+	if (a->argm <= a->argc + 2)
+		a->argv = xrealloc(a->argv, sizeof(char **) * (a->argm *= 2));
    
-   a->argv[a->argc++] = (char *)__UNCONST(new); /* discard const */
-   a->argv[a->argc]   = NULL;
+	a->argv[a->argc++] = (char *)__UNCONST(new); /* discard const */
+	a->argv[a->argc]   = NULL;
 
-   return a;
+	return a;
 }
 
 /* \doc Grow the next item of |arg| with |length| characters of |string|.
@@ -132,66 +132,66 @@ arg_List arg_addn( arg_List arg, const char *string, int length )
    |arg_finish| without any intervening calls to other functions which
    modify |arg|. */
 
-void arg_grow( arg_List arg, const char *string, int length )
+void arg_grow(arg_List arg, const char *string, int length)
 {
-   Arg        a = (Arg)arg;
+	Arg        a = (Arg)arg;
 
-   _arg_check( a, __func__ );
-   mem_grow( a->object, string, length );
+	_arg_check(a, __func__);
+	mem_grow(a->object, string, length);
 }
 
 /* \doc Finish the growth of the next item in |arg| started by
    |arg_grow|. */
 
-arg_List arg_finish( arg_List arg )
+arg_List arg_finish(arg_List arg)
 {
-   Arg        a = (Arg)arg;
-   const char *new;
+	Arg        a = (Arg)arg;
+	const char *new;
    
-   _arg_check( a, __func__ );
-   new = mem_finish( a->object );
-   if (a->argm <= a->argc + 2 )
-      a->argv = xrealloc( a->argv, sizeof( char **) * (a->argm *= 2) );
+	_arg_check(a, __func__);
+	new = mem_finish(a->object);
+	if (a->argm <= a->argc + 2)
+		a->argv = xrealloc(a->argv, sizeof(char **) * (a->argm *= 2));
    
-   a->argv[a->argc++] = (char *)__UNCONST(new); /* discard const */
-   a->argv[a->argc]   = NULL;
+	a->argv[a->argc++] = (char *)__UNCONST(new); /* discard const */
+	a->argv[a->argc]   = NULL;
 
-   return a;
+	return a;
 }
 
 /* \doc Return |item| from |arg|.  |arg| is 0-based. */
 
-const char *arg_get( arg_List arg, int item ) /* FIXME! inline? */
+const char *arg_get(arg_List arg, int item) /* FIXME! inline? */
 {
-   Arg a = (Arg)arg;
+	Arg a = (Arg)arg;
    
-   _arg_check( a, __func__ );
-   if (item < 0 || item >= a->argc)
-      err_internal( __func__,
-		    "Request for item %d in list containing %d items\n",
-		    item,
-		    a->argc );
-   return a->argv[ item ];
+	_arg_check(a, __func__);
+	if (item < 0 || item >= a->argc)
+		err_internal(__func__,
+					 "Request for item %d in list containing %d items\n",
+					 item,
+					 a->argc);
+	return a->argv[ item ];
 }
 
 /* \doc Return the number of items in |arg|. */
 
-int arg_count( arg_List arg )	/* FIXME! inline? */
+int arg_count(arg_List arg)	/* FIXME! inline? */
 {
-   _arg_check( arg, __func__ );
-   return ((Arg)arg)->argc;
+	_arg_check(arg, __func__);
+	return ((Arg)arg)->argc;
 }
 
 /* \doc Get an |argc| and |argv| from |arg|.  These are suitable for use in
    calls to |exec|.  The |argc|+1 item in |argv| is "NULL". */
 
-void arg_get_vector( arg_List arg, int *argc, char ***argv )
+void arg_get_vector(arg_List arg, int *argc, char ***argv)
 {
-   Arg        a = (Arg)arg;
+	Arg        a = (Arg)arg;
 
-   _arg_check( a, __func__ );
-   *argc = a->argc;
-   *argv = a->argv;
+	_arg_check(a, __func__);
+	*argc = a->argc;
+	*argv = a->argv;
 }
 
 /* \doc Break up |string| into arguments, placing them as items in |arg|.
@@ -212,97 +212,97 @@ void arg_get_vector( arg_List arg, int *argc, char ***argv )
 
 static int char2char_type (int quoteStyle, char ch)
 {
-   switch (ch){
-   case '"':
-      if (ARG_NO_QUOTE & quoteStyle)
-	 return CHARTYPE_OTHER;
-      else
-	 return CHARTYPE_DQ;
-   case '\'':
-      if (ARG_NO_QUOTE & quoteStyle)
-	 return CHARTYPE_OTHER;
-      else
-	 return CHARTYPE_SQ;
-   case '\\':
-      if (ARG_NO_ESCAPE & quoteStyle)
-	 return CHARTYPE_OTHER;
-      else
-	 return CHARTYPE_BS;
-   case ' ':
-   case '\t':
-   case '\r':
-   case '\v':
-   case '\n':
-      return CHARTYPE_SPACE;
-   case '\0':
-      return CHARTYPE_NULL;
-   default:
-      return CHARTYPE_OTHER;
-   }
+	switch (ch){
+		case '"':
+			if (ARG_NO_QUOTE & quoteStyle)
+				return CHARTYPE_OTHER;
+			else
+				return CHARTYPE_DQ;
+		case '\'':
+			if (ARG_NO_QUOTE & quoteStyle)
+				return CHARTYPE_OTHER;
+			else
+				return CHARTYPE_SQ;
+		case '\\':
+			if (ARG_NO_ESCAPE & quoteStyle)
+				return CHARTYPE_OTHER;
+			else
+				return CHARTYPE_BS;
+		case ' ':
+		case '\t':
+		case '\r':
+		case '\v':
+		case '\n':
+			return CHARTYPE_SPACE;
+		case '\0':
+			return CHARTYPE_NULL;
+		default:
+			return CHARTYPE_OTHER;
+	}
 }
 
 
-arg_List arg_argify( const char *string, int quoteStyle )
+arg_List arg_argify(const char *string, int quoteStyle)
 {
-   Arg        a = arg_create();
-   const char *last = NULL;
-   const char *pt = string;
-   char ch;
-   int ch_type;
+	Arg        a = arg_create();
+	const char *last = NULL;
+	const char *pt = string;
+	char ch;
+	int ch_type;
 
-   int state = 0;
-   int curr_act = -1;
+	int state = 0;
+	int curr_act = -1;
 
-   do {
-      ch = *pt;
-      ch_type = char2char_type (quoteStyle, ch);
+	do {
+		ch = *pt;
+		ch_type = char2char_type (quoteStyle, ch);
 
-      curr_act = action [state] [ch_type];
+		curr_act = action [state] [ch_type];
 
-/*      fprintf (stderr, "%i -- %i(%c) / %i --> %i\n", state, ch_type, ch, curr_act, transition [state] [ch_type]);*/
+		/*      fprintf (stderr, "%i -- %i(%c) / %i --> %i\n", state, ch_type, ch, curr_act, transition [state] [ch_type]);*/
 
-      state = transition [state] [ch_type];
+		state = transition [state] [ch_type];
 
-      switch (curr_act){
-      case ACTION_INCLUDE:
-	 if (!last)
-	    last = pt;
+		switch (curr_act){
+			case ACTION_INCLUDE:
+				if (!last)
+					last = pt;
 
-	 break;
-      case ACTION_SKIP:
-	 if (last){
-	    arg_grow (a, last, pt - last);
-	 }
-	 last = pt + 1;
+				break;
+			case ACTION_SKIP:
+				if (last){
+					arg_grow (a, last, pt - last);
+				}
+				last = pt + 1;
 
-	 break;
-      case ACTION_FINISH:
-/*	 assert (last);*/
-	 if (last){
-	    arg_grow (a, last, pt - last);
-	    arg_finish (a);
-	    last = NULL;
-	 }
+				break;
+			case ACTION_FINISH:
+				/*	 assert (last);*/
+				if (last){
+					arg_grow (a, last, pt - last);
+					arg_finish (a);
+					last = NULL;
+				}
 
-	 break;
-      default:
-	 abort ();
-      }
+				break;
+			default:
+				abort ();
+		}
 
-      ++pt;
-   }while (ch && state >= 0);
+		++pt;
+	}while (ch && state >= 0);
 
-   switch (state){
-   case -1:
-      /* Fine! Normal exit*/
-      break;
-   case -2:
-      /* Parsing error */
-      break;
-   default:
-      /* Oooops! */
-      err_internal( __func__, "arg.c:arg_argify is buggy!!!:\n");
-   }
+	switch (state){
+		case -1:
+			/* Fine! Normal exit*/
+			break;
+		case -2:
+			/* Parsing error */
+			break;
+		default:
+			/* Oooops! */
+			err_internal(__func__, "arg.c:arg_argify is buggy!!!:\n");
+	}
 
-   return a;
+	return a;
 }

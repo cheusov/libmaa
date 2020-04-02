@@ -48,7 +48,7 @@
 #endif
 
 #if !defined(SIZEOF_VOID_P)
-# define SIZEOF_VOID_P sizeof (void *)
+# define SIZEOF_VOID_P sizeof(void *)
 #endif
 
 #if HAVE_HEADER_SYS_RESOURCE_H

@@ -59,43 +59,43 @@ static int b26_index[256] = {
 /* |b26_encode| encodes |val| in a printable base 26 format.  A MSB-first
    encoding is generated. */
 
-const char *b26_encode( unsigned long val )
+const char *b26_encode(unsigned long val)
 {
-   static char          result[8] = { 'a', 'a', 'a', 'a', 'a', 'a', 'a', '\0'};
-   static unsigned long previous = 0;
-   int                  i;
+	static char          result[8] = { 'a', 'a', 'a', 'a', 'a', 'a', 'a', '\0'};
+	static unsigned long previous = 0;
+	int                  i;
 
-   if (previous != val) {
-      previous = val;
-      for (i = 6; i >= 0; i--) {
-	 result[i] = b26_list[ val % 26 ];
-	 val = val / 26;
-      }
-      result[7] = 0;
-   }
+	if (previous != val) {
+		previous = val;
+		for (i = 6; i >= 0; i--) {
+			result[i] = b26_list[ val % 26 ];
+			val = val / 26;
+		}
+		result[7] = 0;
+	}
 
-   for (i = 0; i < 6; i++) if (result[i] != b26_list[0]) return result + i;
-   return result + 6;
+	for (i = 0; i < 6; i++) if (result[i] != b26_list[0]) return result + i;
+	return result + 6;
 }
 
-unsigned long b26_decode( const char *val )
+unsigned long b26_decode(const char *val)
 {
-   unsigned long v = 0;
-   int           i;
-   int           offset = 1;
-   int           len = strlen( val );
+	unsigned long v = 0;
+	int           i;
+	int           offset = 1;
+	int           len = strlen(val);
 
-   for (i = len - 1; i >= 0; i--) {
-      int tmp = b26_index[ (unsigned char)val[i] ];
+	for (i = len - 1; i >= 0; i--) {
+		int tmp = b26_index[ (unsigned char)val[i] ];
 
-      if (tmp == XX)
-	 err_internal( __func__,
-		       "Illegal character in base26 value: `%c' (%d)\n",
-		       val[i], val[i] );
+		if (tmp == XX)
+			err_internal(__func__,
+						 "Illegal character in base26 value: `%c' (%d)\n",
+						 val[i], val[i]);
 
-      v += tmp * offset;
-      offset *= 26;
-   }
+		v += tmp * offset;
+		offset *= 26;
+	}
 
-   return v;
+	return v;
 }

@@ -38,40 +38,40 @@
    (1922)]. */
 
 void txt_soundex2(
-   const char *string,
-   char * result /* five chars */ )
+	const char *string,
+	char * result /* five chars */)
 {
-   char        *pt = result;
-   int         upper_case;
-   /*                         abcdefghijklmnopqrstuvwxyz */
-   static const char map[] = "01230120022455012623010202";
-   char        previous = 0;
-   char        transform;
-   int         i;
+	char        *pt = result;
+	int         upper_case;
+	/*                         abcdefghijklmnopqrstuvwxyz */
+	static const char map[] = "01230120022455012623010202";
+	char        previous = 0;
+	char        transform;
+	int         i;
 
-   strcpy( result, "Z000" );
+	strcpy(result, "Z000");
 
-   for (i = 0; *string && i < 4; ++string) {
-      if (isascii ( (unsigned char) *string ) && isalpha( (unsigned char) *string )) {
-         upper_case = toupper( (unsigned char) *string );
-         transform  = map[ upper_case - 'A' ];
-         if (!i) {
-            *pt++ = upper_case;
-            ++i;
-         } else {
-            if (transform != '0' && transform != previous) {
-               *pt++ = transform;
-               ++i;
-            }
-         }
-         previous = transform;
-      }
-   }
+	for (i = 0; *string && i < 4; ++string) {
+		if (isascii ((unsigned char) *string) && isalpha((unsigned char) *string)) {
+			upper_case = toupper((unsigned char) *string);
+			transform  = map[ upper_case - 'A' ];
+			if (!i) {
+				*pt++ = upper_case;
+				++i;
+			} else {
+				if (transform != '0' && transform != previous) {
+					*pt++ = transform;
+					++i;
+				}
+			}
+			previous = transform;
+		}
+	}
 }
 
-const char * txt_soundex( const char *string )
+const char * txt_soundex(const char *string)
 {
-   static char buf [5];
-   txt_soundex2 (string, buf);
-   return buf;
+	static char buf [5];
+	txt_soundex2 (string, buf);
+	return buf;
 }

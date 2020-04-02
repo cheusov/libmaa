@@ -34,94 +34,94 @@
 #include "maaP.h"
 
 typedef struct data {
-   const void  *datum;
-   struct data *prev;
+	const void  *datum;
+	struct data *prev;
 } *dataType;
 
 typedef struct stack {
-   struct data    *data;
+	struct data    *data;
 } *stackType;
 
 /* \doc |stk_create| initializes a stack object. */
 
-stk_Stack stk_create( void )
+stk_Stack stk_create(void)
 {
-   stackType s;
+	stackType s;
 
-   s          = xmalloc( sizeof( struct stack ) );
-   s->data    = NULL;
+	s          = xmalloc(sizeof(struct stack));
+	s->data    = NULL;
 
-   return s;
+	return s;
 }
 
 /* \doc |stk_destroy| destroys all memory associated with the |stack|.  The
    memory used by data is \emph{not} freed---this memory is the
    responsibility of the user. */
 
-void stk_destroy( stk_Stack stack )
+void stk_destroy(stk_Stack stack)
 {
-   while (!stk_isempty( stack )){
-	   stk_pop( stack );
-   }
-   xfree( stack );		/* terminal */
+	while (!stk_isempty(stack)){
+		stk_pop(stack);
+	}
+	xfree(stack);		/* terminal */
 }
 
 /* \doc |stk_push| places |datum| on the top of the |stack|. */
 
-void stk_push( stk_Stack stack, void *datum )
+void stk_push(stk_Stack stack, void *datum)
 {
-   stackType s = (stackType)stack;
-   dataType  d = (dataType)malloc( sizeof( struct data ) );
+	stackType s = (stackType)stack;
+	dataType  d = (dataType)malloc(sizeof(struct data));
 
-   d->datum = datum;
-   d->prev  = s->data;
-   s->data  = d;
+	d->datum = datum;
+	d->prev  = s->data;
+	s->data  = d;
 }
 
 /* \doc |stk_pop| removes the top of the |stack| and returns the pointer.
    If the |stack| is empty, |stk_pop| returns "NULL". */
 
-void *stk_pop( stk_Stack stack )
+void *stk_pop(stk_Stack stack)
 {
-   stackType  s     = (stackType)stack;
-   void      *datum = NULL;
+	stackType  s     = (stackType)stack;
+	void      *datum = NULL;
 
-   if (s->data) {
-      dataType old = s->data;
+	if (s->data) {
+		dataType old = s->data;
 
-      datum = __UNCONST(old->datum); /* Discard const */
-      s->data = s->data->prev;
+		datum = __UNCONST(old->datum); /* Discard const */
+		s->data = s->data->prev;
 
-      free( old );
-   }
+		free(old);
+	}
 
-   return datum;
+	return datum;
 }
 
 /* \doc |stk_isempty| return 1 if |stack| is empty, or 0 otherwise.
 */
 
-int stk_isempty( stk_Stack stack )
+int stk_isempty(stk_Stack stack)
 {
-   stackType  s     = (stackType)stack;
+	stackType  s     = (stackType)stack;
 
-   if (s->data) {
-	  return 0;
-   }else{
-	  return 1;
-   }
+	if (s->data) {
+		return 0;
+	}else{
+		return 1;
+	}
 }
 
 /* \doc |stk_top| returns a pointer to the datum on the top of the |stack|,
    but does \emph{not} remove this datum from the |stack|.  If the |stack|
    is empty, |stk_pop| returns "NULL". */
 
-void *stk_top( stk_Stack stack )
+void *stk_top(stk_Stack stack)
 {
-   stackType s = (stackType)stack;
+	stackType s = (stackType)stack;
 
-   if (s->data)
-      return __UNCONST(s->data->datum);	/* Discard const */
+	if (s->data)
+		return __UNCONST(s->data->datum);	/* Discard const */
 
-   return NULL;
+	return NULL;
 }

@@ -27,20 +27,20 @@
 
 static hsh_HashTable _prs_hash;
 
-void prs_register_concrete( const char *symbol, const char *concrete )
+void prs_register_concrete(const char *symbol, const char *concrete)
 {
-   if (!_prs_hash) _prs_hash = hsh_create( NULL, NULL );
+	if (!_prs_hash) _prs_hash = hsh_create(NULL, NULL);
 
-   hsh_insert( _prs_hash, str_find( symbol ), str_find( concrete ) );
+	hsh_insert(_prs_hash, str_find(symbol), str_find(concrete));
 }
 
-const char *prs_concrete( const char *symbol )
+const char *prs_concrete(const char *symbol)
 {
-   if (!_prs_hash) return NULL;
-   return hsh_retrieve( _prs_hash, symbol );
+	if (!_prs_hash) return NULL;
+	return hsh_retrieve(_prs_hash, symbol);
 }
 
-void _prs_shutdown( void )
+void _prs_shutdown(void)
 {
-   if (_prs_hash) hsh_destroy( _prs_hash );
+	if (_prs_hash) hsh_destroy(_prs_hash);
 }

@@ -79,44 +79,44 @@ static int b64_index[256] = {
 /* |b64_encode| encodes |val| in a printable base 64 format.  A MSB-first
    encoding is generated. */
 
-const char *b64_encode( unsigned long val )
+const char *b64_encode(unsigned long val)
 {
-   static char   result[7];
-   int    i;
+	static char   result[7];
+	int    i;
 
-   result[0] = b64_list[ (val & 0xc0000000) >> 30 ];
-   result[1] = b64_list[ (val & 0x3f000000) >> 24 ];
-   result[2] = b64_list[ (val & 0x00fc0000) >> 18 ];
-   result[3] = b64_list[ (val & 0x0003f000) >> 12 ];
-   result[4] = b64_list[ (val & 0x00000fc0) >>  6 ];
-   result[5] = b64_list[ (val & 0x0000003f)       ];
-   result[6] = 0;
+	result[0] = b64_list[(val & 0xc0000000) >> 30 ];
+	result[1] = b64_list[(val & 0x3f000000) >> 24 ];
+	result[2] = b64_list[(val & 0x00fc0000) >> 18 ];
+	result[3] = b64_list[(val & 0x0003f000) >> 12 ];
+	result[4] = b64_list[(val & 0x00000fc0) >>  6 ];
+	result[5] = b64_list[(val & 0x0000003f)       ];
+	result[6] = 0;
 
-   for (i = 0; i < 5; i++) if (result[i] != b64_list[0]) return result + i;
-   return result + 5;
+	for (i = 0; i < 5; i++) if (result[i] != b64_list[0]) return result + i;
+	return result + 5;
 }
 
-unsigned long b64_decode_buf (const char *val, size_t len)
+unsigned long b64_decode_buf(const char *val, size_t len)
 {
-   unsigned long v = 0;
-   int           i;
-   int           offset = 0;
+	unsigned long v = 0;
+	int           i;
+	int           offset = 0;
 
-   for (i = len - 1; i >= 0; i--) {
-      int tmp = b64_index[ (unsigned char)val[i] ];
+	for (i = len - 1; i >= 0; i--) {
+		int tmp = b64_index[ (unsigned char)val[i] ];
 
-      if (tmp == XX)
-	 err_internal( __func__,
-		       "Illegal character in base64 value: `%c'\n", val[i] );
+		if (tmp == XX)
+			err_internal(__func__,
+						 "Illegal character in base64 value: `%c'\n", val[i]);
 
-      v |= tmp << offset;
-      offset += 6;
-   }
+		v |= tmp << offset;
+		offset += 6;
+	}
 
-   return v;
+	return v;
 }
 
-unsigned long b64_decode (const char *val)
+unsigned long b64_decode(const char *val)
 {
-   return b64_decode_buf (val, strlen (val));
+	return b64_decode_buf(val, strlen(val));
 }

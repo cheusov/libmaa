@@ -32,62 +32,63 @@
 /* \doc |maa_init| should be called at the start of "main()", and serves to
    initialize debugging and other support for \libmaa. */
 
-void maa_init( const char *programName )
+void maa_init(const char *programName)
 {
-   tim_start( "total" );
+	tim_start("total");
    
-   err_set_program_name( programName );
-   
-   _dbg_register( MAA_MEMORY,    ".memory" );
-   _dbg_register( MAA_TIME,      ".time" );
-   _dbg_register( MAA_PR,        ".pr" );
-   _dbg_register( MAA_SL,        ".sl" );
-   _dbg_register( MAA_SRC,       ".src" );
-   _dbg_register( MAA_PARSE,     ".parse" );
+	err_set_program_name(programName);
+
+	_dbg_register(MAA_MEMORY,    ".memory");
+	_dbg_register(MAA_TIME,      ".time");
+	_dbg_register(MAA_PR,        ".pr");
+	_dbg_register(MAA_SL,        ".sl");
+	_dbg_register(MAA_SRC,       ".src");
+	_dbg_register(MAA_PARSE,     ".parse");
 }
 
-void maa_shutdown( void )
+void maa_shutdown(void)
 {
-   if (dbg_test(MAA_MEMORY) || dbg_test(MAA_TIME))
-      fprintf( stderr, "%s\n", maa_version() );
-   if (dbg_test(MAA_MEMORY)) {
-      str_print_stats( stderr );
-   }
+	if (dbg_test(MAA_MEMORY) || dbg_test(MAA_TIME))
+		fprintf(stderr, "%s\n", maa_version());
 
-   _pr_shutdown();
-   str_destroy();
-   _lst_shutdown();
-   _sl_shutdown();
+	if (dbg_test(MAA_MEMORY)) {
+		str_print_stats(stderr);
+	}
 
-   tim_stop( "total" );
-   if (dbg_test(MAA_TIME)) {
-      tim_print_timers( stderr );
-   }
-   _tim_shutdown();
-   flg_destroy();
-   dbg_destroy();
+	_pr_shutdown();
+	str_destroy();
+	_lst_shutdown();
+	_sl_shutdown();
+
+	tim_stop("total");
+	if (dbg_test(MAA_TIME)) {
+		tim_print_timers(stderr);
+	}
+	_tim_shutdown();
+	flg_destroy();
+	dbg_destroy();
 }
 
-int maa_version_major( void )
+int maa_version_major(void)
 {
-   return MAA_MAJOR;
+	return MAA_MAJOR;
 }
 
-int maa_version_minor( void )
+int maa_version_minor(void)
 {
-   return MAA_MINOR;
+	return MAA_MINOR;
 }
 
-int maa_version_teeny( void )
+int maa_version_teeny(void)
 {
-   return MAA_TEENY;
+	return MAA_TEENY;
 }
 
-const char *maa_version( void )
+const char *maa_version(void)
 {
-   static char buffer[80];
+	static char buffer[80];
 
-   sprintf( buffer, "Libmaa %d.%d.%d", MAA_MAJOR, MAA_MINOR, MAA_TEENY );
+	sprintf(buffer, "Libmaa %d.%d.%d", MAA_MAJOR, MAA_MINOR, MAA_TEENY);
       
-   return buffer;
+	return buffer;
 }

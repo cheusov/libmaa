@@ -54,8 +54,8 @@ static char       logHostname[MAXHOSTNAMELEN];
 
 #ifndef HAVE_SYSLOG_NAMES
 typedef struct _code {
-    const char *c_name;
-    int        c_val;
+	const char *c_name;
+	int        c_val;
 } CODE;
 CODE facilitynames[] = {
 #if LOG_AUTH
@@ -122,22 +122,22 @@ CODE facilitynames[] = {
 };
 #endif
 
-static void _log_set_hostname( void )
+static void _log_set_hostname(void)
 {
-   static int hostnameSet = 0;
-   char       *pt;
+	static int hostnameSet = 0;
+	char       *pt;
 
-   if (!hostnameSet) {
-      memset( logHostname, 0, sizeof(logHostname) );
-      gethostname( logHostname, sizeof(logHostname)-1 );
-      if ((pt = strchr(logHostname, '.'))) *pt = '\0';
-      ++hostnameSet;
-   }
+	if (!hostnameSet) {
+		memset(logHostname, 0, sizeof(logHostname));
+		gethostname(logHostname, sizeof(logHostname)-1);
+		if ((pt = strchr(logHostname, '.'))) *pt = '\0';
+		++hostnameSet;
+	}
 }
 
 void log_set_facility(const char *facility)
 {
-    CODE *pt;
+	CODE *pt;
 
     for (pt = facilitynames; pt->c_name; pt++) {
         if (!strcmp(pt->c_name, facility)) {
@@ -150,42 +150,42 @@ void log_set_facility(const char *facility)
 
 const char *log_get_facility(void)
 {
-    CODE *pt;
+	CODE *pt;
 
     for (pt = facilitynames; pt->c_name; pt++)
         if (pt->c_val == logFacility) return pt->c_name;
     return NULL;
 }
 
-void log_option( int option )
+void log_option(int option)
 {
-   if (option == LOG_OPTION_NO_FULL) inhibitFull = 1;
-   else                              inhibitFull = 0;
+	if (option == LOG_OPTION_NO_FULL) inhibitFull = 1;
+	else                              inhibitFull = 0;
 }
 
-void log_syslog( const char *ident )
+void log_syslog(const char *ident)
 {
-   if (ident){
-      if (logSyslog)
-	 err_internal( __func__, "Syslog facility already open\n" );
+	if (ident){
+		if (logSyslog)
+			err_internal(__func__, "Syslog facility already open\n");
 
-      openlog( ident, LOG_PID|LOG_NOWAIT, logFacility );
-      ++logOpen;
-      ++logSyslog;
-   }else{
-      if (!logSyslog)
-	 return;
+		openlog(ident, LOG_PID|LOG_NOWAIT, logFacility);
+		++logOpen;
+		++logSyslog;
+	}else{
+		if (!logSyslog)
+			return;
 
-      closelog ();
-      --logOpen;
-      --logSyslog;
-   }
+		closelog ();
+		--logOpen;
+		--logSyslog;
+	}
 }
 
 static void log_mkpath(const char *filename)
 {
-    char *tmp = xstrdup(filename);
-    char *pt;
+	char *tmp = xstrdup(filename);
+	char *pt;
 
     for (pt = tmp; *pt; pt++) {
         if (*pt == '/' && pt != tmp) {
@@ -200,185 +200,185 @@ static void log_mkpath(const char *filename)
 
 static void _log_check_filename(void)
 {
-   time_t    t;
-   struct tm *tm;
+	time_t    t;
+	struct tm *tm;
    
-   if (!logFilename || !logFilenameTmp || !logFilenameLen) return;
+	if (!logFilename || !logFilenameTmp || !logFilenameLen) return;
 
-   time(&t);
-   tm = localtime(&t);
+	time(&t);
+	tm = localtime(&t);
    
-   strftime(logFilenameTmp, logFilenameLen, logFilenameOrig, tm);
-   if (strcmp(logFilenameTmp, logFilename)) {
-       strcpy(logFilename, logFilenameTmp);
-       if (logFd >= 0) close(logFd);
-       log_mkpath(logFilename);
-       if ((logFd = open( logFilename, O_WRONLY|O_CREAT|O_APPEND, 0644 )) < 0)
-           err_fatal_errno( __func__,
-                            "Cannot open \"%s\" for append\n", logFilename );
-   }
+	strftime(logFilenameTmp, logFilenameLen, logFilenameOrig, tm);
+	if (strcmp(logFilenameTmp, logFilename)) {
+		strcpy(logFilename, logFilenameTmp);
+		if (logFd >= 0) close(logFd);
+		log_mkpath(logFilename);
+		if ((logFd = open(logFilename, O_WRONLY|O_CREAT|O_APPEND, 0644)) < 0)
+			err_fatal_errno(__func__,
+							 "Cannot open \"%s\" for append\n", logFilename);
+	}
 }
 
-void log_file( const char *ident, const char *filename )
+void log_file(const char *ident, const char *filename)
 {
-   if (ident && filename){
-      if (logFd >= 0)
-	 err_internal( __func__,
-		       "Log file \"%s\" open when trying to open \"%s\"\n",
-		       logFilename, filename );
+	if (ident && filename){
+		if (logFd >= 0)
+			err_internal(__func__,
+						  "Log file \"%s\" open when trying to open \"%s\"\n",
+						  logFilename, filename);
 
-      logIdent        = str_find( ident );
-      logFilenameOrig = str_find(filename);
-      logFilenameLen  = strlen(filename)*3+1024;
-      logFilename     = xmalloc(logFilenameLen + 1);
-      logFilenameTmp  = xmalloc(logFilenameLen + 1);
-      logFilename[0]  = '\0';
+		logIdent        = str_find(ident);
+		logFilenameOrig = str_find(filename);
+		logFilenameLen  = strlen(filename)*3+1024;
+		logFilename     = xmalloc(logFilenameLen + 1);
+		logFilenameTmp  = xmalloc(logFilenameLen + 1);
+		logFilename[0]  = '\0';
 
-      _log_check_filename();
-      _log_set_hostname();
+		_log_check_filename();
+		_log_set_hostname();
 
-      ++logOpen;
-   }else{
-      if (logFd < 0)
-	 return;
+		++logOpen;
+	}else{
+		if (logFd < 0)
+			return;
 
-      close (logFd);
-      logFd          = -1;
+		close (logFd);
+		logFd          = -1;
 
-      if (logFilename) xfree (logFilename);
-      logFilename    = NULL;
+		if (logFilename) xfree (logFilename);
+		logFilename    = NULL;
 
-      if (logFilenameTmp) xfree (logFilenameTmp);
-      logFilenameTmp = NULL;
+		if (logFilenameTmp) xfree (logFilenameTmp);
+		logFilenameTmp = NULL;
 
-      logFilenameLen = 0;
+		logFilenameLen = 0;
 
-      --logOpen;
-   }
+		--logOpen;
+	}
 }
 
-void log_stream( const char *ident, FILE *stream )
+void log_stream(const char *ident, FILE *stream)
 {
-   if (ident && stream){
-      if (logUserStream)
-	 err_internal( __func__, "User stream already open\n" );
+	if (ident && stream){
+		if (logUserStream)
+			err_internal(__func__, "User stream already open\n");
 
-      logUserStream = stream;
-      logIdent      = str_find( ident );
+		logUserStream = stream;
+		logIdent      = str_find(ident);
 
-      _log_set_hostname();
-      ++logOpen;
-   }else{
-      if (!logUserStream)
-	 return;
+		_log_set_hostname();
+		++logOpen;
+	}else{
+		if (!logUserStream)
+			return;
 
-      if (logUserStream != stdout &&
-	  logUserStream != stderr)
-      {
-	 fclose (logUserStream);
-      }
+		if (logUserStream != stdout &&
+			logUserStream != stderr)
+		{
+			fclose (logUserStream);
+		}
 
-      logUserStream = NULL;
+		logUserStream = NULL;
 
-      --logOpen;
-   }
+		--logOpen;
+	}
 }
 
-void log_close( void )
+void log_close(void)
 {
-   log_file (NULL, NULL);
-   log_stream (NULL, NULL);
-   log_syslog (NULL);
+	log_file (NULL, NULL);
+	log_stream (NULL, NULL);
+	log_syslog (NULL);
 }
 
 static void _log_base_va(
-   const char *routine,
-   int log_facility,
-   const char *format, va_list ap )
+	const char *routine,
+	int log_facility,
+	const char *format, va_list ap)
 {
-   va_list ap_copy;
-   time_t t;
-   static char   buf [8192] = "";
-   static char   buf_main [4096] = "";
-   static char   buf_preamble [256] = "";
+	va_list ap_copy;
+	time_t t;
+	static char   buf [8192] = "";
+	static char   buf_main [4096] = "";
+	static char   buf_preamble [256] = "";
 
-   va_copy (ap_copy, ap);
+	va_copy (ap_copy, ap);
 
-   if (!logOpen) return;
+	if (!logOpen) return;
 
-   time(&t);
+	time(&t);
 
-   if (logFd >= 0 || logUserStream) {
-      /* preamble */
-      if (inhibitFull) {
-         buf_preamble [0] = 0;
-      } else {
-         snprintf (buf_preamble, sizeof (buf_preamble),
-		   "%24.24s %s %s[%ld]: ",
-		   ctime(&t),
-		   logHostname,
-		   logIdent,
-		   (long int) getpid());
-      }
+	if (logFd >= 0 || logUserStream) {
+		/* preamble */
+		if (inhibitFull) {
+			buf_preamble [0] = 0;
+		} else {
+			snprintf (buf_preamble, sizeof (buf_preamble),
+					  "%24.24s %s %s[%ld]: ",
+					  ctime(&t),
+					  logHostname,
+					  logIdent,
+					  (long int) getpid());
+		}
 
-      /* main part of log message */
-      vsnprintf (buf_main, sizeof (buf_main), format, ap );
+		/* main part of log message */
+		vsnprintf (buf_main, sizeof (buf_main), format, ap);
 
-      /* full log message */
-      if (routine){
-	 snprintf (buf, sizeof (buf), "%s(%s) %s\n",
-		   buf_preamble, routine, buf_main);
-      }else{
-	 snprintf (buf, sizeof (buf), "%s%s\n",
-		   buf_preamble, buf_main);
-      }
+		/* full log message */
+		if (routine){
+			snprintf (buf, sizeof (buf), "%s(%s) %s\n",
+					  buf_preamble, routine, buf_main);
+		}else{
+			snprintf (buf, sizeof (buf), "%s%s\n",
+					  buf_preamble, buf_main);
+		}
 
-      /* writing */
-      if (logFd >= 0) {
-         _log_check_filename();
-         while (-1 == write (logFd, buf, strlen (buf)) && errno == EINTR);
-      }
-      if (logUserStream) {
-         fseek( logUserStream, 0L, SEEK_END ); /* might help if luser didn't
-                                                  open stream with "a" */
-	 if (logUserStream == stdout || logUserStream == stderr)
-	    fprintf( logUserStream, "%s", buf_main );
-	 else
-	    fprintf( logUserStream, "%s", buf );
+		/* writing */
+		if (logFd >= 0) {
+			_log_check_filename();
+			while (-1 == write (logFd, buf, strlen (buf)) && errno == EINTR);
+		}
+		if (logUserStream) {
+			fseek(logUserStream, 0L, SEEK_END); /* might help if luser didn't
+													 open stream with "a" */
+			if (logUserStream == stdout || logUserStream == stderr)
+				fprintf(logUserStream, "%s", buf_main);
+			else
+				fprintf(logUserStream, "%s", buf);
 
-         fflush( logUserStream );
-      }
-   }
+			fflush(logUserStream);
+		}
+	}
 
-   if (logSyslog) {
-      vsyslog( log_facility, format, ap_copy );
-   }
+	if (logSyslog) {
+		vsyslog(log_facility, format, ap_copy);
+	}
 }
 
-void log_error_va( const char *routine, const char *format, va_list ap )
+void log_error_va(const char *routine, const char *format, va_list ap)
 {
    _log_base_va (routine, LOG_ERR, format, ap);
 }
 
-void log_error( const char *routine, const char *format, ... )
+void log_error(const char *routine, const char *format, ...)
 {
-   va_list ap;
+	va_list ap;
 
-   va_start( ap, format );
-   log_error_va( routine, format, ap );
-   va_end( ap );
+	va_start(ap, format);
+	log_error_va(routine, format, ap);
+	va_end(ap);
 }
 
-void log_info_va( const char *format, va_list ap )
+void log_info_va(const char *format, va_list ap)
 {
-   _log_base_va (NULL, LOG_INFO, format, ap);
+	_log_base_va (NULL, LOG_INFO, format, ap);
 }
 
-void log_info( const char *format, ... )
+void log_info(const char *format, ...)
 {
-   va_list ap;
+	va_list ap;
 
-   va_start( ap, format );
-   log_info_va( format, ap );
-   va_end( ap );
+	va_start(ap, format);
+	log_info_va(format, ap);
+	va_end(ap);
 }

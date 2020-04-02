@@ -39,20 +39,20 @@
 static str_Pool global;
 
 typedef struct poolInfo {
-   mem_String    string;
-   hsh_HashTable hash;
+	mem_String    string;
+	hsh_HashTable hash;
 } *poolInfo;
 
 /* \doc |str_pool_create| initialized a string pool object. */
 
 str_Pool str_pool_create( void )
 {
-   poolInfo pool = xmalloc( sizeof( struct poolInfo ) );
+	poolInfo pool = xmalloc( sizeof( struct poolInfo ) );
 
-   pool->string = mem_create_strings();
-   pool->hash   = hsh_create( NULL, NULL );
+	pool->string = mem_create_strings();
+	pool->hash   = hsh_create( NULL, NULL );
 
-   return pool;
+	return pool;
 }
 
 /* \doc |str_pool_destroy| destroys the string pool object, |pool|, and all
@@ -60,14 +60,14 @@ str_Pool str_pool_create( void )
 
 void str_pool_destroy( str_Pool pool )
 {
-   poolInfo p = (poolInfo)pool;
+	poolInfo p = (poolInfo)pool;
    
-   if (!p || !p->string || !p->hash)
-	 err_fatal( __func__, "String pool improperly initialized\n" );
+	if (!p || !p->string || !p->hash)
+		err_fatal( __func__, "String pool improperly initialized\n" );
 
-   mem_destroy_strings( p->string );
-   hsh_destroy( p->hash );
-   xfree( p );			/* terminal */
+	mem_destroy_strings( p->string );
+	hsh_destroy( p->hash );
+	xfree( p );			/* terminal */
 }
 
 /* \doc |str_pool_exists| returns non-zero if the string, |s|, is already
@@ -75,11 +75,11 @@ void str_pool_destroy( str_Pool pool )
 
 int str_pool_exists( str_Pool pool, const char *s )
 {
-   const char *datum;
-   poolInfo   p = (poolInfo)pool;
+	const char *datum;
+	poolInfo   p = (poolInfo)pool;
    
-   if ((datum = hsh_retrieve( p->hash, s ))) return 1;
-   return 0;
+	if ((datum = hsh_retrieve( p->hash, s ))) return 1;
+	return 0;
 }
 
 /* \doc |str_pool_find| looks up the string, |s|, in the memory associated
@@ -90,14 +90,14 @@ int str_pool_exists( str_Pool pool, const char *s )
 
 const char *str_pool_find( str_Pool pool, const char *s )
 {
-   const char *datum;
-   poolInfo   p = (poolInfo)pool;
+	const char *datum;
+	poolInfo   p = (poolInfo)pool;
    
-   if ((datum = hsh_retrieve( p->hash, s ))) return datum;
-   datum = mem_strcpy( p->string, s );
-   hsh_insert( p->hash, datum, datum );
+	if ((datum = hsh_retrieve( p->hash, s ))) return datum;
+	datum = mem_strcpy( p->string, s );
+	hsh_insert( p->hash, datum, datum );
 
-   return datum;
+	return datum;
 }
 
 /* \doc |str_pool_iterate| is used to iterate a function over every
@@ -109,22 +109,22 @@ const char *str_pool_find( str_Pool pool, const char *s )
    two successive calls to |str_pool_iterate|. */
 
 int str_pool_iterate(
-   str_Pool pool,
-   int (*iterator)( const char *s ) )
+	str_Pool pool,
+	int (*iterator)( const char *s ) )
 {
-   poolInfo      p = (poolInfo) pool;
-   hsh_HashTable hash = p -> hash;
-   hsh_Position  hash_pos;
-   void *key;
+	poolInfo      p = (poolInfo) pool;
+	hsh_HashTable hash = p -> hash;
+	hsh_Position  hash_pos;
+	void *key;
 
-/*   printf ("inside str_pool_iterate\n"); */
+	/*   printf ("inside str_pool_iterate\n"); */
 
-   HSH_ITERATE_KEYS (hash, hash_pos, key){
-      if ((*iterator) ((const char *) key))
-	 return 1;
-   }
+	HSH_ITERATE_KEYS (hash, hash_pos, key){
+		if ((*iterator) ((const char *) key))
+			return 1;
+	}
 
-   return 0;
+	return 0;
 }
 
 /* \doc |str_pool_iterate| is used to iterate a function over every
@@ -136,42 +136,42 @@ int str_pool_iterate(
    two successive calls to |str_pool_iterate|. */
 
 int str_pool_iterate_arg(
-   str_Pool pool,
-   int (*iterator)( const char *s, void *arg ),
-   void *arg )
+	str_Pool pool,
+	int (*iterator)( const char *s, void *arg ),
+	void *arg )
 {
-   poolInfo      p    = (poolInfo) pool;
-   hsh_HashTable hash = p -> hash;
-   hsh_Position  hash_pos;
-   void *key;
+	poolInfo      p    = (poolInfo) pool;
+	hsh_HashTable hash = p -> hash;
+	hsh_Position  hash_pos;
+	void *key;
 
-   HSH_ITERATE_KEYS (hash, hash_pos, key){
-      if ((*iterator) (key, arg)){
-	 HSH_ITERATE_END (hash);
-	 return 1;
-      }
-   }
+	HSH_ITERATE_KEYS (hash, hash_pos, key){
+		if ((*iterator) (key, arg)){
+			HSH_ITERATE_END (hash);
+			return 1;
+		}
+	}
 
-   return 0;
+	return 0;
 }
 
 str_Position str_pool_init_position (str_Pool pool)
 {
-   poolInfo p = (poolInfo) pool;
+	poolInfo p = (poolInfo) pool;
 
-   return hsh_init_position (p -> hash);
+	return hsh_init_position (p -> hash);
 }
 
 str_Position str_pool_next_position (str_Pool pool, str_Position position)
 {
-   poolInfo p = (poolInfo) pool;
+	poolInfo p = (poolInfo) pool;
 
-   return hsh_next_position (p -> hash, position);
+	return hsh_next_position (p -> hash, position);
 }
 
 void str_pool_get_position (str_Position position, char const * const*key)
 {
-   hsh_get_position (position, (void **) __UNCONST(key));
+	hsh_get_position (position, (void **) __UNCONST(key));
 }
 
 /* \doc |str_pool_copy| returns a copy of the string, |s|, using memory
@@ -181,9 +181,9 @@ void str_pool_get_position (str_Position position, char const * const*key)
 
 const char *str_pool_copy( str_Pool pool, const char *s )
 {
-   poolInfo   p = (poolInfo)pool;
+	poolInfo   p = (poolInfo)pool;
    
-   return mem_strcpy( p->string, s );
+	return mem_strcpy( p->string, s );
 }
 
 /* \doc |str_pool_copyn| returns a copy of the string, |s|, using memory
@@ -194,9 +194,9 @@ const char *str_pool_copy( str_Pool pool, const char *s )
 
 const char *str_pool_copyn( str_Pool pool, const char *s, int length )
 {
-   poolInfo   p = (poolInfo)pool;
+	poolInfo   p = (poolInfo)pool;
    
-   return mem_strncpy( p->string, s, length );
+	return mem_strncpy( p->string, s, length );
 }
 
 /* \doc |str_pool_grow| will grow a string in the specified |pool| until
@@ -206,9 +206,9 @@ const char *str_pool_copyn( str_Pool pool, const char *s, int length )
 
 void str_pool_grow( str_Pool pool, const char *s, int length )
 {
-   poolInfo p = (poolInfo)pool;
+	poolInfo p = (poolInfo)pool;
 
-   mem_grow( p->string, s, length );
+	mem_grow( p->string, s, length );
 }
 
 /* \doc |str_pool_finish| will finish the growth of a string performed by
@@ -219,14 +219,14 @@ void str_pool_grow( str_Pool pool, const char *s, int length )
 
 const char *str_pool_finish( str_Pool pool )
 {
-   poolInfo   p      = (poolInfo)pool;
-   const char *datum;
+	poolInfo   p      = (poolInfo)pool;
+	const char *datum;
 
-   mem_grow( p->string, "\0", 1 ); /* guarantee null termination */
-   datum = mem_finish( p->string );
-   hsh_insert( p->hash, datum, datum );
+	mem_grow( p->string, "\0", 1 ); /* guarantee null termination */
+	datum = mem_finish( p->string );
+	hsh_insert( p->hash, datum, datum );
 
-   return datum;
+	return datum;
 }
 
 /* \doc |str_pool_get_stats| returns statistics about the specified string
@@ -234,30 +234,30 @@ const char *str_pool_finish( str_Pool pool )
 
 str_Stats str_pool_get_stats( str_Pool pool )
 {
-   poolInfo        p = (poolInfo)pool;
-   str_Stats       s = xmalloc( sizeof( struct str_Stats ) );
+	poolInfo        p = (poolInfo)pool;
+	str_Stats       s = xmalloc( sizeof( struct str_Stats ) );
 
-   if (p) {
-      mem_StringStats m = mem_get_string_stats( p->string );
-      hsh_Stats       h = hsh_get_stats( p->hash );
+	if (p) {
+		mem_StringStats m = mem_get_string_stats( p->string );
+		hsh_Stats       h = hsh_get_stats( p->hash );
       
-      s->count      = m->count;
-      s->bytes      = m->bytes;
-      s->retrievals = h->retrievals;
-      s->hits       = h->hits;
-      s->misses     = h->misses;
+		s->count      = m->count;
+		s->bytes      = m->bytes;
+		s->retrievals = h->retrievals;
+		s->hits       = h->hits;
+		s->misses     = h->misses;
       
-      xfree( h );		/* rare */
-      xfree( m );		/* rare */
-   } else {
-      s->count      = 0;
-      s->bytes      = 0;
-      s->retrievals = 0;
-      s->hits       = 0;
-      s->misses     = 0;
-   }
+		xfree( h );		/* rare */
+		xfree( m );		/* rare */
+	} else {
+		s->count      = 0;
+		s->bytes      = 0;
+		s->retrievals = 0;
+		s->hits       = 0;
+		s->misses     = 0;
+	}
 
-   return s;
+	return s;
 }
 
 /* \doc |str_pool_print_stats| prints the statistics for the specified
@@ -266,20 +266,20 @@ str_Stats str_pool_get_stats( str_Pool pool )
 
 void str_pool_print_stats( str_Pool pool, FILE *stream )
 {
-   FILE      *str = stream ? stream : stdout;
-   str_Stats s    = str_pool_get_stats( pool );
+	FILE      *str = stream ? stream : stdout;
+	str_Stats s    = str_pool_get_stats( pool );
 
-   fprintf( str, "Statistics for %sstring pool at %p:\n",
-	    pool == global ? "global " : "", pool );
-   fprintf( str, "   %d strings using %d bytes\n", s->count, s->bytes );
-   fprintf( str, "   %d retrievals (%d from top, %d failed)\n",
-	    s->retrievals, s->hits, s->misses );
-   xfree( s );			/* rare */
+	fprintf( str, "Statistics for %sstring pool at %p:\n",
+			 pool == global ? "global " : "", pool );
+	fprintf( str, "   %d strings using %d bytes\n", s->count, s->bytes );
+	fprintf( str, "   %d retrievals (%d from top, %d failed)\n",
+			 s->retrievals, s->hits, s->misses );
+	xfree( s );			/* rare */
 }
 
 static void _str_check_global( void )
 {
-   if (!global) global = str_pool_create();
+	if (!global) global = str_pool_create();
 }
 
 /* \doc |str_exists| acts like |str_pool_exists|, except the global string
@@ -287,7 +287,7 @@ static void _str_check_global( void )
 
 int str_exists( const char *s )
 {
-   return str_pool_exists( global, s );
+	return str_pool_exists( global, s );
 }
 
 /* \doc |str_find| acts like |str_pool_find|, except the global string pool
@@ -298,8 +298,8 @@ int str_exists( const char *s )
 
 const char *str_find( const char *s )
 {
-   _str_check_global();
-   return str_pool_find( global, s );
+	_str_check_global();
+	return str_pool_find( global, s );
 }
 
 /* \doc |str_findn| acts like |str_find|, except that the length of the
@@ -308,13 +308,13 @@ const char *str_find( const char *s )
 
 const char *str_findn( const char *s, int length )
 {
-   char *tmp = alloca( sizeof( char ) * (length + 1) );
+	char *tmp = alloca( sizeof( char ) * (length + 1) );
 
-   _str_check_global();
-   strncpy( tmp, s, length);
-   tmp [ length ] = 0;
+	_str_check_global();
+	strncpy( tmp, s, length);
+	tmp [ length ] = 0;
 
-   return str_pool_find( global, tmp );
+	return str_pool_find( global, tmp );
 }
 
 /* \doc |str_copy| acts like |str_pool_copy|, except the global string pool
@@ -325,8 +325,8 @@ const char *str_findn( const char *s, int length )
 
 const char *str_copy( const char *s )
 {
-   _str_check_global();
-   return str_pool_copy( global, s );
+	_str_check_global();
+	return str_pool_copy( global, s );
 }
 
 /* \doc |str_copyn| acts like |str_copy|, except that the length of the
@@ -335,7 +335,7 @@ const char *str_copy( const char *s )
 
 const char *str_copyn( const char *s, int length )
 {
-   return str_pool_copyn( global, s, length );
+	return str_pool_copyn( global, s, length );
 }
 
 /* \doc |str_grow| will grow a string until |str_finish| is called.  There
@@ -344,8 +344,8 @@ const char *str_copyn( const char *s, int length )
 
 void str_grow( const char *s, int length )
 {
-   _str_check_global();
-   str_pool_grow( global, s, length );
+	_str_check_global();
+	str_pool_grow( global, s, length );
 }
 
 /* \doc |str_finish| will finish the growth of a string performed by
@@ -356,8 +356,8 @@ void str_grow( const char *s, int length )
 
 const char *str_finish( void )
 {
-   _str_check_global();
-   return str_pool_finish( global );
+	_str_check_global();
+	return str_pool_finish( global );
 }
 
 /* \doc |str_unique| returns a unique string with the given prefix.  This
@@ -367,13 +367,13 @@ const char *str_finish( void )
 
 const char *str_unique( const char *prefix )
 {
-   static int i       = 1;
-   char       *buf    = alloca( strlen( prefix ) + 100 );
+	static int i       = 1;
+	char       *buf    = alloca( strlen( prefix ) + 100 );
 
-   do {
-      sprintf( buf, "%s%d", prefix, i++ );
-   } while (str_exists( buf ));
-   return str_find( buf );
+	do {
+		sprintf( buf, "%s%d", prefix, i++ );
+	} while (str_exists( buf ));
+	return str_find( buf );
 }
 
 /* \doc |str_destroy| frees all of the memory associated with the global
@@ -386,8 +386,8 @@ const char *str_unique( const char *prefix )
 
 void str_destroy( void )
 {
-   if (global) str_pool_destroy( global );
-   global = NULL;
+	if (global) str_pool_destroy( global );
+	global = NULL;
 }
 
 /* \doc |str_get_stats| returns statistics about the global string pool.
@@ -395,7 +395,7 @@ void str_destroy( void )
 
 str_Stats str_get_stats( void )
 {
-   return str_pool_get_stats( global );
+	return str_pool_get_stats( global );
 }
 
 /* \doc |str_print_stats| prints the statistics for the global string pool
@@ -404,6 +404,5 @@ str_Stats str_get_stats( void )
 
 void str_print_stats( FILE *stream )
 {
-   str_pool_print_stats( global, stream );
+	str_pool_print_stats( global, stream );
 }
-

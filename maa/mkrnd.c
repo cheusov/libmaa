@@ -28,18 +28,18 @@
 
 int main( int argc, char **argv )
 {
-   int count;
-   int i;
+	int count;
+	int i;
    
-   if (argc != 2) {
-      fprintf( stderr, "Usage: mkrnd <count>\n" );
-      exit( 1 );
-   }
+	if (argc != 2) {
+		fprintf( stderr, "Usage: mkrnd <count>\n" );
+		exit( 1 );
+	}
 
-   count = atoi( argv[1] );
-   for (i = 0; i < count; i++) {
-      printf( "%f, ", (double)random()/(double)INT_MAX);
-   }
-   printf( "\n" );
-   return 0;
+	count = atoi( argv[1] );
+	for (i = 0; i < count; i++) {
+		printf( "%f, ", (double)random()/(double)INT_MAX);
+	}
+	printf( "\n" );
+	return 0;
 }

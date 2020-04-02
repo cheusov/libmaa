@@ -38,11 +38,11 @@
 #include "maaP.h"
 
 typedef struct source {
-   const char *file;
-   int        line;
-   int        offset;
-   int        length;
-   int        index;
+	const char *file;
+	int        line;
+	int        offset;
+	int        length;
+	int        index;
 } sourceType;
 
 #define INCREMENT 1000
@@ -59,101 +59,101 @@ static mem_Object InfoHeap;
    If the other routines are used as expected, |src_create| will be called
    automatically when it is needed. */
 
-void src_create( void )
+void src_create(void)
 {
-   if (Lines)
-	 err_fatal( __func__, "Source manager already created\n" );
+	if (Lines)
+		err_fatal(__func__, "Source manager already created\n");
 
-   Lines      = xmalloc( (Count = INCREMENT) * sizeof( char * ) );
-   StringHeap = mem_create_strings();
-   InfoHeap   = mem_create_objects( sizeof( struct source ) );
+	Lines      = xmalloc((Count = INCREMENT) * sizeof(char *));
+	StringHeap = mem_create_strings();
+	InfoHeap   = mem_create_objects(sizeof(struct source));
 }
 
 /* \doc |src_destroy| frees all memory associated with the global source
    code management object. */
 
-void src_destroy( void )
+void src_destroy(void)
 {
-   if (!Lines) return;
-   mem_destroy_objects( InfoHeap );
-   mem_destroy_strings( StringHeap );
-   xfree( Lines );		/* terminal */
-   Lines = StringHeap = InfoHeap = NULL;
+	if (!Lines) return;
+	mem_destroy_objects(InfoHeap);
+	mem_destroy_strings(StringHeap);
+	xfree(Lines);		/* terminal */
+	Lines = StringHeap = InfoHeap = NULL;
 }
 
 /* \doc |src_line| stores a |line| of length |len|. */
 
-const char *src_line( const char *line, int len )
+const char *src_line(const char *line, int len)
 {
-   char *pt;
+	char *pt;
    
-   if (!Lines) src_create();
+	if (!Lines) src_create();
    
-   ++Info.line;
-   Info.index  = Used;
-   Info.offset = 0;
+	++Info.line;
+	Info.index  = Used;
+	Info.offset = 0;
    
-   Lines[Used] = mem_strncpy( StringHeap, line, len );
-   for (pt = (char*)__UNCONST(Lines[Used]); *pt; pt++) if (*pt == '\t') *pt = ' ';
+	Lines[Used] = mem_strncpy(StringHeap, line, len);
+	for (pt = (char*)__UNCONST(Lines[Used]); *pt; pt++) if (*pt == '\t') *pt = ' ';
    
-   PRINTF(MAA_SRC,("Line %d: %s",Used,Lines[Used]));
+	PRINTF(MAA_SRC,("Line %d: %s",Used,Lines[Used]));
    
-   if (++Used >= Count)
-	 Lines = xrealloc( Lines, (Count += INCREMENT) * sizeof( char * ) );
+	if (++Used >= Count)
+		Lines = xrealloc(Lines, (Count += INCREMENT) * sizeof(char *));
    
-   return Lines[ Used - 1 ];
+	return Lines[ Used - 1 ];
 }
 
 /* \doc |src_new_file| specifies that |filename| is the name of the current
    file being read by the lexer. */
 
-void src_new_file( const char *filename )
+void src_new_file(const char *filename)
 {
-   Info.file = str_find( filename );
+   Info.file = str_find(filename);
 }
 
 /* \doc |src_new_line| specifies that |line| is the number of the current
    line being read by the lexer.  Line numbers start at 1. */
 
-void src_new_line( int line )
+void src_new_line(int line)
 {
-   Info.line = line;
+	Info.line = line;
 }
 
 /* \doc |src_advance| is used to advance the token offset pointer |length|
    bytes. */
 
-void src_advance( int length )
+void src_advance(int length)
 {
-   Info.offset += length;
+	Info.offset += length;
 }
 
-void src_cpp_line( const char *line, int length )
+void src_cpp_line(const char *line, int length)
 {
-   arg_List args;
-   char     *tmp = alloca( length + 1 );
-   int      lineno;
+	arg_List args;
+	char     *tmp = alloca(length + 1);
+	int      lineno;
 
-   strncpy( tmp, line, length );
-   tmp [ length ] = '\0';
+	strncpy(tmp, line, length);
+	tmp [ length ] = '\0';
 
-   args = arg_argify( tmp, 0 );
+	args = arg_argify(tmp, 0);
 
-   if ((lineno = atoi( arg_get( args, 1 ) )) > 0) --lineno;
-   else                                           lineno = 1;
-   src_new_line( lineno );
+	if ((lineno = atoi(arg_get(args, 1))) > 0) --lineno;
+	else                                           lineno = 1;
+	src_new_line(lineno);
 
-				/* FIXME! This is debugging cruft to be
-				   removed. */
-   if (arg_count( args ) == 2) {
-      PRINTF(MAA_SRC,( "lineno %s\n", arg_get( args, 1 ) ));
-   } else {
-      PRINTF(MAA_SRC,( "lineno %s in %s\n",
-		      arg_get( args, 1 ), arg_get( args, 2 ) ));
-      src_new_file( arg_get( args, 2 ) );
-   }
+	/* FIXME! This is debugging cruft to be
+	   removed. */
+	if (arg_count(args) == 2) {
+		PRINTF(MAA_SRC,("lineno %s\n", arg_get(args, 1)));
+	} else {
+		PRINTF(MAA_SRC,("lineno %s in %s\n",
+						arg_get(args, 1), arg_get(args, 2)));
+		src_new_file(arg_get(args, 2));
+	}
    
-   arg_destroy( args );
+	arg_destroy(args);
 }
 
 /* \doc |src_get| is used to get a |src_Type| object for the current token.
@@ -161,217 +161,217 @@ void src_cpp_line( const char *line, int length )
    can be used to print parse error messages and provide detailed token
    tracking. */
 
-src_Type src_get( int length )
+src_Type src_get(int length)
 {
-   sourceType *new;
+	sourceType *new;
 
-   if (!Lines)
-	 err_fatal( __func__, "Source manager does not exist\n" );
+	if (!Lines)
+		err_fatal(__func__, "Source manager does not exist\n");
    
-   Info.length = length;
-   new = mem_get_object( InfoHeap );
+	Info.length = length;
+	new = mem_get_object(InfoHeap);
 
-   new->file   = Info.file;
-   new->line   = Info.line;
-   new->offset = Info.offset;
-   new->length = Info.length;
-   new->index  = Info.index;	/* Index into Lines array. */
+	new->file   = Info.file;
+	new->line   = Info.line;
+	new->offset = Info.offset;
+	new->length = Info.length;
+	new->index  = Info.index;	/* Index into Lines array. */
 
-   if (dbg_test(MAA_SRC)) {
-      printf( "%s:%d @ %d, %d; %d\n",
-	      new->file,
-	      new->line,
-	      new->offset,
-	      new->length,
-	      new->index );
-   }
+	if (dbg_test(MAA_SRC)) {
+		printf("%s:%d @ %d, %d; %d\n",
+			   new->file,
+			   new->line,
+			   new->offset,
+			   new->length,
+			   new->index);
+	}
 
-   src_advance( length );
+	src_advance(length);
 
-   return new;
+	return new;
 }
 
 /* \doc |src_filename| returns the |file| associated with the specified
    |source| information. */
 
-const char *src_filename( src_Type source )
+const char *src_filename(src_Type source)
 {
-   sourceType *s = (sourceType *)source;
+	sourceType *s = (sourceType *)source;
 
-   if (!Lines)
-	 err_fatal( __func__, "Source manager never created\n" );
+	if (!Lines)
+		err_fatal(__func__, "Source manager never created\n");
 
-   return s ? s->file : "";
+	return s ? s->file : "";
 }
 
 /* \doc |src_linenumber| returns the |line| associated with the specified
    |source| information. */
 
-int src_linenumber( src_Type source )
+int src_linenumber(src_Type source)
 {
-   sourceType *s = (sourceType *)source;
+	sourceType *s = (sourceType *)source;
 
-   if (!Lines)
-	 err_fatal( __func__, "Source manager never created\n" );
+	if (!Lines)
+		err_fatal(__func__, "Source manager never created\n");
 
-   return s ? s->line : 0;
+	return s ? s->line : 0;
 }
 
 /* \doc |src_offset| returns the token |offset| associated with the
    specified |source| information. */
 
-int src_offset( src_Type source )
+int src_offset(src_Type source)
 {
-   sourceType *s = (sourceType *)source;
+	sourceType *s = (sourceType *)source;
 
-   if (!Lines)
-	 err_fatal( __func__, "Source manager never created\n" );
+	if (!Lines)
+		err_fatal(__func__, "Source manager never created\n");
 
-   return s ? s->offset : 0;
+	return s ? s->offset : 0;
 }
 
 /* \doc |src_length| returns the token |length| associated with the
    specified |source| information. */
 
-int src_length( src_Type source )
+int src_length(src_Type source)
 {
-   sourceType *s = (sourceType *)source;
+	sourceType *s = (sourceType *)source;
 
-   if (!Lines)
-	 err_fatal( __func__, "Source manager never created\n" );
+	if (!Lines)
+		err_fatal(__func__, "Source manager never created\n");
 
-   return s ? s->length : 0;
+	return s ? s->length : 0;
 }
 
 /* \doc |src_source_line| returns the full source line associated with the
    specified |source| information. */
 
-const char *src_source_line( src_Type source )
+const char *src_source_line(src_Type source)
 {
-   sourceType *s = (sourceType *)source;
+	sourceType *s = (sourceType *)source;
 
-   if (!Lines)
-	 err_fatal( __func__, "Source manager never created\n" );
+	if (!Lines)
+		err_fatal(__func__, "Source manager never created\n");
 
-   return s ? Lines[ s->index ] : "";
+	return s ? Lines[ s->index ] : "";
 }
 
 /* \doc |src_get_stats| returns the statistics associated with the source
    code manager.  The |src_Stats| structure is shown in
    \grind{src_Stats}. */
 
-src_Stats src_get_stats( void )
+src_Stats src_get_stats(void)
 {
-   src_Stats s = xmalloc( sizeof( struct src_Stats ) );
+	src_Stats s = xmalloc(sizeof(struct src_Stats));
 
-   if (Lines) {
-      mem_StringStats ms = mem_get_string_stats( StringHeap );
-      mem_ObjectStats mo = mem_get_object_stats( InfoHeap );
+	if (Lines) {
+		mem_StringStats ms = mem_get_string_stats(StringHeap);
+		mem_ObjectStats mo = mem_get_object_stats(InfoHeap);
       
-      s->lines_used      = Used;
-      s->lines_allocated = Count;
-      s->lines_bytes     = ms->bytes;
-      s->tokens_total    = mo->total;
-      s->tokens_reused   = mo->reused;
-      s->tokens_size     = mo->size;
+		s->lines_used      = Used;
+		s->lines_allocated = Count;
+		s->lines_bytes     = ms->bytes;
+		s->tokens_total    = mo->total;
+		s->tokens_reused   = mo->reused;
+		s->tokens_size     = mo->size;
 
-      xfree( ms );		/* rare */
-      xfree( mo );		/* rare */
-   } else {
-      s->lines_used      = 0;
-      s->lines_allocated = 0;
-      s->lines_bytes     = 0;
-      s->tokens_total    = 0;
-      s->tokens_reused   = 0;
-      s->tokens_size     = 0;
-   }
+		xfree(ms);		/* rare */
+		xfree(mo);		/* rare */
+	} else {
+		s->lines_used      = 0;
+		s->lines_allocated = 0;
+		s->lines_bytes     = 0;
+		s->tokens_total    = 0;
+		s->tokens_reused   = 0;
+		s->tokens_size     = 0;
+	}
 
-   return s;
+	return s;
 }
 
 /* \doc |src_print_stats| prints the statistics about the source code
    manager to the specified |stream|.  If |stream| is "NULL", then "stdout"
    will be used. */
 
-void src_print_stats( FILE *stream )
+void src_print_stats(FILE *stream)
 {
-   FILE      *str = stream ? stream : stdout;
-   src_Stats s    = src_get_stats();
+	FILE      *str = stream ? stream : stdout;
+	src_Stats s    = src_get_stats();
 
-   fprintf( str, "Statistics for source manager:\n" );
-   fprintf( str, "   %d lines using %d bytes (%d allocated)\n",
-	    s->lines_used, s->lines_bytes, s->lines_allocated );
-   fprintf( str, "   %d tokens using %d bytes (%d reused)\n",
-	    s->tokens_total, s->tokens_total * s->tokens_size,
-	    s->tokens_reused );
-   xfree( s );			/* rare */
+	fprintf(str, "Statistics for source manager:\n");
+	fprintf(str, "   %d lines using %d bytes (%d allocated)\n",
+			s->lines_used, s->lines_bytes, s->lines_allocated);
+	fprintf(str, "   %d tokens using %d bytes (%d reused)\n",
+			s->tokens_total, s->tokens_total * s->tokens_size,
+			s->tokens_reused);
+	xfree(s);			/* rare */
 }
 
-static void _src_print_yyerror( FILE *str, const char *message )
+static void _src_print_yyerror(FILE *str, const char *message)
 {
-   const char *pt;
-   char       buf[1024];
-   char       *b;
-   const char *concrete;
+	const char *pt;
+	char       buf[1024];
+	char       *b;
+	const char *concrete;
 
-   assert( str );
+	assert(str);
    
-   if (!message) {
-      fprintf( str, "(null)" );
-      return;
-   }
+	if (!message) {
+		fprintf(str, "(null)");
+		return;
+	}
 
-   for (pt = message; *pt; pt++) {
-      if (*pt == '`') {		/* clean up character constants */
-	 if (pt[1] == '`' && pt[2] && pt[3] == '\'' && pt[4] == '\'') {
-	    fprintf( str, "`%c'", pt[2] );
-	    pt += 4;
-	 } else if (pt[1] == 'T' && pt[2] == '_') { /* replace symbols */
-	    for (b = buf, ++pt; *pt && *pt != '\''; b++, pt++) *b = *pt;
-	    *b = '\0';
-	    if ((concrete = prs_concrete( buf )))
-	       fprintf( str, "`%s'", concrete );
-	    else
-	       fprintf( str, "`%s'", buf );
-	 } else
-	    putc( *pt, str );
-      } else
-	 putc( *pt, str );
-   }
+	for (pt = message; *pt; pt++) {
+		if (*pt == '`') {		/* clean up character constants */
+			if (pt[1] == '`' && pt[2] && pt[3] == '\'' && pt[4] == '\'') {
+				fprintf(str, "`%c'", pt[2]);
+				pt += 4;
+			} else if (pt[1] == 'T' && pt[2] == '_') { /* replace symbols */
+				for (b = buf, ++pt; *pt && *pt != '\''; b++, pt++) *b = *pt;
+				*b = '\0';
+				if ((concrete = prs_concrete(buf)))
+					fprintf(str, "`%s'", concrete);
+				else
+					fprintf(str, "`%s'", buf);
+			} else
+				putc(*pt, str);
+		} else
+			putc(*pt, str);
+	}
 }
 
 /* \doc |src_print_line| prints a line of source code, as described by
    |source| to the specified |stream|.  If |stream| is "NULL", then
    "stdout" will be used. */
 
-void src_print_line( FILE *stream, src_Type source )
+void src_print_line(FILE *stream, src_Type source)
 {
-   sourceType *s   = (sourceType *)source;
-   FILE       *str = stream ? stream : stdout;
+	sourceType *s   = (sourceType *)source;
+	FILE       *str = stream ? stream : stdout;
 
-   if (s)
-      fprintf( str, "%s:%d: %s", s->file, s->line, Lines[ s->index ] );
-   else
-      fprintf( str, "?:?: <source line not available>\n" );
+	if (s)
+		fprintf(str, "%s:%d: %s", s->file, s->line, Lines[ s->index ]);
+	else
+		fprintf(str, "?:?: <source line not available>\n");
 }
 
-static void _src_print_error( FILE *str, sourceType *s, int fudge )
+static void _src_print_error(FILE *str, sourceType *s, int fudge)
 {
-   int        i;
+	int        i;
 
-   assert( str );
+	assert(str);
 
-   src_print_line( str, s );
-   if (s) {
-      PRINTF(MAA_SRC,("s->offset = %d, fudge = %d, s->length = %d\n",
-		     s->offset, fudge, s->length ));
-      fprintf( str, "%s:%d: ", s->file, s->line );
-      for (i = 0; i < s->offset - fudge; i++) putc( ' ', str );
-      for (i = 0; i < s->length; i++) putc( '^', str );
-   } else {
-      fprintf( str, "?:?: " );
-   }
-   putc( '\n', str );
+	src_print_line(str, s);
+	if (s) {
+		PRINTF(MAA_SRC,("s->offset = %d, fudge = %d, s->length = %d\n",
+						s->offset, fudge, s->length));
+		fprintf(str, "%s:%d: ", s->file, s->line);
+		for (i = 0; i < s->offset - fudge; i++) putc(' ', str);
+		for (i = 0; i < s->length; i++) putc('^', str);
+	} else {
+		fprintf(str, "?:?: ");
+	}
+	putc('\n', str);
 }
 
 /* \doc |src_parse_error| will print the error |message| to the specified
@@ -385,17 +385,17 @@ static void _src_print_error( FILE *str, sourceType *s, int fudge )
    function, since it is relatively specific to this author's coding
    conventions. */
 
-void src_parse_error( FILE *stream, src_Type source, const char *message )
+void src_parse_error(FILE *stream, src_Type source, const char *message)
 {
-   sourceType *s   = (sourceType *)source;
-   FILE       *str = stream ? stream : stdout;
+	sourceType *s   = (sourceType *)source;
+	FILE       *str = stream ? stream : stdout;
 
-   if (s) fprintf( str, "%s:%d: ", s->file, s->line );
-   else   fprintf( str, "?:?: " );
-   _src_print_yyerror( str, message );
-   putc( '\n', str );
+	if (s) fprintf(str, "%s:%d: ", s->file, s->line);
+	else   fprintf(str, "?:?: ");
+	_src_print_yyerror(str, message);
+	putc('\n', str);
 
-   _src_print_error( str, s, 0 );
+	_src_print_error(str, s, 0);
 }
 
 /* \doc |src_print_error| will print an arbitrary error, specified as for
@@ -403,42 +403,42 @@ void src_parse_error( FILE *stream, src_Type source, const char *message )
    by the line of source code specified by |source|.  If |stream| is
    "NULL", then "stdout" will be used. */
 
-void src_print_error( FILE *str, src_Type source, const char *format, ... )
+void src_print_error(FILE *str, src_Type source, const char *format, ...)
 {
-   va_list    ap;
-   sourceType *s = (sourceType *)source;
+	va_list    ap;
+	sourceType *s = (sourceType *)source;
 
-   fflush( str );
-   if (format) {
-      if (s)
-         fprintf( str, "%s:%d: ", s->file, s->line );
-      else
-         fprintf( str, "?:?: " );
-      va_start( ap, format );
-      vfprintf( str, format, ap );
-      va_end( ap );
-      putc( '\n', str );
-   }
+	fflush(str);
+	if (format) {
+		if (s)
+			fprintf(str, "%s:%d: ", s->file, s->line);
+		else
+			fprintf(str, "?:?: ");
+		va_start(ap, format);
+		vfprintf(str, format, ap);
+		va_end(ap);
+		putc('\n', str);
+	}
    
-   _src_print_error( str, s, 0 );
+	_src_print_error(str, s, 0);
 }
 
 /* \doc |src_print_message| will just print a message labeled with a line. */
 
-void src_print_message( FILE *str, src_Type source, const char *format, ... )
+void src_print_message(FILE *str, src_Type source, const char *format, ...)
 {
-   va_list    ap;
-   sourceType *s = (sourceType *)source;
+	va_list    ap;
+	sourceType *s = (sourceType *)source;
 
-   fflush( str );
-   if (format) {
-      if (s)
-         fprintf( str, "%s:%d: ", s->file, s->line );
-      else
-         fprintf( str, "?:?: " );
-      va_start( ap, format );
-      vfprintf( str, format, ap );
-      va_end( ap );
-      putc( '\n', str );
-   }
+	fflush(str);
+	if (format) {
+		if (s)
+			fprintf(str, "%s:%d: ", s->file, s->line);
+		else
+			fprintf(str, "?:?: ");
+		va_start(ap, format);
+		vfprintf(str, format, ap);
+		va_end(ap);
+		putc('\n', str);
+	}
 }
