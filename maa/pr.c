@@ -356,7 +356,7 @@ int pr_readwrite(int in, int out,
 									  "End of output, but input not flushed");
 						if ((status = pr_close(out)))
 							err_warning(__func__,
-										"Filter had non-zero exit status: 0x%x\n",
+										"Filter had non-zero exit status: 0x%x",
 										status);
 						return outLen;
 					} else if (errno != EAGAIN)

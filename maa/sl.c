@@ -96,7 +96,7 @@ static int _sl_check_entry(_sl_Entry e, const char *function)
 #if MAA_MAGIC
 	if (e->magic != SL_ENTRY_MAGIC) {
 		err_warning(function,
-					"Bad magic: 0x%08x (should be 0x%08x)\n",
+					"Bad magic: 0x%08x (should be 0x%08x)",
 					e->magic,
 					SL_ENTRY_MAGIC);
 		return 1;
