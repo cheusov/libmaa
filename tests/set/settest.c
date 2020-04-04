@@ -41,6 +41,11 @@ static int freer( const void *key )
 	return 0;
 }
 
+static unsigned long hsh_string_hash_32bit(const void *key)
+{
+	return hsh_string_hash(key) & 0xFFFFFFFFul;
+}
+
 int main( int argc, char **argv )
 {
 	set_Set      t;
@@ -64,7 +69,7 @@ int main( int argc, char **argv )
 	printf( "Running test for count of %d\n", count );
 
 	/* Test sequential keys */
-	t = set_create( NULL, NULL );
+	t = set_create( hsh_string_hash_32bit, NULL );
    
 	for (i = 0; i < count; i++) {
 		char *key   = xmalloc( 20 );
@@ -91,7 +96,7 @@ int main( int argc, char **argv )
 
 
 	/* Test random keys */
-	t = set_create( NULL, NULL );
+	t = set_create( hsh_string_hash_32bit, NULL );
 
 	init_rand();
 	for (i = 0; i < count; i++) {
@@ -151,8 +156,8 @@ int main( int argc, char **argv )
 
 	/* Test set operations */
 
-	t1 = set_create( NULL, NULL );
-	t2 = set_create( NULL, NULL );
+	t1 = set_create( hsh_string_hash_32bit, NULL );
+	t2 = set_create( hsh_string_hash_32bit, NULL );
 
 	set_insert( t1, "foo" );
 	set_insert( t1, "bar" );

@@ -94,6 +94,12 @@ static int free_data( const void *key, const void *datum )
 	return 0;
 }
 
+// this test function is just for test succeeded
+static unsigned long hsh_string_hash_32bit(const void *key)
+{
+	return hsh_string_hash(key) & 0xFFFFFFFFul;
+}
+
 static void test_hsh_strings(int count)
 {
 	hsh_HashTable t;
@@ -101,7 +107,7 @@ static void test_hsh_strings(int count)
 	int           j;
 
 	/* Test sequential keys */
-	t = hsh_create( NULL, NULL );
+	t = hsh_create( hsh_string_hash_32bit, NULL );
    
 	for (i = 0; i < count; i++) {
 		char *key   = get_key(i);
