@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
 	maa_init(argv [0]);
 
-	log_file ("errtest", "log.log");
+	log_file("errtest", "log.log");
 
 	switch (num){
 		case 1:

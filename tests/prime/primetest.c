@@ -26,12 +26,12 @@
 
 #include "maaP.h"
 
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
 	if (argc != 2) {
-		printf( "%lu\n", prm_next_prime( 10000 ) );
+		printf("%lu\n", prm_next_prime(10000));
 	} else {
-		printf( "%lu\n", prm_next_prime( strtoul( argv[1], NULL, 0 ) ) );
+		printf("%lu\n", prm_next_prime(strtoul(argv[1], NULL, 0)));
 	}
 	return 0;
 }

@@ -25,7 +25,7 @@
 
 #include "maaP.h"
 
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
 	const char *logfn;
 
@@ -34,24 +34,24 @@ int main( int argc, char **argv )
 	if (!argc)
 		return 1;
 
-	logfn = argv [0];
+	logfn = argv[0];
 
-	maa_init (argv [0]);
+	maa_init(argv[0]);
 
-	log_file ("logtest", logfn);
+	log_file("logtest", logfn);
 
-	log_error ("main", "Error??? No-o-o-o... :-)");
+	log_error("main", "Error??? No-o-o-o... :-)");
 
 	log_set_facility("syslog");
-	log_error ("main", "log_facility: %s", log_get_facility());
-	log_info ("five: %d", 5);
+	log_error("main", "log_facility: %s", log_get_facility());
+	log_info("five: %d", 5);
 
 	log_syslog("ident");
 	log_syslog(NULL);
 
 	log_close();
 
-	maa_shutdown ();
+	maa_shutdown();
 
 	return 0;
 }

@@ -26,13 +26,13 @@
 
 #include <stdio.h>
 
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
 	stk_Stack     stack = NULL;
 	stk_Stack     stack2 = NULL;
 	void *        datum;
 
-	maa_init( argv[0] );
+	maa_init(argv[0]);
    
 	stack = stk_create();
 
