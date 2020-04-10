@@ -1,4 +1,23 @@
 ========================================================================
+Version 1.4.7, by Aleksey Cheusov, Sat, 11 Apr 2020 01:03:28 +0300
+
+  Fix incorrect work of set_* where hash function generates full
+  ulong_t hash value
+
+  hsh_string_hash generates full 64bit hash value on platforms where
+  sizeof(long) == 8
+
+  Improve build and test system
+
+  tests/err: minor fix, target "test" should not remove _mkc_* and .o files
+
+  Avoid trailing \n in format argument for err_* functions, no need
+  for it any longer
+
+  tests/err/errtest.c: fix another compilation failure due to __wur
+  (warning used result)
+
+========================================================================
 Version 1.4.6, by Aleksey Cheusov, Mon, 30 Mar 2020 21:32:23 +0300
 
   Add missing fix (compilation failure) for tests/err/errtest.c
