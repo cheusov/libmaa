@@ -496,7 +496,7 @@ unsigned long hsh_string_hash(const void *key)
 #endif
 	}
 
-	return h & 0xffffffff;
+	return h;
 }
 
 unsigned long hsh_pointer_hash(const void *key)

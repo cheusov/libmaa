@@ -41,7 +41,7 @@
 
 typedef struct bucket {
 	const void    *elem;
-	unsigned int   hash;
+	unsigned long  hash;
 	struct bucket *next;
 } *bucketType;
 
@@ -196,7 +196,7 @@ void set_destroy(set_Set set)
 	_set_destroy_table(set);
 }
 
-static void _set_insert(set_Set set, unsigned int hash, const void *elem)
+static void _set_insert(set_Set set, unsigned long hash, const void *elem)
 {
 	setType       t = (setType)set;
 	unsigned long h = hash % t->prime;

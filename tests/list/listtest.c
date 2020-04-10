@@ -26,47 +26,48 @@
 
 #include "maaP.h"
 
-static int print( const void *datum )
+static int print(const void *datum)
 {
-	printf( "%s ", (char*) __UNCONST(datum) );
+	printf("%s ", (char*) __UNCONST(datum));
 	return 0;
 }
 
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
 	lst_List     list = lst_create();
 	lst_Position p;
 	char         *e;
 	long         i;
 
-	maa_init( argv[0] );
+	maa_init(argv[0]);
 
-	lst_append( list, "1" );
-	lst_iterate( list, print ); printf( "\n" );
+	lst_append(list, "1");
+	lst_iterate(list, print); printf("\n");
 
-	lst_append( list, "2" );
-	lst_append( list, "3" );
-	lst_iterate( list, print ); printf( "\n" );
+	lst_append(list, "2");
+	lst_append(list, "3");
+	lst_iterate(list, print); printf("\n");
    
-	lst_push( list, "0" );
-	lst_iterate( list, print ); printf( "\n" );
-	printf( "Length = %d (expect 4)\n", lst_length( list ) );
+	lst_push(list, "0");
+	lst_iterate(list, print); printf("\n");
+	printf("Length = %d (expect 4)\n", lst_length(list));
 
 	LST_ITERATE(list,p,e) {
-		printf( "%s ", e );
+		printf("%s ", e);
 	}
-	printf( "\n" );
+	printf("\n");
 
-	lst_pop( list );
-	lst_iterate( list, print ); printf( "\n" );
-	printf( "Length = %d (expect 3)\n", lst_length( list ) );
+	lst_pop(list);
+	lst_iterate(list, print); printf("\n");
+	printf("Length = %d (expect 3)\n", lst_length(list));
 
-	lst_truncate( list, 1 );
-	lst_iterate( list, print ); printf( "\n" );
-	printf( "Length = %d (expect 1)\n", lst_length( list ) );
+	lst_truncate(list, 1);
+	lst_iterate(list, print); printf("\n");
+	printf("Length = %d (expect 1)\n", lst_length(list));
 
-	for (i = 0; i < 10000; i++) lst_push( list, (void *)i );
+	for (i = 0; i < 10000; i++)
+		lst_push(list, (void *)i);
    
-	lst_destroy( list );
+	lst_destroy(list);
 	return 0;
 }

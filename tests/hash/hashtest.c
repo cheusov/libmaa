@@ -32,8 +32,8 @@
 #  define INT2PTR(x) ((void *)((char *)0 + x))
 #endif
 
-extern void init_rand( void );
-extern int get_rand( int ll, int ul );
+extern void init_rand(void);
+extern int get_rand(int ll, int ul);
 
 static char *get_static_key(int key)
 {
@@ -63,35 +63,41 @@ static char *get_datum(int datum)
 	return xstrdup(ret);
 }
 
-static int iterator( const void *key, const void *datum )
+static int iterator(const void *key, const void *datum)
 {
-	printf( "%s: %s\n", (const char *)key, (const char *)datum );
+	printf("%s: %s\n", (const char *)key, (const char *)datum);
 	return 0;
 }
 
-static int iterator_arg( const void *key, const void *datum, void *arg )
+static int iterator_arg(const void *key, const void *datum, void *arg)
 {
 	if (arg) {
-		printf( "%s: %s (%u)\n", (const char *)key, (const char *)datum,
+		printf("%s: %s (%u)\n", (const char *)key, (const char *)datum,
 				(unsigned)((char *)arg - (char *)NULL));
 		return strchr((const char *)datum, '5') != NULL;
 	} else {
-		printf( "%s: %s\n", (const char *)key, (const char *)datum);
+		printf("%s: %s\n", (const char *)key, (const char *)datum);
 		return 0;
 	}
 }
 
-static int freer( const void *key, const void *datum )
+static int freer(const void *key, const void *datum)
 {
-	xfree( __UNCONST(datum) );
-	xfree( __UNCONST(key) );
+	xfree(__UNCONST(datum));
+	xfree(__UNCONST(key));
 	return 0;
 }
 
-static int free_data( const void *key, const void *datum )
+static int free_data(const void *key, const void *datum)
 {
-	xfree( __UNCONST(datum) );
+	xfree(__UNCONST(datum));
 	return 0;
+}
+
+// this test function is just for test succeeded
+static unsigned long hsh_string_hash_32bit(const void *key)
+{
+	return hsh_string_hash(key) & 0xFFFFFFFFul;
 }
 
 static void test_hsh_strings(int count)
@@ -101,13 +107,13 @@ static void test_hsh_strings(int count)
 	int           j;
 
 	/* Test sequential keys */
-	t = hsh_create( NULL, NULL );
+	t = hsh_create(hsh_string_hash_32bit, NULL);
    
 	for (i = 0; i < count; i++) {
 		char *key   = get_key(i);
 		char *datum = get_datum(i);
 
-		hsh_insert( t, key, datum );
+		hsh_insert(t, key, datum);
 	}
 
 	for (i = count + 1; i >= -2; i--) {
@@ -115,39 +121,39 @@ static void test_hsh_strings(int count)
 		char *datum = get_static_datum(i);
 		const char *pt;
 
-		pt = hsh_retrieve( t, key );
+		pt = hsh_retrieve(t, key);
 
-		if (!pt || strcmp( pt, datum )) {
-			printf( "Expected \"%s\", got \"%s\"\n", datum, pt ? pt : "(null)" );
+		if (!pt || strcmp(pt, datum)) {
+			printf("Expected \"%s\", got \"%s\"\n", datum, pt ? pt : "(null)");
 		}
 	}
 
 	/* Iterating */
-	printf( "Iteration 1\n");
+	printf("Iteration 1\n");
 	if (count <= 200)
-		hsh_iterate( t, iterator );
+		hsh_iterate(t, iterator);
 
 	/* Delete items 60-70 */
 	for (i = 60; i <= 70; ++i) {
-		hsh_delete( t, get_static_key(i));
+		hsh_delete(t, get_static_key(i));
 	}
 
 	/* Iterating */
-	printf( "Iteration 2\n");
+	printf("Iteration 2\n");
 	if (count <= 200) {
-		int ret = hsh_iterate_arg( t, iterator_arg, NULL);
+		int ret = hsh_iterate_arg(t, iterator_arg, NULL);
 		printf("hsh_iterate_arg returned %d\n", ret);
 	}
 
 	/* Partial iterating */
-	printf( "Iteration 3\n");
+	printf("Iteration 3\n");
 	if (count <= 200) {
-		int ret = hsh_iterate_arg( t, iterator_arg, (char *)NULL + 7 );
+		int ret = hsh_iterate_arg(t, iterator_arg, (char *)NULL + 7);
 		printf("hsh_iterate_arg returned %d\n", ret);
 	}
 
 	/* Iterating */
-	printf( "Iteration 4\n");
+	printf("Iteration 4\n");
 	hsh_Position hsh_pos;
 	void * hsh_key;
 	void * hsh_data;
@@ -165,50 +171,50 @@ static void test_hsh_strings(int count)
 	}
 	HSH_ITERATE_END(t);
 
-	/*   hsh_print_stats( t, stdout );*/
+	/*   hsh_print_stats(t, stdout);*/
 
 	/* Deleting everything */
-	hsh_iterate( t, freer );
-	hsh_destroy( t );
+	hsh_iterate(t, freer);
+	hsh_destroy(t);
 
 	/* Test random keys */
-	t = hsh_create( NULL, NULL );
+	t = hsh_create(NULL, NULL);
 
 	init_rand();
 	for (i = 0; i < count; i++) {
-		int  len = get_rand( 2, 32 );
-		char *key   = xmalloc( len + 1 );
+		int  len = get_rand(2, 32);
+		char *key   = xmalloc(len + 1);
 		char *datum = get_datum(i);
 
-		for (j = 0; j < len; j++) key[j] = get_rand( 32, 128 );
+		for (j = 0; j < len; j++) key[j] = get_rand(32, 128);
 		key[ len ] = '\0';
-		hsh_insert( t, key, datum );
+		hsh_insert(t, key, datum);
 	}
 
 	init_rand();
 	for (i = 0; i < count; i++) {
-		int         len = get_rand( 2, 32 );
-		char       *key = xmalloc( len + 1 );
+		int         len = get_rand(2, 32);
+		char       *key = xmalloc(len + 1);
 		char       *datum = get_static_datum(i);
 		const char *pt;
 
 		for (j = 0; j < len; j++)
-			key[j] = get_rand( 32, 128 );
+			key[j] = get_rand(32, 128);
 
 		key[ len ] = '\0';
-		pt = hsh_retrieve( t, key );
+		pt = hsh_retrieve(t, key);
 
-		if (!pt || strcmp( pt, datum ))
-			printf( "Expected \"%s\", got \"%s\" for key \"%s\"\n",
-					datum, pt, key );
+		if (!pt || strcmp(pt, datum))
+			printf("Expected \"%s\", got \"%s\" for key \"%s\"\n",
+					datum, pt, key);
 
-		xfree( key );
+		xfree(key);
 	}
    
-	/*   hsh_print_stats( t, stdout );*/
+	/*   hsh_print_stats(t, stdout);*/
 
-	hsh_iterate( t, freer );
-	hsh_destroy( t );
+	hsh_iterate(t, freer);
+	hsh_destroy(t);
 }
 
 static void test_hsh_integers(int count)
@@ -216,33 +222,33 @@ static void test_hsh_integers(int count)
 	hsh_HashTable t;
 	int           i;
 
-	t = hsh_create( hsh_pointer_hash, hsh_pointer_compare );
+	t = hsh_create(hsh_pointer_hash, hsh_pointer_compare);
 
 	init_rand();
 	for (i = 0; i < count; i++) {
-		long key    = get_rand( 1, 16777216 );
+		long key    = get_rand(1, 16777216);
 		char *datum = get_datum(i);
 
-		hsh_insert( t, INT2PTR(key), datum );
+		hsh_insert(t, INT2PTR(key), datum);
 	}
 
 	init_rand();
 	for (i = 0; i < count; i++) {
-		long        key = get_rand( 1, 16777216 );
+		long        key = get_rand(1, 16777216);
 		char       *datum = get_static_datum(i);
 		const char *pt;
 
-		pt = hsh_retrieve( t, INT2PTR(key) );
+		pt = hsh_retrieve(t, INT2PTR(key));
 
-		if (!pt || strcmp( pt, datum ))
-			printf( "Expected \"%s\", got \"%s\" for key %ld\n",
-					datum, pt, key );
+		if (!pt || strcmp(pt, datum))
+			printf("Expected \"%s\", got \"%s\" for key %ld\n",
+					datum, pt, key);
 	}
    
-	/*   hsh_print_stats( t, stdout );*/
+	/*   hsh_print_stats(t, stdout);*/
 
-	hsh_iterate( t, free_data );
-	hsh_destroy( t );
+	hsh_iterate(t, free_data);
+	hsh_destroy(t);
 }
 
 static void test_hsh_pointer_compare(void)
@@ -256,20 +262,20 @@ static void test_hsh_pointer_compare(void)
 	printf("p1 vs. p1: %d\n", hsh_pointer_compare(p1, p1));
 }
 
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
 	int           count;
 
 	if (argc == 1) {
 		count = 100;
-	} else if (argc != 2 ) {
-		fprintf( stderr, "usage: hashtest count\n" );
+	} else if (argc != 2) {
+		fprintf(stderr, "usage: hashtest count\n");
 		return 1;
 	} else {
-		count = atoi( argv[1] );
+		count = atoi(argv[1]);
 	}
 
-	printf( "Running test for count of %d\n", count );
+	printf("Running test for count of %d\n", count);
 
 	test_hsh_strings(count);
 	test_hsh_integers(count);

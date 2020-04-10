@@ -26,54 +26,54 @@
 
 #include "maaP.h"
 
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
 	long int   i;
 	const char *result;
 	long int   limit = 0xffff;
 
-	if (argc == 2) limit = strtol( argv[1], NULL, 0 );
+	if (argc == 2) limit = strtol(argv[1], NULL, 0);
    
 	for (i = 0; i < limit; i++) {
-		result = b26_encode( i );
-		if (i != b26_decode( result )) {
-			printf( "%s => %ld != %ld\n", result, b26_decode( result ), i );
+		result = b26_encode(i);
+		if (i != b26_decode(result)) {
+			printf("%s => %ld != %ld\n", result, b26_decode(result), i);
 		}
 		if (i < 100) {
-			result = b26_encode( 0 );
-			if (0 != b26_decode( result )) {
-				printf( "%s => %ld != %ld (cache problem)\n",
-						result, b26_decode( result ), 0L );
+			result = b26_encode(0);
+			if (0 != b26_decode(result)) {
+				printf("%s => %ld != %ld (cache problem)\n",
+						result, b26_decode(result), 0L);
 			}
-			result = b26_encode( i );
-			if (i != b26_decode( result )) {
-				printf( "%s => %ld != %ld (cache problem)\n",
-						result, b64_decode( result ), i );
+			result = b26_encode(i);
+			if (i != b26_decode(result)) {
+				printf("%s => %ld != %ld (cache problem)\n",
+						result, b64_decode(result), i);
 			}
 		}
 		if (i < 10 || !(i % (limit/10)))
-			printf( "%ld = %s (base26)\n", i, result );
+			printf("%ld = %s (base26)\n", i, result);
 	}
 
 	for (i = 0; i < limit; i++) {
-		result = b64_encode( i );
-		if (i != b64_decode( result )) {
-			printf( "%s => %ld != %ld\n", result, b64_decode( result ), i );
+		result = b64_encode(i);
+		if (i != b64_decode(result)) {
+			printf("%s => %ld != %ld\n", result, b64_decode(result), i);
 		}
 		if (i < 100) {
-			result = b64_encode( 0 );
-			if (0 != b64_decode( result )) {
-				printf( "%s => %ld != %ld (cache problem)\n",
-						result, b64_decode( result ), 0L );
+			result = b64_encode(0);
+			if (0 != b64_decode(result)) {
+				printf("%s => %ld != %ld (cache problem)\n",
+						result, b64_decode(result), 0L);
 			}
-			result = b64_encode( i );
-			if (i != b64_decode( result )) {
-				printf( "%s => %ld != %ld (cache problem)\n",
-						result, b64_decode( result ), i );
+			result = b64_encode(i);
+			if (i != b64_decode(result)) {
+				printf("%s => %ld != %ld (cache problem)\n",
+						result, b64_decode(result), i);
 			}
 		}
 		if (i < 10 || !(i % (limit/10)))
-			printf( "%ld = %s (base64)\n", i, result );
+			printf("%ld = %s (base64)\n", i, result);
 	}
 
 	return 0;
