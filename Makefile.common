@@ -5,3 +5,5 @@ MAA_TEENY =	0
 DOCDIR     ?=   ${DATADIR}/doc/libmaa
 
 VERSION =	1.4.7
+
+COPTS ?=	-O2 -g
