@@ -300,7 +300,7 @@ static void _log_base_va(
 	time_t t;
 	static char   buf [8192] = "";
 	static char   buf_main [4096] = "";
-	static char   buf_preamble [256] = "";
+	static char   buf_preamble [256 + MAXHOSTNAMELEN] = "";
 
 	va_copy (ap_copy, ap);
 
