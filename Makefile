@@ -11,6 +11,8 @@ test-tests/${d}: all-tests/${d}     # new inter-target dependency
 
 SUBPRJ    +=	doc
 
+SUBPRJ_DFLT = maa test
+
 NODEPS    +=	install-tests/*:*     # do not install tests
 NODEPS    +=	all-tests/*:*         # do not build tests by default
 NODEPS    +=	test-doc:* test-maa:* # nothing to test in doc/ and maa/
