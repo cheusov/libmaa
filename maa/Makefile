@@ -3,8 +3,6 @@
 MKC_REQUIRE_PROGS +=	awk
 
 ##################################################
-WARNS   ?=	4
-WARNERR ?=	yes
 
 LIB  =		maa
 INCS =		maa.h

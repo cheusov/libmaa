@@ -1,8 +1,7 @@
 PROG =	prtest
 SRCS =	prtest.c
 
-WARNS   =	4
-WARNERR =	yes
+CFLAGS.check +=	-Wno-error=unused-result
 
 .include "../../mk/test.mk"
 .include <mkc.prog.mk>
