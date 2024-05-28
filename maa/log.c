@@ -314,7 +314,7 @@ static void _log_base_va(
 			buf_preamble [0] = 0;
 		} else {
 			snprintf (buf_preamble, sizeof (buf_preamble),
-					  "%24.24s %s %s[%ld]: ",
+					  "%24.24s %.64s %s[%ld]: ",
 					  ctime(&t),
 					  logHostname,
 					  logIdent,
