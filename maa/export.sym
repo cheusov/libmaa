@@ -165,6 +165,7 @@ arg_count
 arg_get_vector
 arg_argify
 pr_open
+pr_open2
 pr_close_nowait
 pr_close
 pr_wait

@@ -1,7 +1,7 @@
 /* prtest.c -- 
  * Created: Fri Jan 12 14:18:32 1996 by faith@dict.org
  * Copyright 1996, 2002 Rickard E. Faith (faith@dict.org)
- * Copyright 2002-2008 Aleksey Cheusov (vle@gmx.net)
+ * Copyright 2002-2024 Aleksey Cheusov (vle@gmx.net)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -10,10 +10,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,7 +24,15 @@
  *
  */
 
+#include <stdio.h>
+
 #include "maaP.h"
+
+static void callback(void)
+{
+	printf("baz\n");
+	fflush(stdout);
+}
 
 int main(int argc, char **argv)
 {
@@ -60,28 +68,24 @@ int main(int argc, char **argv)
 	}
 	printf("status = 0x%02x\n", pr_close (fdout));
 
-#if 0
-	printf("%s\n", maa_version());
+	pr_open2("echo foobar", callback, PR_USE_STDIN | PR_CREATE_STDOUT,
+			 NULL, &fdin, NULL);
 
-	pr_open("echo foobar", PR_USE_STDIN | PR_CREATE_STDOUT,
-			 NULL, &instr, NULL);
-   
 	pr_open("cat", PR_USE_STDIN | PR_CREATE_STDOUT,
-			 &instr, &outstr, NULL);
-	fgets(buf, sizeof(buf), outstr);
+			 &fdin, &fdout, NULL);
+	read(fdout, buf, sizeof(buf));
 	printf("Got \"%s\"\n", buf);
 
-	printf("status = 0x%02x\n", pr_close(outstr));
+	printf("status = 0x%02x\n", pr_close(fdout));
 
 	pr_open("cat", PR_CREATE_STDIN | PR_CREATE_STDOUT,
-			 &instr, &outstr, NULL);
-	fprintf(instr, "this is a test\n");
-	fflush(instr);
-	fgets(buf, sizeof(buf), outstr);
+			 &fdin, &fdout, NULL);
+	static const char message[] = "this is a test\n";
+	write(fdin, message, sizeof(message));
+	read(fdout, buf, sizeof(buf));
 	printf("Got \"%s\"\n", buf);
-	printf("status = 0x%02x\n", pr_close(instr));
-	printf("status = 0x%02x\n", pr_close(outstr));
-#endif
-   
+	printf("status = 0x%02x\n", pr_close(fdin));
+	printf("status = 0x%02x\n", pr_close(fdout));
+
 	return 0;
 }

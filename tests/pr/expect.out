@@ -1,3 +1,14 @@
 Got: "foo
 "
 status = 0x00
+baz
+Got: "foo
+"
+status = 0x00
+Got "foobar
+"
+status = 0x00
+Got "this is a test
+"
+status = 0x00
+status = 0x00

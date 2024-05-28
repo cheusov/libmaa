@@ -493,6 +493,8 @@ extern arg_List   arg_argify(const char *string, int quoteStyle);
 #define PR_CREATE_STDERR    0x00000040
 #define PR_STDERR_TO_STDOUT 0x00000100
 
+extern int pr_open2(const char *command, void(*callback)(void), int flags,
+					int *infd, int *outfd, int *errfd);
 extern int  pr_open(const char *command, int flags,
 					int *infd, int *outfd, int *errfd);
 extern int  pr_close_nowait(int fd);

@@ -1,7 +1,7 @@
 /* pr.c -- Process creation and tracking support
  * Created: Sun Jan  7 13:34:08 1996 by faith@dict.org
  * Copyright 1996, 2002 Rickard E. Faith (faith@dict.org)
- * Copyright 2002-2008 Aleksey Cheusov (vle@gmx.net)
+ * Copyright 2002-2024 Aleksey Cheusov (vle@gmx.net)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -10,10 +10,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,7 +27,7 @@
  * \intro The process management routines are designed to facilitate the
  * creation and management of child processes, coprocesses, and associated
  * pipelines and I/O.  Some support for daemons and socket connections is
- * also provided. 
+ * also provided 
  *
  */
 
@@ -108,7 +108,14 @@ void _pr_shutdown(void)
 	}
 }
 
-int pr_open(const char *command, int flags, int *infd, int *outfd, int *errfd)
+
+int pr_open(const char *command, int flags, int *infd, int *outfd, int *errfs)
+{
+	return pr_open2(command, NULL, flags, infd, outfd, errfs);
+}
+
+int pr_open2(const char *command, void(*callback)(void),
+			 int flags, int *infd, int *outfd, int *errfd)
 {
 	int        pid;
 	int        fdin[2];
@@ -118,7 +125,7 @@ int pr_open(const char *command, int flags, int *infd, int *outfd, int *errfd)
 	int        argc;
 	char       **argv;
 	int        null;
-   
+
 	_pr_init();
 
 	if (flags & ~(PR_USE_STDIN | PR_USE_STDOUT | PR_USE_STDERR
@@ -135,7 +142,7 @@ int pr_open(const char *command, int flags, int *infd, int *outfd, int *errfd)
 		&& ((flags & PR_USE_STDERR) || (flags & PR_CREATE_STDERR)))
 		err_internal(__func__,
 					 "Cannot use/create stderr when duping to stdout");
-   
+
 	list = arg_argify(command, 0);
 	arg_get_vector(list, &argc, &argv);
 	PRINTF(MAA_PR,("Execing %s with \"%s\"\n", argv[0], command));
@@ -146,12 +153,15 @@ int pr_open(const char *command, int flags, int *infd, int *outfd, int *errfd)
 		err_fatal_errno(__func__, "Cannot create pipe for stdout");
 	if ((flags & PR_CREATE_STDERR) && pipe(fderr) < 0)
 		err_fatal_errno(__func__, "Cannot create pipe for stderr");
-   
+
 	if ((pid = fork()) < 0)
 		err_fatal_errno(__func__, "Cannot fork");
 
 	if (pid == 0) {		/* child */
 		int        i;
+
+		if (callback)
+			callback();
 
 #define CHILD(CREATE,USE,fds,writefd,readfd,fd,FILENO,flag)		\
 		if (flags & CREATE) {									\
