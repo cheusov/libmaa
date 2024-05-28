@@ -17,8 +17,9 @@ NODEPS    +=	test-doc:* test-maa:* # nothing to test in doc/ and maa/
 
 ##################################################
 
-MKC_REQD  =	0.29.1
+MKC_REQD  =	0.34.0
 
 ##################################################
+.include "help.mk"
 .include "Makefile.common"
 .include <mkc.subprj.mk>
