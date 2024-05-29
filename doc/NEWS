@@ -1,4 +1,9 @@
 ========================================================================
+Version 1.5.1, by Aleksey Cheusov, Wed, 29 May 2024 19:24:58 +0400
+
+  Improve tests/pr test
+
+========================================================================
 Version 1.5.0, by Aleksey Cheusov, Wed, 29 May 2024 01:20:58 +0400
 
   Add new function pr_open2 with argument "callback" ran from child
