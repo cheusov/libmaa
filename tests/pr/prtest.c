@@ -25,8 +25,11 @@
  */
 
 #include <stdio.h>
+#include <errno.h>
 
 #include "maaP.h"
+
+#define BUFFER_SIZE 1024
 
 static void callback(void)
 {
@@ -38,7 +41,7 @@ int main(int argc, char **argv)
 {
 	int  fdin = 0;
 	int  fdout;
-	char buf[BUFSIZ];
+	char buf[BUFFER_SIZE];
 	int  c;
 	int  i;
 	ssize_t cnt = 0;
@@ -62,7 +65,7 @@ int main(int argc, char **argv)
 	}
 
 	printf ("Got:");
-	while (cnt = read(fdout, buf, BUFSIZ-1), cnt > 0){
+	while (cnt = read(fdout, buf, BUFFER_SIZE), cnt > 0){
 		buf [cnt] = 0;
 		printf(" \"%s\"\n", buf);
 	}
@@ -73,7 +76,9 @@ int main(int argc, char **argv)
 
 	pr_open("cat", PR_USE_STDIN | PR_CREATE_STDOUT,
 			 &fdin, &fdout, NULL);
-	read(fdout, buf, sizeof(buf));
+	ssize_t size = read(fdout, buf, sizeof(buf));
+	assert(size == 7);
+	buf[size] = '\0';
 	printf("Got \"%s\"\n", buf);
 
 	printf("status = 0x%02x\n", pr_close(fdout));
@@ -81,11 +86,15 @@ int main(int argc, char **argv)
 	pr_open("cat", PR_CREATE_STDIN | PR_CREATE_STDOUT,
 			 &fdin, &fdout, NULL);
 	static const char message[] = "this is a test\n";
-	write(fdin, message, sizeof(message));
-	read(fdout, buf, sizeof(buf));
+	size = write(fdin, message, sizeof(message) - 1);
+	assert(size == sizeof(message) - 1);
+	size = read(fdout, buf, sizeof(buf));
+	assert(size == sizeof(message) - 1);
+	buf[size] = '\0';
 	printf("Got \"%s\"\n", buf);
 	printf("status = 0x%02x\n", pr_close(fdin));
 	printf("status = 0x%02x\n", pr_close(fdout));
+	fflush(stdout);
 
 	return 0;
 }
