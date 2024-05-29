@@ -1,5 +1,7 @@
 ##################################################
 
+PROJECTNAME =	libmaa
+
 tests     =	arg base basics bit debug hash list log memstr memobj \
 		prime pr prm set sl string stack err
 
